@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <title>MyKids School Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root { --navy: #002663; --red: #e11d48; --gold: #d4af37; --blue: #1e40af; }
+        body { font-family: 'Battambang', cursive; background: #f1f5f9; margin: 0; padding: 20px; }
+        
+        .no-print-area { max-width: 1000px; margin: 0 auto 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-main { background: var(--blue); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-family: 'Moul'; margin: 5px; }
+        .btn-download { background: #15803d; display: none; margin: 20px auto; width: 100%; font-size: 14pt; }
+
+        /* PDF Container - A4 Standard */
+        .pdf-container { 
+            width: 210mm; min-height: 297mm; background: white; 
+            margin: 0 auto; padding: 15mm 15mm 25mm 15mm; 
+            box-sizing: border-box; display: none; 
+            flex-direction: column; justify-content: space-between;
+        }
+
+        /* Header Style */
+        .header-section { display: flex; justify-content: space-between; font-family: 'Moul'; font-size: 10pt; line-height: 1.6; }
+        .school-info { text-align: center; color: var(--navy); }
+        .nation-info { text-align: center; }
+
+        /* Table Style */
+        .report-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1.5px solid black; }
+        .report-table th, .report-table td { border: 1px solid black; padding: 8px; text-align: center; }
+        .report-table th { background: #f2f2f2; font-family: 'Moul'; font-size: 9pt; }
+
+        /* Honor Board Layout - FIXED */
+        .honor-frame { border: 12px double var(--blue); padding: 15px; height: 100%; display: flex; flex-direction: column; flex-grow: 1; }
+        .star-container { display: flex; flex-direction: column; align-items: center; gap: 30px; margin: 40px 0; flex-grow: 1; }
+        .student-row { display: flex; justify-content: space-around; width: 100%; }
+        
+        .student-card { text-align: center; width: 160px; position: relative; }
+        .rank-number { font-family: 'Moul'; color: var(--red); font-size: 24pt; margin-bottom: 5px; }
+        .photo-frame { width: 120px; height: 150px; border: 4px solid var(--gold); margin: 0 auto; background: #eee; overflow: hidden; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .name-label { background: var(--navy); color: white; padding: 5px; border-radius: 20px; font-family: 'Moul'; font-size: 9pt; margin-top: 8px; display: block; }
+
+        /* Footer Signature - FIXED AT BOTTOM */
+        .signature-section { display: flex; justify-content: space-between; text-align: center; padding: 0 20px; margin-top: auto; }
+        .signature-box { width: 200px; font-family: 'Moul'; font-size: 11pt; }
+    </style>
+</head>
+<body>
+
+<div class="no-print-area">
+    <h2 style="font-family:'Moul'; text-align:center; color:var(--blue);">បញ្ចូលទិន្នន័យសិស្ស</h2>
+    <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <select id="classSelect" onchange="loadStudents()" style="padding:8px; flex:1;"><option value="">-- រើសថ្នាក់ --</option></select>
+        <input type="text" id="monthInput" value="មករា" style="padding:8px;">
+        <input type="text" id="yearInput" value="២០២៥-២០២៦" style="padding:8px;">
+    </div>
+    <table style="width:100%; border-collapse: collapse;" border="1">
+        <thead style="background:#eee;">
+            <tr><th>អត្តលេខ</th><th>ឈ្មោះ</th><th>ភេទ</th><th>ភាសាខ្មែរ</th><th>គណិតវិទ្យា</th><th>វិទ្យាសាស្រ្ដ</th><th>សិក្សាសង្គម</th><th>រូបថត</th></tr>
+        </thead>
+        <tbody id="inputBody"></tbody>
+    </table>
+    <div style="text-align:center; margin-top:20px;">
+        <button class="btn-main" onclick="render('REPORT')">📋 តារាងលទ្ធផលរួម</button>
+        <button class="btn-main" onclick="render('HONOR')" style="background:#9333ea;">🏆 តារាងកិត្តិយស</button>
+    </div>
+</div>
+
+<div id="pdf-content" class="pdf-container">
+    <div id="main-wrap" style="height: 100%; display: flex; flex-direction: column;">
+        </div>
+</div>
+
+<button id="downloadBtn" class="btn-main btn-download" onclick="downloadPDF()">📥 ទាញយកជា PDF (ប្លង់ស្អាត ១០០%)</button>
+
+<script>
+    const studentDB = {  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម២': [
+            { id: '64', name: 'ឃុន ទេពង្ស', sex: 'M' }, { id: '121', name: 'នឿន វឌ្ឍនា', sex: 'M' },
+            { id: '128', name: 'ពិសិទ្អ ច័ន្ទវឌ្ឃ', sex: 'M' }, { id: '141', name: 'ហេង សាជីង', sex: 'F' },
+            { id: '132', name: 'សុ បញ្ញា មុនិរាជ', sex: 'M' }, { id: '67', name: 'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex: 'M' },
+            { id: '173', name: 'សាន្ត លីប៉េង', sex: 'M' }, { id: '163', name: 'អេង លីឆេង', sex: 'M' },
+            { id: '179', name: 'ចន្ថា វឌ្ឍនា', sex: 'M' }, { id: '162', name: 'យ៉ាន់ សុខឡេង', sex: 'M' }
+        ],
+        'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម១': [
+            { id: '139', name: 'ហ៊ឺម ម៉ីអ៊ិ', sex: 'M' }, { id: '146', name: 'លន វេស្សភូ', sex: 'M' },
+            { id: '102', name: 'សំណាង វីរៈបុត្រ', sex: 'M' }, { id: '67', name: 'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex: 'M' },
+            { id: '181', name: 'ឈន ចេស្ដា', sex: 'M' }, { id: '87', name: 'អ៊ុំ រតនាសិទ្ធីការ', sex: 'F' },
+            { id: '113', name: 'ស៊ីម សិទ្ធីការ', sex: 'F' }, { id: '164', name: 'អ៊ូសុវណ្ណ វេហា៍', sex: 'M' },
+            { id: '177', name: 'វាសនា ពេជ្រសុម៉ាលី', sex: 'F' }, { id: '165', name: 'លឹម លីម៉េងគ័ង្គ', sex: 'M' }
+        ],
+        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់១': [
+            { id: '29', name: 'ខាន់ មុនីវល្លភា', sex: 'F' }, { id: '101', name: 'ឈុំ វីរ់សិទ្ធ', sex: 'M' },
+            { id: '65', name: 'និត សុធារ៉ា', sex: 'M' }, { id: '78', name: 'នី លីជីង', sex: 'F' },
+            { id: '117', name: 'ហ៊ុន រាណ្ណជេណស្ដា', sex: 'M' }, { id: '47', name: 'បុណ្ណជេ ជេននី', sex: 'F' },
+            { id: '14', name: 'ឃុន ទេពី', sex: 'F' }, { id: '62', name: 'រិទ្ធី ពិស្សុតសុក្រឹត', sex: 'M' },
+            { id: '49', name: 'ងិន ទៀនវិន', sex: 'M' }, { id: '107', name: 'សុភក្រ័ វរៈសិទ្ធ', sex: 'M' },
+            { id: '170', name: 'អុលវឿន ដាវីន', sex: 'F' }, { id: '137', name: 'សឿន ចាន់សុមេធា', sex: 'F' },
+            { id: '1', name: 'ប៊ុនរីន ខេមរា', sex: 'M' }
+        ],
+        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់': [
+            { id: '54', name: 'យន់ លីហេង', sex: 'M' }, { id: '75', name: 'វិន បញ្ញាវ័ន្ត', sex: 'M' },
+            { id: '90', name: 'សូ រស្មីពនិតា', sex: 'F' }, { id: '50', name: 'សូយ រក្សា', sex: 'M' },
+            { id: '0072', name: 'អ៊ូ សុខអាមី', sex: 'F' }, { id: '137', name: 'សឿន ចាន់សុមេធា', sex: 'F' },
+            { id: '176', name: 'ប៉ឹម ម៉ីជូ', sex: 'F' }, { id: '85', name: 'សេរី ចន្ទវឌ្ឍនា', sex: 'M' },
+            { id: '161', name: 'លីម ហ៊ីប៉', sex: 'M' }, { id: '55', name: 'អ៊ា ជីងហ័រ', sex: 'F' },
+            { id: '0079', name: 'មិត្ត ម៉េងហេង', sex: 'M' }, { id: '74', name: 'ចាន់នី​ ស៊ូសាន់ណា', sex: 'F' }
+        ],
+        'ថ្នាក់ទី១(ក១)': [
+            { id: '75', name: 'ឆន វិរៈសិទ្ធ', sex: 'M' }, { id: '47', name: 'ជាឡិច កូលីន', sex: 'M' },
+            { id: '92', name: 'សុបញ្ញា សោម៉ា', sex: 'F' }, { id: '83', name: 'ភឺន ថិរាយុ', sex: 'M' },
+            { id: '69', name: 'លី ឆាយឈ័ន', sex: 'M' }, { id: '77', name: 'វុឌ្ឍី ដាវីកា', sex: 'F' },
+            { id: '93', name: 'អ៊ឹម រោចនា', sex: 'F' }, { id: '72', name: 'វង្ស ដារ៉ាវីន', sex: 'M' },
+            { id: '95', name: 'ចាវ វិនហាវ', sex: 'M' }, { id: '80', name: 'ងួន បញ្ញាពុទ្ធិស័ក្តិ', sex: 'M' }
+        ],
+        'ថ្នាក់ទី១(ក២)': [
+            { id: '88', name: 'ចំរើន ចន្ទឧត្តម', sex: 'M' }, { id: '91', name: 'ប៊ូ សាធុការ', sex: 'F' },
+            { id: '82', name: 'សេន យ៉ាស្មីនណា', sex: 'F' }, { id: '85', name: 'ដន សុភ័ណ្ឌម៉ូនីកា', sex: 'F' },
+            { id: '78', name: 'ស៊្រាង សៀវហ្វុង', sex: 'F' }, { id: '73', name: 'ហេង ម៉ីអ៊ិ', sex: 'F' },
+            { id: '74', name: 'អឿន ពៅវល័ក្ខ', sex: 'F' }, { id: '70', name: 'រ័ត្ន រ៉ាថេប', sex: 'M' }
+        ],
+        'ថ្នាក់ទី២': [
+            { id: '21', name: 'ចន្ថា លីតា', sex: 'F' }, { id: '20', name: 'ពៅ សុខចិន', sex: 'M' },
+            { id: '17', name: 'ណារ៉ា ហេងលី', sex: 'M' }, { id: '23', name: 'សុខ សម្បត្តិ', sex: 'M' },
+            { id: '22', name: 'សុខ ដាលីស', sex: 'F' }, { id: '29', name: 'ស្រស់ រីហ្សា', sex: 'F' },
+            { id: '41', name: 'ប៉ុន រីយ៉ា', sex: 'F' }
+        ],
+        'ថ្នាក់ទី២,១': [
+            { id: '59', name: 'អុង បញ្ញារ័ត្ន', sex: 'M' }, { id: '31', name: 'មិត្ត ម៉េងហួរ', sex: 'M' },
+            { id: '14', name: 'យស់ នរិន្ទ', sex: 'M' }, { id: '33', name: 'វង់ ពុទ្ធិតា', sex: 'F' },
+            { id: '62', name: 'សូយ បញ្ញា', sex: 'M' }, { id: '40', name: 'សេង សាណា', sex: 'F' },
+            { id: '39', name: 'ចន្ទ សុផាយ៉ាមេឃ', sex: 'M' }, { id: '30', name: 'ស៊នវីរៈ បញ្ញាទេពី', sex: 'F' },
+            { id: '27', name: 'ប៊ូ តាម៉ា', sex: 'M' }, { id: '65', name: 'កែវ មុន្នីឧត្តម', sex: 'M' },
+            { id: '56', name: 'វន្តវិន ថាណា', sex: 'F' }, { id: '36', name: 'ហាន ស៊ីវហ័រ', sex: 'F' }
+        ],
+        'ថ្នាក់ទី៣': [
+            { id: '9', name: 'កែវ វីនសុឧត្តតារា', sex: 'F' }, { id: '28', name: 'ឈុនតា រតនៈខុនដូ', sex: 'F' },
+            { id: '10', name: 'យ៉ា ពេជ្រម៉ូនីកា', sex: 'F' }, { id: '15', name: 'លីម ពុទ្ធិរាជ', sex: 'M' },
+            { id: '3', name: 'ឡ ស៊ីវហ៊ួយ', sex: 'F' }, { id: '2', name: 'ឡាយ មុនិចិន្ដា', sex: 'F' },
+            { id: '24', name: 'អោក និសិ្សត', sex: 'M' }, { id: '44', name: 'ចំរើន ម៉ានីតា', sex: 'F' }
+        ],
+        'ថ្នាក់ទី៤​ ៥': [
+            { id: '1', name: 'ឡាយ ភារ៉ាដាវីឌ', sex: 'M' }, { id: '42', name: 'វង្ស មុនីកញ្ចនា', sex: 'F' },
+            { id: '43', name: 'ពៅ សុនីតា', sex: 'F' }, { id: '4', name: 'ឡ សុវណ្ណហាន់ណា', sex: 'F' }
+        ],
+        'Fount1 mooning': [
+            { id: '82', name: 'រុន រស្មី', sex: 'M' }, { id: '149', name: 'ធី សុវណ្ណ សិទ្ធិកា', sex: 'F' },
+            { id: '143', name: 'ផន សុខហៀង', sex: 'M' }, { id: '133', name: 'សុទ្ធ លីនប្រុសសិទ្ធ', sex: 'M' },
+            { id: '134', name: 'អ៊ាប លីយីង', sex: 'F' }, { id: '88', name: 'ចំរើន ចន្ទឧត្តម', sex: 'M' },
+            { id: '127', name: 'ហម ចាន់បុរីរក្ស', sex: 'M' }, { id: '182', name: 'តាំង ហ៊ួយលីន', sex: 'F' }
+        ],
+        'Fount1 Evening': [
+            { id: '116', name: 'ឆន ម៉េងស៊ីន', sex: 'M' }, { id: '58', name: 'ងួន គីមហាប់', sex: 'M' },
+            { id: '145', name: 'ឆាយ ភីងអ៊ីង', sex: 'F' }, { id: '125', name: 'បញ្ញា ភេត្រា', sex: 'F' },
+            { id: '90', name: 'ចំរើន រឿនរឹទ្ធិរាជ', sex: 'M' }, { id: '159', name: 'ថន ស៊ីហ្គ្សិច', sex: 'F' }
+        ],
+        'Nursery': [
+            { id: '148', name: 'បេរ៉េស ម៉ៃឃើស', sex: 'M' }, { id: '144', name: 'ហេង សន្តិភាព', sex: 'M' },
+            { id: '157', name: 'ដួង សុមេធា', sex: 'M' }, { id: '183', name: 'ថុង ហ្វុងម៉េង', sex: 'M' },
+            { id: '158', name: 'ពន្លក វិរសិទ្ធ', sex: 'M' }, { id: '172', name: 'រតនា សៀវលិ', sex: 'F' },
+            { id: '180', name: 'រ៉ាត់ ពេជ្រមរកត', sex: 'F' }, { id: '178', name: 'លីវទ្ធី ជុតិមា', sex: 'F' },
+            { id: '184', name: 'ហូ លីភីង', sex: 'M' }, { id: '174', name: 'វិច្ឆិកា មុន្នីទេពី', sex: 'F' },
+            { id: '185', name: 'យឹម ពុទ្ធិវង្ស', sex: 'M' }, { id: '171', name: 'សុង សិរីបុត្រ', sex: 'M' },
+            { id: '147', name: 'សុភ័ក្រ វីរបុត្រ', sex: 'M' }, { id: '150', name: 'វ៉េត នីរីតា', sex: 'F' },
+            { id: '166', name: 'លីណា ហុងស័ក្កិអធិភូ', sex: 'M' }
+        ],
+        'Fount2.1': [
+            { id: '86', name: 'ធេង ម៉េងលី', sex: 'M' }, { id: '00', name: 'ស៊្រាង សៀវហ្វុង', sex: 'F' },
+            { id: '00', name: 'ហេង ម៉ីអ៊ិ', sex: 'F' }, { id: '00', name: 'អឿន ពៅវល័ក្ខ', sex: 'F' },
+            { id: '00', name: 'ហាន ស៊ីវហ័រ', sex: 'F' }, { id: '00', name: 'រ័ត្ន សុវណ្ណច័ន្ទណាកា', sex: 'M' },
+            { id: '00', name: 'ចំរើន ម៉ានីតា ', sex: 'F' }, { id: '70', name: 'រ័ត្ន រ៉ាថេប', sex: 'M' },
+            { id: '00', name: 'ចំរើន ច័ន្ទឧត្តម', sex: 'M' }
+        ],
+        'Fount2.10.narein': [
+            { id: '68', name: 'សុង រឹទ្ធស័ក្ក', sex: 'M' }, { id: '00', name: 'ពៅ សុខចិន', sex: 'M' },
+            { id: '66', name: 'ប៊ុនឡេង អ៊ៃដឹក', sex: 'M' }, { id: '67', name: 'ភោគ ស្ពីតឌី', sex: 'M' },
+            { id: '00', name: 'អ៊ឹម រោចនា', sex: 'F' }, { id: '00', name: 'ងួន បញ្ញាពុទ្ធិស័ក្តិ', sex: 'M' },
+            { id: '00', name: 'ជាឡិច កូលីន', sex: 'M' }, { id: '00', name: 'ណារ៉ា ហេងលី', sex: 'M' },
+            { id: '00', name: 'ឆន វិរៈសិទ្ធ', sex: 'M' }, { id: '00', name: 'សុខ សម្បត្តិ', sex: 'M' },
+            { id: '00', name: 'សុខ ដាលីស', sex: 'F' }, { id: '00', name: 'លី ឆាយឈ័នប', sex: 'M' }
+        ],
+        'Level1': [
+            { id: '00', name: 'អោក ឧត្តម', sex: 'M' }, { id: '00', name: 'ណារ៉ា ហេងឡាយ', sex: 'M' },
+            { id: '62', name: 'ឈូក ឈិនឡុង', sex: 'M' }, { id: '00', name: 'ពៅ សុនីតា', sex: 'F' },
+            { id: '00', name: 'កែវ វីនសុឧត្តតារា', sex: 'F' }, { id: '00', name: 'ឈុនតា រតនៈខុនដូ', sex: 'F' },
+            { id: '64', name: 'លាង វឌ្ឃនធនុ', sex: 'M' }, { id: '00', name: 'យ៉ា ពេជ្រម៉ូនីកា', sex: 'F' },
+            { id: '00', name: 'លីម ពុទ្ធិរាជ', sex: 'M' }, { id: '00', name: 'ឡ ស៊ីវហ៊ួយ', sex: 'F' },
+            { id: '00', name: 'ឡាយ មុនិចិន្ដា', sex: 'F' }, { id: '00', name: 'អោក និសិ្សត', sex: 'M' },
+            { id: '00', name: 'ចន្ទ សុផាយ៉ាមេឃ', sex: 'M' }, { id: '00', name: 'ស៊នវីរៈ បញ្ញាទេពី', sex: 'F' }
+        ],
+        'Level2': [
+            { id: '48', name: 'សុភក្ដិ ទិត្រដាណា', sex: 'F' }, { id: '63', name: 'នឿន វឌ្ឍនះ', sex: 'M' },
+            { id: '49', name: 'សុភក្ដិ រតន', sex: 'M' }, { id: '61', name: 'ផល​ សុវណ្ណ', sex: 'M' },
+            { id: '53', name: 'ហុង សិទ្ធិណាល់', sex: 'M' }, { id: '55', name: 'ធេង ជូលីញ', sex: 'F' },
+            { id: '1', name: 'ឡាយ ភារ៉ាដាវីឌ', sex: 'M' }, { id: '4', name: 'ឡ សុវណ្ណហាន់ណា', sex: 'F' }
+        ],
+        'មត្ដេយ្យកម្រិតទាប': [
+            { id: '147', name: 'សុភក្រ វីរបុត្រ', sex: 'M' }, { id: '166', name: 'លីណា រ័ត្នហុងស័ក្កិអធិភូ', sex: 'M' },
+            { id: '160', name: 'ថូ សិទ្ធីយូណា', sex: 'F' }, { id: '175', name: 'ហេង ជ័រម៉ីង', sex: 'F' },
+            { id: '000', name: 'វ៉េត នីរីតា', sex: 'F' }
+        ] };
+    const sel = document.getElementById('classSelect');
+    Object.keys(studentDB).forEach(c => sel.add(new Option(c, c)));
+
+    function loadStudents() {
+        const tbody = document.getElementById('inputBody'); tbody.innerHTML = '';
+        (studentDB[sel.value] || []).forEach((s, i) => {
+            tbody.innerHTML += `<tr class="row" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
+                <td align="center">${s.id}</td><td>${s.name}</td><td align="center">${s.sex}</td>
+                <td><input type="number" class="s" value="0" style="width:50px"></td><td><input type="number" class="s" value="0" style="width:50px"></td>
+                <td><input type="number" class="s" value="0" style="width:50px"></td><td><input type="number" class="s" value="0" style="width:50px"></td>
+                <td><input type="file" onchange="previewImg(event, ${i})"><input type="hidden" id="img${i}"></td>
+            </tr>`;
+        });
+    }
+
+    function previewImg(e, i) {
+        const reader = new FileReader();
+        reader.onload = (f) => document.getElementById('img'+i).value = f.target.result;
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+    function render(type) {
+        if(!sel.value) return alert("រើសថ្នាក់សិន!");
+        let data = [];
+        document.querySelectorAll('.row').forEach((r, i) => {
+            const scores = Array.from(r.querySelectorAll('.s')).map(input => parseFloat(input.value) || 0);
+            const total = scores.reduce((a, b) => a + b, 0);
+            data.push({ id: r.dataset.id, name: r.dataset.name, sex: r.dataset.sex, total: total, avg: total/4, img: document.getElementById('img'+i).value });
+        });
+        data.sort((a, b) => b.avg - a.avg);
+
+        const month = document.getElementById('monthInput').value;
+        const year = document.getElementById('yearInput').value;
+        const today = `ភ្នំពេញ, ថ្ងៃទី ${new Date().getDate()} ខែ ${month} ឆ្នាំ ២០២៦`;
+
+        let content = `
+            <div class="header-section">
+                <div class="school-info">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br>សាលាអន្ដរជាតិម៉ាយឃីដ<br>Mikids International school</div>
+                <div class="nation-info">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>-------</div>
+            </div>`;
+
+        if(type === 'REPORT') {
+            let rows = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.id}</td><td align="left">${s.name}</td><td>${s.sex}</td><td>${s.total.toFixed(2)}</td><td>${s.avg.toFixed(2)}</td><td>${i+1}</td></tr>`).join('');
+            content += `
+                <div style="text-align:center; margin-top:20px;"><h2 style="font-family:'Moul'; color:var(--blue);">បញ្ជីចំណាត់ថ្នាក់លទ្ធផលការសិក្សា</h2><p>ថ្នាក់៖ ${sel.value} | ខែ៖ ${month} | ឆ្នាំ៖ ${year}</p></div>
+                <table class="report-table"><thead><tr><th>ល.រ</th><th>អត្តលេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th><th>សរុប</th><th>មធ្យម</th><th>ចំណាត់ថ្នាក់</th></tr></thead><tbody>${rows}</tbody></table>`;
+        } else {
+            const getCard = (s, i) => `<div class="student-card"><div class="rank-number">${i+1}</div><div class="photo-frame"><img src="${s.img || 'https://via.placeholder.com/120x150'}"></div><div class="name-label">${s.name}</div></div>`;
+            content = `<div class="honor-frame">${content}
+                <div style="text-align:center;"><h1 style="font-family:'Moul'; color:var(--red); font-size:32pt; margin:10px 0;">តារាងកិត្តិយស</h1><p style="font-size:14pt;">ប្រចាំខែ ${month} ឆ្នាំសិក្សា ${year}</p></div>
+                <div class="star-container">
+                    <div class="student-row">${getCard(data[0], 0)}</div>
+                    <div class="student-row">${getCard(data[1], 1)}${getCard(data[2], 2)}</div>
+                    <div class="student-row">${getCard(data[3], 3)}${getCard(data[4], 4)}</div>
+                </div></div>`;
+        }
+
+        content += `<div class="signature-section"><div class="signature-box">បានឃើញ និងឯកភាព<br>នាយកសាលលា</div><div class="signature-box" style="font-family:'Battambang'; font-weight:normal;">${today}<br><b style="font-family:'Moul'">គ្រូប្រចាំថ្នាក់</b></div></div>`;
+        
+        document.getElementById('main-wrap').innerHTML = content;
+        document.getElementById('pdf-content').style.display = 'flex';
+        document.getElementById('downloadBtn').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function downloadPDF() {
+        const el = document.getElementById('pdf-content');
+        html2pdf().from(el).set({ margin: 0, filename: 'MyKids_Result.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save();
+    }
+</script>
+</body>
+</html>
