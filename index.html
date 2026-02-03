@@ -6,45 +6,221 @@
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --navy: #002663; --red: #e11d48; --gold: #d4af37; --blue: #1e40af; }
+        :root { --navy: #1e40af; --red: #dc2626; --gold: #fbbf24; --blue: #2563eb; }
         body { font-family: 'Battambang', cursive; background: #f1f5f9; margin: 0; padding: 20px; }
         
         .no-print-area { max-width: 1000px; margin: 0 auto 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-main { background: var(--blue); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-family: 'Moul'; margin: 5px; }
         .btn-download { background: #15803d; display: none; margin: 20px auto; width: 100%; font-size: 14pt; }
 
-        /* PDF Container - A4 Standard */
+        /* PDF Container - SINGLE PAGE A4 */
         .pdf-container { 
-            width: 210mm; min-height: 297mm; background: white; 
-            margin: 0 auto; padding: 15mm 15mm 25mm 15mm; 
-            box-sizing: border-box; display: none; 
-            flex-direction: column; justify-content: space-between;
+            width: 210mm; 
+            height: 297mm;
+            background: white !important; 
+            margin: 0 auto; 
+            padding: 0 !important;
+            box-sizing: border-box; 
+            display: none;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Header Style */
-        .header-section { display: flex; justify-content: space-between; font-family: 'Moul'; font-size: 10pt; line-height: 1.6; }
-        .school-info { text-align: center; color: var(--navy); }
-        .nation-info { text-align: center; }
+        /* Outer Border */
+        .outer-border {
+            position: absolute;
+            top: 10mm;
+            left: 10mm;
+            right: 10mm;
+            bottom: 10mm;
+            border: 3px solid var(--navy) !important;
+        }
 
-        /* Table Style */
-        .report-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1.5px solid black; }
-        .report-table th, .report-table td { border: 1px solid black; padding: 8px; text-align: center; }
-        .report-table th { background: #f2f2f2; font-family: 'Moul'; font-size: 9pt; }
+        /* Inner Border */
+        .inner-border {
+            position: absolute;
+            top: 14mm;
+            left: 14mm;
+            right: 14mm;
+            bottom: 14mm;
+            border: 2px solid var(--navy) !important;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* Honor Board Layout - FIXED */
-        .honor-frame { border: 12px double var(--blue); padding: 15px; height: 100%; display: flex; flex-direction: column; flex-grow: 1; }
-        .star-container { display: flex; flex-direction: column; align-items: center; gap: 30px; margin: 40px 0; flex-grow: 1; }
-        .student-row { display: flex; justify-content: space-around; width: 100%; }
+        /* Content */
+        .cert-content {
+            padding: 8mm 12mm;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .cert-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Battambang';
+            font-size: 8.5pt;
+            line-height: 1.4;
+            margin-bottom: 5mm;
+        }
+
+        .school-info { text-align: left; flex: 1; }
+        .nation-info { text-align: right; flex: 1; }
+
+        /* Title */
+        .cert-title {
+            text-align: center;
+            margin-bottom: 5mm;
+        }
+
+        .cert-title h1 {
+            font-family: 'Moul';
+            color: var(--red) !important;
+            font-size: 32pt;
+            margin: 0;
+            margin-bottom: 2mm;
+        }
+
+        .cert-title p {
+            font-size: 10pt;
+            margin: 0;
+        }
+
+        /* Divider */
+        .divider {
+            width: 100%;
+            height: 2px;
+            background: black !important;
+            margin: 5mm 0;
+        }
+
+        /* Students Grid */
+        .students-grid {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8mm;
+            padding: 3mm 0;
+        }
+
+        .student-row {
+            display: flex;
+            justify-content: center;
+            gap: 12mm;
+        }
+
+        .student-card {
+            text-align: center;
+            width: 32mm;
+        }
+
+        .rank-badge {
+            width: 22px;
+            height: 22px;
+            background: var(--red) !important;
+            color: white !important;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Moul';
+            font-size: 12pt;
+            margin-bottom: 2mm;
+            font-weight: bold;
+        }
+
+        .photo-box {
+            width: 32mm;
+            height: 40mm;
+            border: 2.5px solid var(--gold) !important;
+            background: #f3f4f6 !important;
+            margin: 0 auto 2mm auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .student-name {
+            background: var(--navy) !important;
+            color: white !important;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-family: 'Battambang';
+            font-size: 8pt;
+            font-weight: bold;
+            display: inline-block;
+            max-width: 32mm;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Footer */
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 3mm;
+        }
+
+        .signature-block {
+            text-align: center;
+            font-family: 'Battambang';
+            font-size: 9pt;
+        }
+
+        .signature-block strong {
+            font-family: 'Moul';
+        }
+
+        /* Report Table */
+        .report-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+            border: 1.5px solid black !important; 
+        }
         
-        .student-card { text-align: center; width: 160px; position: relative; }
-        .rank-number { font-family: 'Moul'; color: var(--red); font-size: 24pt; margin-bottom: 5px; }
-        .photo-frame { width: 120px; height: 150px; border: 4px solid var(--gold); margin: 0 auto; background: #eee; overflow: hidden; }
-        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
-        .name-label { background: var(--navy); color: white; padding: 5px; border-radius: 20px; font-family: 'Moul'; font-size: 9pt; margin-top: 8px; display: block; }
+        .report-table th, .report-table td { 
+            border: 1px solid black !important; 
+            padding: 6px; 
+            text-align: center; 
+            background: white !important;
+        }
+        
+        .report-table th { 
+            background: #f2f2f2 !important; 
+            font-family: 'Moul'; 
+            font-size: 9pt; 
+            font-weight: bold;
+        }
 
-        /* Footer Signature - FIXED AT BOTTOM */
-        .signature-section { display: flex; justify-content: space-between; text-align: center; padding: 0 20px; margin-top: auto; }
-        .signature-box { width: 200px; font-family: 'Moul'; font-size: 11pt; }
+        .title-section {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .title-section h2 {
+            font-family: 'Moul';
+            color: var(--blue);
+            font-size: 22pt;
+            margin: 10px 0;
+        }
+
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .no-print-area, .btn-download { display: none !important; }
+            .pdf-container { display: block !important; page-break-after: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -68,15 +244,12 @@
     </div>
 </div>
 
-<div id="pdf-content" class="pdf-container">
-    <div id="main-wrap" style="height: 100%; display: flex; flex-direction: column;">
-        </div>
-</div>
+<div id="pdf-content" class="pdf-container"></div>
 
-<button id="downloadBtn" class="btn-main btn-download" onclick="downloadPDF()">📥 ទាញយកជា PDF (ប្លង់ស្អាត ១០០%)</button>
+<button id="downloadBtn" class="btn-main btn-download" onclick="downloadPDF()">📥 ទាញយកជា PDF</button>
 
 <script>
-    const studentDB = {  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម២': [
+   const studentDB = {  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម២': [
             { id: '64', name: 'ឃុន ទេពង្ស', sex: 'M' }, { id: '121', name: 'នឿន វឌ្ឍនា', sex: 'M' },
             { id: '128', name: 'ពិសិទ្អ ច័ន្ទវឌ្ឃ', sex: 'M' }, { id: '141', name: 'ហេង សាជីង', sex: 'F' },
             { id: '132', name: 'សុ បញ្ញា មុនិរាជ', sex: 'M' }, { id: '67', name: 'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex: 'M' },
@@ -200,17 +373,21 @@
             { id: '160', name: 'ថូ សិទ្ធីយូណា', sex: 'F' }, { id: '175', name: 'ហេង ជ័រម៉ីង', sex: 'F' },
             { id: '000', name: 'វ៉េត នីរីតា', sex: 'F' }
         ] };
+
     const sel = document.getElementById('classSelect');
     Object.keys(studentDB).forEach(c => sel.add(new Option(c, c)));
 
     function loadStudents() {
-        const tbody = document.getElementById('inputBody'); tbody.innerHTML = '';
+        const tbody = document.getElementById('inputBody'); 
+        tbody.innerHTML = '';
         (studentDB[sel.value] || []).forEach((s, i) => {
             tbody.innerHTML += `<tr class="row" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
                 <td align="center">${s.id}</td><td>${s.name}</td><td align="center">${s.sex}</td>
-                <td><input type="number" class="s" value="0" style="width:50px"></td><td><input type="number" class="s" value="0" style="width:50px"></td>
-                <td><input type="number" class="s" value="0" style="width:50px"></td><td><input type="number" class="s" value="0" style="width:50px"></td>
-                <td><input type="file" onchange="previewImg(event, ${i})"><input type="hidden" id="img${i}"></td>
+                <td><input type="number" class="s" value="${90-i}" style="width:50px"></td>
+                <td><input type="number" class="s" value="${88-i}" style="width:50px"></td>
+                <td><input type="number" class="s" value="${85-i}" style="width:50px"></td>
+                <td><input type="number" class="s" value="${92-i}" style="width:50px"></td>
+                <td><input type="file" accept="image/*" onchange="previewImg(event, ${i})"><input type="hidden" id="img${i}"></td>
             </tr>`;
         });
     }
@@ -223,51 +400,189 @@
 
     function render(type) {
         if(!sel.value) return alert("រើសថ្នាក់សិន!");
+        
         let data = [];
         document.querySelectorAll('.row').forEach((r, i) => {
             const scores = Array.from(r.querySelectorAll('.s')).map(input => parseFloat(input.value) || 0);
             const total = scores.reduce((a, b) => a + b, 0);
-            data.push({ id: r.dataset.id, name: r.dataset.name, sex: r.dataset.sex, total: total, avg: total/4, img: document.getElementById('img'+i).value });
+            data.push({ 
+                id: r.dataset.id, 
+                name: r.dataset.name, 
+                sex: r.dataset.sex, 
+                scores: scores,
+                total: total, 
+                avg: total/4, 
+                img: document.getElementById('img'+i).value 
+            });
         });
         data.sort((a, b) => b.avg - a.avg);
 
         const month = document.getElementById('monthInput').value;
         const year = document.getElementById('yearInput').value;
-        const today = `ភ្នំពេញ, ថ្ងៃទី ${new Date().getDate()} ខែ ${month} ឆ្នាំ ២០២៦`;
-
-        let content = `
-            <div class="header-section">
-                <div class="school-info">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br>សាលាអន្ដរជាតិម៉ាយឃីដ<br>Mikids International school</div>
-                <div class="nation-info">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>-------</div>
-            </div>`;
+        const today = `ភ្នំពេញ, ថ្ងៃទី ${new Date().getDate()} ខែ ${month} ឆ្នាំ ${new Date().getFullYear()}`;
 
         if(type === 'REPORT') {
-            let rows = data.map((s, i) => `<tr><td>${i+1}</td><td>${s.id}</td><td align="left">${s.name}</td><td>${s.sex}</td><td>${s.total.toFixed(2)}</td><td>${s.avg.toFixed(2)}</td><td>${i+1}</td></tr>`).join('');
-            content += `
-                <div style="text-align:center; margin-top:20px;"><h2 style="font-family:'Moul'; color:var(--blue);">បញ្ជីចំណាត់ថ្នាក់លទ្ធផលការសិក្សា</h2><p>ថ្នាក់៖ ${sel.value} | ខែ៖ ${month} | ឆ្នាំ៖ ${year}</p></div>
-                <table class="report-table"><thead><tr><th>ល.រ</th><th>អត្តលេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th><th>សរុប</th><th>មធ្យម</th><th>ចំណាត់ថ្នាក់</th></tr></thead><tbody>${rows}</tbody></table>`;
+            let rows = data.map((s, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${s.id}</td>
+                    <td style="text-align:left; padding-left:10px;">${s.name}</td>
+                    <td>${s.sex === 'M' ? 'ប្រុស' : 'ស្រី'}</td>
+                    <td>${s.scores[0]}</td>
+                    <td>${s.scores[1]}</td>
+                    <td>${s.scores[2]}</td>
+                    <td>${s.scores[3]}</td>
+                    <td><strong>${s.total.toFixed(0)}</strong></td>
+                    <td><strong>${s.avg.toFixed(2)}</strong></td>
+                    <td><strong>${i+1}</strong></td>
+                </tr>`).join('');
+            
+            document.getElementById('pdf-content').innerHTML = `
+                <div style="padding: 15mm;">
+                    <div style="display:flex; justify-content:space-between; font-family:'Battambang'; font-size:9pt; margin-bottom:15px;">
+                        <h2 style="text-align:left;">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br><span style="color:#dc2626;">សាលាអន្ដរជាតិម៉ាយឃីដ</span><br><span style="font-size:8pt; color:#dc2626;">Mikids International school</span></h2>
+                        <h2 style="text-align:right;"><strong>ព្រះរាជាណាចក្រកម្ពុជា</strong><br><strong>ជាតិ សាសនា ព្រះមហាក្សត្រ</strong><br>-------</h2>
+                    </div>
+                    <div class="title-section">
+                        <h2>បញ្ជីចំណាត់ថ្នាក់លទ្ធផលការសិក្សា</h2>
+                        <p style="font-size:11pt;">ថ្នាក់៖ ${sel.value} | ខែ៖ ${month} | ឆ្នាំ៖ ${year}</p>
+                    </div>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30px;">ល.រ</th>
+                                <th style="width:50px;">អត្តលេខ</th>
+                                <th>គោត្តនាម-នាម</th>
+                                <th style="width:40px;">ភេទ</th>
+                                <th>ខ្មែរ</th>
+                                <th>គណិត</th>
+                                <th>វិទ្យា</th>
+                                <th>សង្គម</th>
+                                <th>សរុប</th>
+                                <th>មធ្យម</th>
+                                <th>ចំណាត់ថ្នាក់</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                    <div style="margin-top:15px; font-family:'Battambang'; font-size:10pt;">
+                        <strong>សរុប៖ ${data.length} នាក់ | ស្រី៖ ${data.filter(s => s.sex === 'F').length} នាក់</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:30px; font-family:'Battambang'; font-size:10pt;">
+                        <div style="text-align:center; width:150px;">បានឃើញ និងឯកភាព<br><br><br><b style="font-family:'Moul'">នាយកសាលា</b></div>
+                        <div style="text-align:center; width:150px;">${today}<br><br><br><b style="font-family:'Moul'">គ្រូប្រចាំថ្នាក់</b></div>
+                    </div>
+                </div>`;
         } else {
-            const getCard = (s, i) => `<div class="student-card"><div class="rank-number">${i+1}</div><div class="photo-frame"><img src="${s.img || 'https://via.placeholder.com/120x150'}"></div><div class="name-label">${s.name}</div></div>`;
-            content = `<div class="honor-frame">${content}
-                <div style="text-align:center;"><h1 style="font-family:'Moul'; color:var(--red); font-size:32pt; margin:10px 0;">តារាងកិត្តិយស</h1><p style="font-size:14pt;">ប្រចាំខែ ${month} ឆ្នាំសិក្សា ${year}</p></div>
-                <div class="star-container">
-                    <div class="student-row">${getCard(data[0], 0)}</div>
-                    <div class="student-row">${getCard(data[1], 1)}${getCard(data[2], 2)}</div>
-                    <div class="student-row">${getCard(data[3], 3)}${getCard(data[4], 4)}</div>
-                </div></div>`;
-        }
+            const createCard = (s, rank) => {
+                if (!s) return '';
+                const imgSrc = s.img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="150"%3E%3Crect width="120" height="150" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" font-size="14" fill="%239ca3af" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
+                
+                return `
+                    <div class="student-card">
+                        <div class="rank-badge">${rank}</div>
+                        <div class="photo-box">
+                            <img src="${imgSrc}" alt="${s.name}">
+                        </div>
+                        <div class="student-name">${s.name}</div>
+                    </div>`;
+            };
 
-        content += `<div class="signature-section"><div class="signature-box">បានឃើញ និងឯកភាព<br>នាយកសាលលា</div><div class="signature-box" style="font-family:'Battambang'; font-weight:normal;">${today}<br><b style="font-family:'Moul'">គ្រូប្រចាំថ្នាក់</b></div></div>`;
+            document.getElementById('pdf-content').innerHTML = `
+               <div style="padding: 15mm;">
+                    <div style="display:flex; justify-content:space-between; font-family:'Battambang'; font-size:9pt; margin-bottom:15px;">
+                        <h2 style="text-align:left;">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br><span style="color:#dc2626;">សាលាអន្ដរជាតិម៉ាយឃីដ</span><br><span style="font-size:8pt; color:#dc2626;">Mikids International school</span></h2>
+                        <h2 style="text-align:right;"><strong>ព្រះរាជាណាចក្រកម្ពុជា</strong><br><strong>ជាតិ សាសនា ព្រះមហាក្សត្រ</strong><br>-------</h2>
+                    </div>
+                            <div class="nation-info">
+                                <div style="font-weight:bold;">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                                <div style="font-weight:bold;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                                <div>-------</div>
+                            </div>
+                        </div>
+
+                       <div class="cert-title">
+                            <h1>តារាងកិត្តិយស</h1>
+                            <p>ប្រចាំខែ ${month} ឆ្នាំសិក្សា ${year}</p>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="students-grid">
+                            <div class="student-row">
+                                ${createCard(data[0], 1)}
+                                ${createCard(data[1], 2)}
+                                ${createCard(data[2], 3)}
+                                ${createCard(data[3], 4)}
+                                ${createCard(data[4], 5)}
+                            </div>
+                        </div>
+
+                        <div class="cert-footer">
+                            <div class="signature-block">
+                                បានឃើញ និងឯកភាព<br><br><br>
+                                <strong>នាយកសាលា</strong>
+                            </div>
+                            <div class="signature-block">
+                                ${today}<br><br><br>
+                                <strong>គ្រូប្រចាំថ្នាក់</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
         
-        document.getElementById('main-wrap').innerHTML = content;
-        document.getElementById('pdf-content').style.display = 'flex';
+        document.getElementById('pdf-content').style.display = 'block';
         document.getElementById('downloadBtn').style.display = 'block';
-        window.scrollTo(0, document.body.scrollHeight);
+        
+        setTimeout(() => {
+            document.getElementById('pdf-content').scrollIntoView({ behavior: 'smooth' });
+        }, 100);
     }
 
     function downloadPDF() {
         const el = document.getElementById('pdf-content');
-        html2pdf().from(el).set({ margin: 0, filename: 'MyKids_Result.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).save();
+        const btn = document.getElementById('downloadBtn');
+        
+        btn.innerText = "⏳ កំពុងបង្កើត PDF... សូមរង់ចាំ";
+        btn.disabled = true;
+        
+        const opt = {
+            margin: 0,
+            filename: `MyKids_${sel.value}_${new Date().getTime()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 3,
+                useCORS: true,
+                logging: false,
+                letterRendering: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                scrollY: 0,
+                scrollX: 0,
+                windowWidth: 794,
+                windowHeight: 1123
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            }
+        };
+
+        html2pdf().set(opt).from(el).save().then(() => {
+            btn.innerText = "✅ ទាញយកបានជោគជ័យ!";
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.innerText = "📥 ទាញយកជា PDF";
+            }, 3000);
+        }).catch(err => {
+            console.error('PDF Error:', err);
+            btn.innerText = "❌ មានបញ្ហា!";
+            btn.disabled = false;
+        });
     }
 </script>
 </body>
