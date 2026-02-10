@@ -4,266 +4,157 @@
     <meta charset="UTF-8">
     <title>MyKids School Management System</title>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        :root { --navy: #1e40af; --red: #dc2626; --gold: #fbbf24; --blue: #2563eb; }
-        body { font-family: 'Battambang', cursive; background: #f1f5f9; margin: 0; padding: 20px; }
+        :root { --navy: #1e3a8a; --red: #be123c; --gold: #f59e0b; --blue: #2563eb; }
+        body { font-family: 'Battambang', cursive; background: #e2e8f0; margin: 0; padding: 20px; }
         
+        /* Control Panel */
         .no-print-area { max-width: 1000px; margin: 0 auto 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-main { background: var(--blue); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-family: 'Moul'; margin: 5px; }
-        .btn-download { background: #15803d; display: none; margin: 20px auto; width: 100%; font-size: 14pt; }
+        .btn-main { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-family: 'Moul'; margin: 5px; transition: 0.3s; }
+        .btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-download { background: #15803d; display: none; margin: 20px auto; width: 300px; font-size: 14pt; }
 
-        /* PDF Container - SINGLE PAGE A4 */
+        /* PDF Layout Settings */
         .pdf-container { 
-            width: 210mm; 
-            height: 297mm;
-            background: white !important; 
-            margin: 0 auto; 
-            padding: 0 !important;
-            box-sizing: border-box; 
-            display: none;
-            position: relative;
-            overflow: hidden;
+            width: 210mm; min-height: 297mm; background: white !important; 
+            margin: 0 auto; box-sizing: border-box; display: none;
+            position: relative; border: 1px solid #ddd;
         }
 
-        /* Outer Border */
-        .outer-border {
-            position: absolute;
-            top: 10mm;
-            left: 10mm;
-            right: 10mm;
-            bottom: 10mm;
-            border: 3px solid var(--navy) !important;
-        }
+        /* Certificate/Report Decoration */
+        .frame-outer { position: relative; padding: 10mm; height: 100%; min-height: 277mm; }
+        .frame-inner { border: 4px double var(--navy); height: 100%; min-height: 270mm; padding: 5mm; position: relative; }
 
-        /* Inner Border */
-        .inner-border {
-            position: absolute;
-            top: 14mm;
-            left: 14mm;
-            right: 14mm;
-            bottom: 14mm;
-            border: 2px solid var(--navy) !important;
-            display: flex;
+        /* Common Header with Ministry */
+        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; position: relative; }
+        .left-section { flex: 1; display: flex; flex-direction: column; align-items: flex-start; }
+        .ministry-side { text-align: left; font-family: 'Moul'; font-size: 9pt; font-weight: bold; color: var(--black); margin-top: 18mm; }
+        .ministry-side p { margin: 2px 0; }
+        .nation-side p:first-child { font-size: 10pt; }
+        .nation-side p:last-child { font-size: 11pt; }
+        .logo-container { text-align: left; margin: 3px 0; }
+        .logo-img { max-width: 250px; max-height: 250px; display: block; }
+        .school-side { text-align: left; color: var(--red); font-weight: bold; margin-top: 2px; }
+        .school-side h2 { font-family: 'Moul'; font-size: 12pt; margin: 0; }
+        .school-side p { font-size: 9pt; margin: 2px 0; }
+        .nation-side { text-align: center; font-family: 'Moul'; font-size: 15pt; }
+
+        /* Report Table Styling */
+        .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9.5pt; }
+        .report-table th, .report-table td { border: 1px solid black !important; padding: 5px; text-align: center; }
+        .report-table th { background: #f3f4f6 !important; font-family: 'Moul'; font-size: 8.5pt; }
+
+        /* Statistics Section */
+        .statistics { margin-top: 15px; font-size: 9pt; line-height: 1.8; }
+        .statistics p { margin: 3px 0; }
+
+        /* Honor Card Styling - Pyramid Layout */
+        .honor-grid { 
+            display: flex; 
             flex-direction: column;
-        }
-
-        /* Content */
-        .cert-content {
-            padding: 8mm 12mm;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
-        .cert-header {
-            display: flex;
-            justify-content: space-between;
-            font-family: 'Battambang';
-            font-size: 8.5pt;
-            line-height: 1.4;
-            margin-bottom: 5mm;
-        }
-
-        .school-info { text-align: left; flex: 1; }
-        .nation-info { text-align: right; flex: 1; }
-
-        /* Title */
-        .cert-title {
-            text-align: center;
-            margin-bottom: 5mm;
-        }
-
-        .cert-title h1 {
-            font-family: 'Moul';
-            color: var(--red) !important;
-            font-size: 32pt;
-            margin: 0;
-            margin-bottom: 2mm;
-        }
-
-        .cert-title p {
-            font-size: 10pt;
-            margin: 0;
-        }
-
-        /* Divider */
-        .divider {
-            width: 100%;
-            height: 2px;
-            background: black !important;
-            margin: 5mm 0;
-        }
-
-        /* Students Grid */
-        .students-grid {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8mm;
-            padding: 3mm 0;
-        }
-
-        .student-row {
-            display: flex;
-            justify-content: center;
-            gap: 12mm;
-        }
-
-        .student-card {
-            text-align: center;
-            width: 32mm;
-        }
-
-        .rank-badge {
-            width: 22px;
-            height: 22px;
-            background: var(--red) !important;
-            color: white !important;
-            border-radius: 50%;
-            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-family: 'Moul';
-            font-size: 12pt;
-            margin-bottom: 2mm;
-            font-weight: bold;
+            gap: 10mm; 
+            margin-top: 15mm; 
         }
-
-        .photo-box {
-            width: 32mm;
-            height: 40mm;
-            border: 2.5px solid var(--gold) !important;
-            background: #f3f4f6 !important;
-            margin: 0 auto 2mm auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+        .honor-row { display: flex; justify-content: center; gap: 12mm; }
+        .student-card { width: 55mm; text-align: center; position: relative; }
+        .rank-badge { 
+            width: 32px; height: 32px; background: var(--red) !important; color: white !important;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto -16px auto; font-family: 'Moul'; font-size: 14pt;
+            position: relative; z-index: 2; border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-
-        .photo-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .rank-badge.gold { background: var(--gold) !important; }
+        .rank-badge.silver { background: #94a3b8 !important; }
+        .rank-badge.bronze { background: #d97706 !important; }
+        .photo-box { 
+            width: 55mm; height: 70mm; border: 3px solid var(--gold) !important;
+            background: #fff; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .student-name {
-            background: var(--navy) !important;
-            color: white !important;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-family: 'Battambang';
-            font-size: 8pt;
-            font-weight: bold;
-            display: inline-block;
-            max-width: 32mm;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .name-label { 
+            background: var(--navy) !important; color: white !important; padding: 6px 2px;
+            border-radius: 12px; font-size: 10pt; font-weight: bold; margin-top: 8px;
+            display: block; width: 100%;
         }
 
         /* Footer */
-        .cert-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-            padding-top: 3mm;
-        }
-
-        .signature-block {
-            text-align: center;
-            font-family: 'Battambang';
-            font-size: 9pt;
-        }
-
-        .signature-block strong {
-            font-family: 'Moul';
-        }
-
-        /* Report Table */
-        .report-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 15px; 
-            border: 1.5px solid black !important; 
-        }
-        
-        .report-table th, .report-table td { 
-            border: 1px solid black !important; 
-            padding: 6px; 
-            text-align: center; 
-            background: white !important;
-        }
-        
-        .report-table th { 
-            background: #f2f2f2 !important; 
-            font-family: 'Moul'; 
-            font-size: 9pt; 
-            font-weight: bold;
-        }
-
-        .title-section {
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .title-section h2 {
-            font-family: 'Moul';
-            color: var(--blue);
-            font-size: 22pt;
-            margin: 10px 0;
-        }
+        .doc-footer { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 20px; }
+        .sig-block { text-align: center; font-size: 10pt; }
+        .sig-block b { font-family: 'Moul'; display: block; margin-top: 20px; }
 
         @media print {
-            body { background: white; margin: 0; padding: 0; }
+            body { background: white; padding: 0; }
             .no-print-area, .btn-download { display: none !important; }
-            .pdf-container { display: block !important; page-break-after: avoid; }
+            .pdf-container { display: block !important; border: none; }
         }
     </style>
 </head>
 <body>
 
 <div class="no-print-area">
-    <h2 style="font-family:'Moul'; text-align:center; color:var(--blue);">បញ្ចូលទិន្នន័យសិស្ស</h2>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <select id="classSelect" onchange="loadStudents()" style="padding:8px; flex:1;"><option value="">-- រើសថ្នាក់ --</option></select>
-        <input type="text" id="monthInput" value="មករា" style="padding:8px;">
-        <input type="text" id="yearInput" value="២០២៥-២០២៦" style="padding:8px;">
+    <h2 style="font-family:'Moul'; text-align:center; color:var(--blue);">Student Score Management System Of MyKids International School</h2>
+
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:15px; margin-bottom:20px;">
+        <div>
+            <label>ជ្រើសរើសថ្នាក់៖</label>
+            <select id="classSelect" onchange="loadStudents()" style="width:100%; padding:10px; border-radius:5px;"></select>
+        </div>
+        <div>
+            <label>ប្រចាំខែ៖</label>
+            <input type="text" id="monthInput" value="មករា" style="width:90%; padding:10px;">
+        </div>
+        <div>
+            <label>ឆ្នាំសិក្សា៖</label>
+            <input type="text" id="yearInput" value="២០២៥-២០២៦" style="width:90%; padding:10px;">
+        </div>
     </div>
-    <table style="width:100%; border-collapse: collapse;" border="1">
-        <thead style="background:#eee;">
-            <tr><th>អត្តលេខ</th><th>ឈ្មោះ</th><th>ភេទ</th><th>ភាសាខ្មែរ</th><th>គណិតវិទ្យា</th><th>វិទ្យាសាស្រ្ដ</th><th>សិក្សាសង្គម</th><th>រូបថត</th></tr>
+
+    <table style="width:100%; background:white; border-radius:8px; overflow:hidden;" border="1" cellspacing="0" cellpadding="8">
+        <thead style="background:var(--navy); color:white; font-family:'Moul'; font-size:9pt;">
+            <tr>
+                <th>អត្តលេខ</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th>
+                <th>ភាសាខ្មែរ</th><th>គណិតវិទ្យា</th><th>វិទ្យាសាស្ត្រ</th><th>សិក្សាសង្គម</th>
+                <th>រូបថត</th>
+            </tr>
         </thead>
         <tbody id="inputBody"></tbody>
     </table>
-    <div style="text-align:center; margin-top:20px;">
-        <button class="btn-main" onclick="render('REPORT')">📋 តារាងលទ្ធផលរួម</button>
-        <button class="btn-main" onclick="render('HONOR')" style="background:#9333ea;">🏆 តារាងកិត្តិយស</button>
+
+    <div style="text-align:center; margin-top:25px;">
+        <button class="btn-main" onclick="generate('REPORT')" style="background:var(--navy);">📋 បង្កើតតារាងចំណាត់ថ្នាក់</button>
+        <button class="btn-main" onclick="generate('HONOR')" style="background:var(--red);">🏆 បង្កើតតារាងកិត្តិយស</button>
     </div>
 </div>
 
 <div id="pdf-content" class="pdf-container"></div>
 
-<button id="downloadBtn" class="btn-main btn-download" onclick="downloadPDF()">📥 ទាញយកជា PDF</button>
+<div style="text-align:center;">
+    <button id="downloadBtn" class="btn-main btn-download" onclick="downloadPDF()">📥 Download PDF</button>
+</div>
 
 <script>
-   const studentDB = {  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម២': [
+    // Database
+    const studentDB = { 
+       
+        'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)': [
             { id: '64', name: 'ឃុន ទេពង្ស', sex: 'M' }, { id: '121', name: 'នឿន វឌ្ឍនា', sex: 'M' },
             { id: '128', name: 'ពិសិទ្អ ច័ន្ទវឌ្ឃ', sex: 'M' }, { id: '141', name: 'ហេង សាជីង', sex: 'F' },
             { id: '132', name: 'សុ បញ្ញា មុនិរាជ', sex: 'M' }, { id: '67', name: 'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex: 'M' },
             { id: '173', name: 'សាន្ត លីប៉េង', sex: 'M' }, { id: '163', name: 'អេង លីឆេង', sex: 'M' },
             { id: '179', name: 'ចន្ថា វឌ្ឍនា', sex: 'M' }, { id: '162', name: 'យ៉ាន់ សុខឡេង', sex: 'M' }
         ],
-        'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម១': [
+        'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(រសៀល)': [
             { id: '139', name: 'ហ៊ឺម ម៉ីអ៊ិ', sex: 'M' }, { id: '146', name: 'លន វេស្សភូ', sex: 'M' },
             { id: '102', name: 'សំណាង វីរៈបុត្រ', sex: 'M' }, { id: '67', name: 'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex: 'M' },
-            { id: '181', name: 'ឈន ចេស្ដា', sex: 'M' }, { id: '87', name: 'អ៊ុំ រតនាសិទ្ធីការ', sex: 'F' },
-            { id: '113', name: 'ស៊ីម សិទ្ធីការ', sex: 'F' }, { id: '164', name: 'អ៊ូសុវណ្ណ វេហា៍', sex: 'M' },
-            { id: '177', name: 'វាសនា ពេជ្រសុម៉ាលី', sex: 'F' }, { id: '165', name: 'លឹម លីម៉េងគ័ង្គ', sex: 'M' }
+            { id: '87', name: 'អ៊ុំ រតនាសិទ្ធីការ', sex: 'F' },{ id: '113', name: 'ស៊ីម សិទ្ធីការ', sex: 'F' },
+            { id: '164', name: 'អ៊ូសុវណ្ណ វេហា៍', sex: 'M' }, { id: '177', name: 'តាំង ហ៊ួយលីន', sex: 'F' }, 
+            { id: '165', name: 'លឹម លីម៉េងគ័ង្គ', sex: 'M' }
         ],
-        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់១': [
+        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(ព្រឹក)': [
             { id: '29', name: 'ខាន់ មុនីវល្លភា', sex: 'F' }, { id: '101', name: 'ឈុំ វីរ់សិទ្ធ', sex: 'M' },
             { id: '65', name: 'និត សុធារ៉ា', sex: 'M' }, { id: '78', name: 'នី លីជីង', sex: 'F' },
             { id: '117', name: 'ហ៊ុន រាណ្ណជេណស្ដា', sex: 'M' }, { id: '47', name: 'បុណ្ណជេ ជេននី', sex: 'F' },
@@ -272,34 +163,34 @@
             { id: '170', name: 'អុលវឿន ដាវីន', sex: 'F' }, { id: '137', name: 'សឿន ចាន់សុមេធា', sex: 'F' },
             { id: '1', name: 'ប៊ុនរីន ខេមរា', sex: 'M' }
         ],
-        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់': [
+        'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(រសៀល)': [
             { id: '54', name: 'យន់ លីហេង', sex: 'M' }, { id: '75', name: 'វិន បញ្ញាវ័ន្ត', sex: 'M' },
             { id: '90', name: 'សូ រស្មីពនិតា', sex: 'F' }, { id: '50', name: 'សូយ រក្សា', sex: 'M' },
-            { id: '0072', name: 'អ៊ូ សុខអាមី', sex: 'F' }, { id: '137', name: 'សឿន ចាន់សុមេធា', sex: 'F' },
+            { id: '72', name: 'អ៊ូ សុខអាមី', sex: 'F' }, { id: '137', name: 'សឿន ចាន់សុមេធា', sex: 'F' },
             { id: '176', name: 'ប៉ឹម ម៉ីជូ', sex: 'F' }, { id: '85', name: 'សេរី ចន្ទវឌ្ឍនា', sex: 'M' },
             { id: '161', name: 'លីម ហ៊ីប៉', sex: 'M' }, { id: '55', name: 'អ៊ា ជីងហ័រ', sex: 'F' },
-            { id: '0079', name: 'មិត្ត ម៉េងហេង', sex: 'M' }, { id: '74', name: 'ចាន់នី​ ស៊ូសាន់ណា', sex: 'F' }
+            { id: '79', name: 'មិត្ត ម៉េងហេង', sex: 'M' }, { id: '74', name: 'ចាន់នី​ ស៊ូសាន់ណា', sex: 'F' }
         ],
-        'ថ្នាក់ទី១(ក១)': [
+        'ថ្នាក់ទី១(ព្រឹក)': [
             { id: '75', name: 'ឆន វិរៈសិទ្ធ', sex: 'M' }, { id: '47', name: 'ជាឡិច កូលីន', sex: 'M' },
             { id: '92', name: 'សុបញ្ញា សោម៉ា', sex: 'F' }, { id: '83', name: 'ភឺន ថិរាយុ', sex: 'M' },
             { id: '69', name: 'លី ឆាយឈ័ន', sex: 'M' }, { id: '77', name: 'វុឌ្ឍី ដាវីកា', sex: 'F' },
             { id: '93', name: 'អ៊ឹម រោចនា', sex: 'F' }, { id: '72', name: 'វង្ស ដារ៉ាវីន', sex: 'M' },
             { id: '95', name: 'ចាវ វិនហាវ', sex: 'M' }, { id: '80', name: 'ងួន បញ្ញាពុទ្ធិស័ក្តិ', sex: 'M' }
         ],
-        'ថ្នាក់ទី១(ក២)': [
+        'ថ្នាក់ទី១(រសៀល)': [
             { id: '88', name: 'ចំរើន ចន្ទឧត្តម', sex: 'M' }, { id: '91', name: 'ប៊ូ សាធុការ', sex: 'F' },
             { id: '82', name: 'សេន យ៉ាស្មីនណា', sex: 'F' }, { id: '85', name: 'ដន សុភ័ណ្ឌម៉ូនីកា', sex: 'F' },
             { id: '78', name: 'ស៊្រាង សៀវហ្វុង', sex: 'F' }, { id: '73', name: 'ហេង ម៉ីអ៊ិ', sex: 'F' },
             { id: '74', name: 'អឿន ពៅវល័ក្ខ', sex: 'F' }, { id: '70', name: 'រ័ត្ន រ៉ាថេប', sex: 'M' }
         ],
-        'ថ្នាក់ទី២': [
+        'ថ្នាក់ទី២(ព្រឹក)': [
             { id: '21', name: 'ចន្ថា លីតា', sex: 'F' }, { id: '20', name: 'ពៅ សុខចិន', sex: 'M' },
             { id: '17', name: 'ណារ៉ា ហេងលី', sex: 'M' }, { id: '23', name: 'សុខ សម្បត្តិ', sex: 'M' },
             { id: '22', name: 'សុខ ដាលីស', sex: 'F' }, { id: '29', name: 'ស្រស់ រីហ្សា', sex: 'F' },
             { id: '41', name: 'ប៉ុន រីយ៉ា', sex: 'F' }
         ],
-        'ថ្នាក់ទី២,១': [
+        'ថ្នាក់ទី២(រសៀល)': [
             { id: '59', name: 'អុង បញ្ញារ័ត្ន', sex: 'M' }, { id: '31', name: 'មិត្ត ម៉េងហួរ', sex: 'M' },
             { id: '14', name: 'យស់ នរិន្ទ', sex: 'M' }, { id: '33', name: 'វង់ ពុទ្ធិតា', sex: 'F' },
             { id: '62', name: 'សូយ បញ្ញា', sex: 'M' }, { id: '40', name: 'សេង សាណា', sex: 'F' },
@@ -307,13 +198,13 @@
             { id: '27', name: 'ប៊ូ តាម៉ា', sex: 'M' }, { id: '65', name: 'កែវ មុន្នីឧត្តម', sex: 'M' },
             { id: '56', name: 'វន្តវិន ថាណា', sex: 'F' }, { id: '36', name: 'ហាន ស៊ីវហ័រ', sex: 'F' }
         ],
-        'ថ្នាក់ទី៣': [
+        'ថ្នាក់ទី៣(រសៀល)': [
             { id: '9', name: 'កែវ វីនសុឧត្តតារា', sex: 'F' }, { id: '28', name: 'ឈុនតា រតនៈខុនដូ', sex: 'F' },
             { id: '10', name: 'យ៉ា ពេជ្រម៉ូនីកា', sex: 'F' }, { id: '15', name: 'លីម ពុទ្ធិរាជ', sex: 'M' },
             { id: '3', name: 'ឡ ស៊ីវហ៊ួយ', sex: 'F' }, { id: '2', name: 'ឡាយ មុនិចិន្ដា', sex: 'F' },
             { id: '24', name: 'អោក និសិ្សត', sex: 'M' }, { id: '44', name: 'ចំរើន ម៉ានីតា', sex: 'F' }
         ],
-        'ថ្នាក់ទី៤​ ៥': [
+        'ថ្នាក់ទី៤ ៥': [  // ✅ កែប្រើ space ធម្មតា
             { id: '1', name: 'ឡាយ ភារ៉ាដាវីឌ', sex: 'M' }, { id: '42', name: 'វង្ស មុនីកញ្ចនា', sex: 'F' },
             { id: '43', name: 'ពៅ សុនីតា', sex: 'F' }, { id: '4', name: 'ឡ សុវណ្ណហាន់ណា', sex: 'F' }
         ],
@@ -328,30 +219,32 @@
             { id: '145', name: 'ឆាយ ភីងអ៊ីង', sex: 'F' }, { id: '125', name: 'បញ្ញា ភេត្រា', sex: 'F' },
             { id: '90', name: 'ចំរើន រឿនរឹទ្ធិរាជ', sex: 'M' }, { id: '159', name: 'ថន ស៊ីហ្គ្សិច', sex: 'F' }
         ],
-        'Nursery': [
+        'Nursery(ព្រឹក)': [
             { id: '148', name: 'បេរ៉េស ម៉ៃឃើស', sex: 'M' }, { id: '144', name: 'ហេង សន្តិភាព', sex: 'M' },
             { id: '157', name: 'ដួង សុមេធា', sex: 'M' }, { id: '183', name: 'ថុង ហ្វុងម៉េង', sex: 'M' },
             { id: '158', name: 'ពន្លក វិរសិទ្ធ', sex: 'M' }, { id: '172', name: 'រតនា សៀវលិ', sex: 'F' },
             { id: '180', name: 'រ៉ាត់ ពេជ្រមរកត', sex: 'F' }, { id: '178', name: 'លីវទ្ធី ជុតិមា', sex: 'F' },
             { id: '184', name: 'ហូ លីភីង', sex: 'M' }, { id: '174', name: 'វិច្ឆិកា មុន្នីទេពី', sex: 'F' },
-            { id: '185', name: 'យឹម ពុទ្ធិវង្ស', sex: 'M' }, { id: '171', name: 'សុង សិរីបុត្រ', sex: 'M' },
-            { id: '147', name: 'សុភ័ក្រ វីរបុត្រ', sex: 'M' }, { id: '150', name: 'វ៉េត នីរីតា', sex: 'F' },
-            { id: '166', name: 'លីណា ហុងស័ក្កិអធិភូ', sex: 'M' }
+            { id: '185', name: 'យឹម ពុទ្ធិវង្ស', sex: 'M' }, { id: '171', name: 'សុង សិរីបុត្រ', sex: 'M' }
         ],
-        'Fount2.1': [
+        'Nursery(រសៀល)': [
+            { id: '148', name: 'បេរ៉េស ម៉ៃឃើស', sex: 'M' }, { id: '147', name: 'សុភ័ក្រ វីរបុត្រ', sex: 'M' },
+            { id: '150', name: 'វ៉េត នីរីតា', sex: 'F' }, { id: '166', name: 'លីណា ហុងស័ក្កិអធិភូ', sex: 'M' }
+        ],
+        'Fount2': [
             { id: '86', name: 'ធេង ម៉េងលី', sex: 'M' }, { id: '00', name: 'ស៊្រាង សៀវហ្វុង', sex: 'F' },
             { id: '00', name: 'ហេង ម៉ីអ៊ិ', sex: 'F' }, { id: '00', name: 'អឿន ពៅវល័ក្ខ', sex: 'F' },
             { id: '00', name: 'ហាន ស៊ីវហ័រ', sex: 'F' }, { id: '00', name: 'រ័ត្ន សុវណ្ណច័ន្ទណាកា', sex: 'M' },
-            { id: '00', name: 'ចំរើន ម៉ានីតា ', sex: 'F' }, { id: '70', name: 'រ័ត្ន រ៉ាថេប', sex: 'M' },
-            { id: '00', name: 'ចំរើន ច័ន្ទឧត្តម', sex: 'M' }
+            { id: '00', name: 'ចំរើន ម៉ានីតា ', sex: 'F' }, { id: '70', name: 'រ័ត្ន រ៉ាថេប', sex: 'M' }
         ],
-        'Fount2.10.narein': [
+        'Fount2(narein)': [
             { id: '68', name: 'សុង រឹទ្ធស័ក្ក', sex: 'M' }, { id: '00', name: 'ពៅ សុខចិន', sex: 'M' },
             { id: '66', name: 'ប៊ុនឡេង អ៊ៃដឹក', sex: 'M' }, { id: '67', name: 'ភោគ ស្ពីតឌី', sex: 'M' },
             { id: '00', name: 'អ៊ឹម រោចនា', sex: 'F' }, { id: '00', name: 'ងួន បញ្ញាពុទ្ធិស័ក្តិ', sex: 'M' },
             { id: '00', name: 'ជាឡិច កូលីន', sex: 'M' }, { id: '00', name: 'ណារ៉ា ហេងលី', sex: 'M' },
             { id: '00', name: 'ឆន វិរៈសិទ្ធ', sex: 'M' }, { id: '00', name: 'សុខ សម្បត្តិ', sex: 'M' },
-            { id: '00', name: 'សុខ ដាលីស', sex: 'F' }, { id: '00', name: 'លី ឆាយឈ័នប', sex: 'M' }
+            { id: '00', name: 'សុខ ដាលីស', sex: 'F' }, { id: '00', name: 'ចាវ វិនហាវ', sex: 'M' },
+            { id: '00', name: 'លី ឆាយឈ័នប', sex: 'M' }
         ],
         'Level1': [
             { id: '00', name: 'អោក ឧត្តម', sex: 'M' }, { id: '00', name: 'ណារ៉ា ហេងឡាយ', sex: 'M' },
@@ -368,221 +261,323 @@
             { id: '53', name: 'ហុង សិទ្ធិណាល់', sex: 'M' }, { id: '55', name: 'ធេង ជូលីញ', sex: 'F' },
             { id: '1', name: 'ឡាយ ភារ៉ាដាវីឌ', sex: 'M' }, { id: '4', name: 'ឡ សុវណ្ណហាន់ណា', sex: 'F' }
         ],
-        'មត្ដេយ្យកម្រិតទាប': [
+        'មត្ដេយ្យកម្រិតទាប(ព្រឹក)': [
             { id: '147', name: 'សុភក្រ វីរបុត្រ', sex: 'M' }, { id: '166', name: 'លីណា រ័ត្នហុងស័ក្កិអធិភូ', sex: 'M' },
-            { id: '160', name: 'ថូ សិទ្ធីយូណា', sex: 'F' }, { id: '175', name: 'ហេង ជ័រម៉ីង', sex: 'F' },
+            { id: '160', name: 'ថូ សិទ្ធីយូណា', sex: 'F' }, { id: '175', name: 'សុគន្ធ បញ្ញាស័ក', sex: 'M' },
+            { id: '000', name: 'សុីម សរឧត្តម', sex: 'M' },{ id: '000' , name: 'និត សុធារាជ',  sex:'M'},
             { id: '000', name: 'វ៉េត នីរីតា', sex: 'F' }
-        ] };
+        ],
+        'មត្ដេយ្យកម្រិតទាប(រសៀល)':[
+            { id: '175', name: 'ហេង ជ័រមុីង', sex: 'F' }, { id: '000', name: 'សាយ សុខហេង', sex: 'M' },
+            { id: '181', name: 'ឈន ចេស្ដា', sex: 'M' }, { id: '000', name: 'លាង លក្សុិកញ្ចនា', sex: 'M' },
+            { id: '177', name: 'វាសនា ពេជ្រសុម៉ាលី', sex: 'F' }
+        ]
+    };
 
     const sel = document.getElementById('classSelect');
+    sel.add(new Option('-- Select Class --', ''));
     Object.keys(studentDB).forEach(c => sel.add(new Option(c, c)));
 
     function loadStudents() {
         const tbody = document.getElementById('inputBody'); 
         tbody.innerHTML = '';
-        (studentDB[sel.value] || []).forEach((s, i) => {
-            tbody.innerHTML += `<tr class="row" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
-                <td align="center">${s.id}</td><td>${s.name}</td><td align="center">${s.sex}</td>
-                <td><input type="number" class="s" value="${90-i}" style="width:50px"></td>
-                <td><input type="number" class="s" value="${88-i}" style="width:50px"></td>
-                <td><input type="number" class="s" value="${85-i}" style="width:50px"></td>
-                <td><input type="number" class="s" value="${92-i}" style="width:50px"></td>
-                <td><input type="file" accept="image/*" onchange="previewImg(event, ${i})"><input type="hidden" id="img${i}"></td>
+        const students = studentDB[sel.value] || [];
+        students.forEach((s, i) => {
+            tbody.innerHTML += `
+            <tr class="row-data" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
+                <td align="center"><b>${s.id}</b></td>
+                <td><input type="text" value="${s.name}" class="in-name" style="width:100%; border:none;"></td>
+                <td align="center">${s.sex}</td>
+                <td><input type="number" class="sc" value="95" style="width:50px"></td>
+                <td><input type="number" class="sc" value="90" style="width:50px"></td>
+                <td><input type="number" class="sc" value="85" style="width:50px"></td>
+                <td><input type="number" class="sc" value="88" style="width:50px"></td>
+                <td>
+                    <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:150px">
+                    <input type="hidden" id="imgData${i}">
+                </td>
             </tr>`;
         });
     }
 
     function previewImg(e, i) {
         const reader = new FileReader();
-        reader.onload = (f) => document.getElementById('img'+i).value = f.target.result;
+        reader.onload = (f) => document.getElementById('imgData'+i).value = f.target.result;
         reader.readAsDataURL(e.target.files[0]);
     }
 
-    function render(type) {
-        if(!sel.value) return alert("រើសថ្នាក់សិន!");
-        
-        let data = [];
-        document.querySelectorAll('.row').forEach((r, i) => {
-            const scores = Array.from(r.querySelectorAll('.s')).map(input => parseFloat(input.value) || 0);
-            const total = scores.reduce((a, b) => a + b, 0);
-            data.push({ 
-                id: r.dataset.id, 
-                name: r.dataset.name, 
-                sex: r.dataset.sex, 
-                scores: scores,
-                total: total, 
-                avg: total/4, 
-                img: document.getElementById('img'+i).value 
-            });
-        });
-        data.sort((a, b) => b.avg - a.avg);
-
+    function generate(type) {
+        if(!sel.value) return alert("សូមជ្រើសរើសថ្នាក់!");
         const month = document.getElementById('monthInput').value;
         const year = document.getElementById('yearInput').value;
         const today = `ភ្នំពេញ, ថ្ងៃទី ${new Date().getDate()} ខែ ${month} ឆ្នាំ ${new Date().getFullYear()}`;
+        
+        let students = [];
+        document.querySelectorAll('.row-data').forEach((r, i) => {
+            const scores = Array.from(r.querySelectorAll('.sc')).map(input => parseFloat(input.value) || 0);
+            const total = scores.reduce((a, b) => a + b, 0);
+            students.push({
+                id: r.dataset.id,
+                name: r.querySelector('.in-name').value,
+                sex: r.dataset.sex === 'M' ? 'ប្រុស' : 'ស្រី',
+                isFemale: r.dataset.sex === 'F',
+                scores: scores,
+                total: total,
+                avg: total / 4,
+                img: document.getElementById('imgData'+i).value
+            });
+        });
 
-        if(type === 'REPORT') {
-            let rows = data.map((s, i) => `
-                <tr>
-                    <td>${i+1}</td>
-                    <td>${s.id}</td>
-                    <td style="text-align:left; padding-left:10px;">${s.name}</td>
-                    <td>${s.sex === 'M' ? 'ប្រុស' : 'ស្រី'}</td>
-                    <td>${s.scores[0]}</td>
-                    <td>${s.scores[1]}</td>
-                    <td>${s.scores[2]}</td>
-                    <td>${s.scores[3]}</td>
-                    <td><strong>${s.total.toFixed(0)}</strong></td>
-                    <td><strong>${s.avg.toFixed(2)}</strong></td>
-                    <td><strong>${i+1}</strong></td>
-                </tr>`).join('');
-            
-            document.getElementById('pdf-content').innerHTML = `
-                <div style="padding: 15mm;">
-                    <div style="display:flex; justify-content:space-between; font-family:'Battambang'; font-size:9pt; margin-bottom:15px;">
-                        <h2 style="text-align:left;">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br><span style="color:#dc2626;">សាលាអន្ដរជាតិម៉ាយឃីដ</span><br><span style="font-size:8pt; color:#dc2626;">Mikids International school</span></h2>
-                        <h2 style="text-align:right;"><strong>ព្រះរាជាណាចក្រកម្ពុជា</strong><br><strong>ជាតិ សាសនា ព្រះមហាក្សត្រ</strong><br>-------</h2>
+        students.sort((a, b) => b.avg - a.avg);
+
+        const totalStudents = students.length;
+        const femaleStudents = students.filter(s => s.isFemale).length;
+        const passedStudents = students.filter(s => s.avg >= 50);
+        const passedCount = passedStudents.length;
+        const passedFemale = passedStudents.filter(s => s.isFemale).length;
+        const passPercentage = ((passedCount / totalStudents) * 100).toFixed(2);
+        const failedCount = totalStudents - passedCount;
+        const failedFemale = femaleStudents - passedFemale;
+        const failPercentage = ((failedCount / totalStudents) * 100).toFixed(2);
+
+        let content = `
+        <div class="frame-outer">
+            <div class="frame-inner">
+                <div class="doc-header">
+                    <div class="left-section">
+                        <div class="ministry-side">
+                            <img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" style="width: 250px; height: auto; margin-bottom: 5px;">
+                        </div>
                     </div>
-                    <div class="title-section">
-                        <h2>បញ្ជីចំណាត់ថ្នាក់លទ្ធផលការសិក្សា</h2>
-                        <p style="font-size:11pt;">ថ្នាក់៖ ${sel.value} | ខែ៖ ${month} | ឆ្នាំ៖ ${year}</p>
-                    </div>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th style="width:30px;">ល.រ</th>
-                                <th style="width:50px;">អត្តលេខ</th>
-                                <th>គោត្តនាម-នាម</th>
-                                <th style="width:40px;">ភេទ</th>
-                                <th>ខ្មែរ</th>
-                                <th>គណិត</th>
-                                <th>វិទ្យា</th>
-                                <th>សង្គម</th>
-                                <th>សរុប</th>
-                                <th>មធ្យម</th>
-                                <th>ចំណាត់ថ្នាក់</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                    <div style="margin-top:15px; font-family:'Battambang'; font-size:10pt;">
-                        <strong>សរុប៖ ${data.length} នាក់ | ស្រី៖ ${data.filter(s => s.sex === 'F').length} នាក់</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-top:30px; font-family:'Battambang'; font-size:10pt;">
-                        <div style="text-align:center; width:150px;">បានឃើញ និងឯកភាព<br><br><br><b style="font-family:'Moul'">នាយកសាលា</b></div>
-                        <div style="text-align:center; width:150px;">${today}<br><br><br><b style="font-family:'Moul'">គ្រូប្រចាំថ្នាក់</b></div>
+                    <div class="nation-side">
+                        ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>
+                        <span style="font-family:serif; font-weight:normal;">✵✵✵</span>
                     </div>
                 </div>`;
+
+        if (type === 'REPORT') {
+            content += `
+                <div style="text-align:center; margin: 10px 0;">
+                    <h1 style="font-family:'Moul'; color:black; margin:0; font-size:16pt;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
+                    <p style="font-family:'Moul'; font-size:12pt; font-weight:bold; color:black;">ថ្នាក់៖ ${sel.value} | ប្រចាំខែ៖ ${month} | ឆ្នាំសិក្សា៖ ${year}</p>
+                </div>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ល.រ</th><th>អត្តលេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th>
+                            <th>សរុប</th><th>មធ្យមភាគ</th><th>ចំណាត់ថ្នាក់</th><th>និទ្ទេស</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${students.map((s, i) => {
+                            let grade = '';
+                            if (s.avg >= 8.5) grade = 'ល្អ';
+                            else if (s.avg >= 7.0) grade = 'ល្អបង្គួរ';
+                            else if (s.avg >= 5.0) grade = 'មធ្យម';
+                            else grade = 'យឺត';
+                            return `
+                        <tr>
+                            <td>${i+1}</td>
+                            <td>${s.id}</td>
+                            <td align="left" style="padding-left:8px;">${s.name}</td>
+                            <td>${s.sex}</td>
+                            <td><b>${s.total}</b></td>
+                            <td><b>${s.avg.toFixed(2)}</b></td>
+                            <td><b>${i+1}</b></td>
+                            <td style="color:${s.avg >= 8.5 ? 'green' : s.avg >= 7.0 ? 'blue' : s.avg >= 5.0 ? 'orange' : 'red'}"><b>${grade}</b></td>
+                        </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+                <div class="statistics">
+                    <p><b>- បញ្ជីនេះបានបញ្ចប់ត្រឹមលេខរៀងទី ${totalStudents} (${totalStudents} នាក់) ក្នុងនោះស្រីចំនួន ${femaleStudents} នាក់</b></p>
+                    <p><b>- សិស្សជាប់សរុប ${passedCount} នាក់ ក្នុងនោះស្រី ${passedFemale} នាក់ ស្មើនឹង ${passPercentage}%</b></p>
+                    <p><b>- សិស្សធ្លាក់មធ្យមភាគ ${failedCount} នាក់ ក្នុងនោះស្រី ${failedFemale} នាក់ ស្មើនឹង ${failPercentage}%</b></p>
+                </div>`;
         } else {
-            const createCard = (s, rank) => {
-                if (!s) return '';
-                const imgSrc = s.img || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="150"%3E%3Crect width="120" height="150" fill="%23f3f4f6"/%3E%3Ctext x="50%25" y="50%25" font-size="14" fill="%239ca3af" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
-                
-                return `
-                    <div class="student-card">
-                        <div class="rank-badge">${rank}</div>
-                        <div class="photo-box">
-                            <img src="${imgSrc}" alt="${s.name}">
-                        </div>
-                        <div class="student-name">${s.name}</div>
-                    </div>`;
+            const top5 = students.slice(0, 5);
+            const rankBadgeClass = (i) => {
+                if (i === 0) return 'gold';
+                if (i === 1) return 'silver';
+                if (i === 2) return 'bronze';
+                return '';
             };
 
-            document.getElementById('pdf-content').innerHTML = `
-               <div style="padding: 15mm;">
-                    <div style="display:flex; justify-content:space-between; font-family:'Battambang'; font-size:9pt; margin-bottom:15px;">
-                        <h2 style="text-align:left;">មន្ទីរអប់រំ យុវជន និងកីឡារាជធានីភ្នំពេញ<br><span style="color:#dc2626;">សាលាអន្ដរជាតិម៉ាយឃីដ</span><br><span style="font-size:8pt; color:#dc2626;">Mikids International school</span></h2>
-                        <h2 style="text-align:right;"><strong>ព្រះរាជាណាចក្រកម្ពុជា</strong><br><strong>ជាតិ សាសនា ព្រះមហាក្សត្រ</strong><br>-------</h2>
-                    </div>
-                            <div class="nation-info">
-                                <div style="font-weight:bold;">ព្រះរាជាណាចក្រកម្ពុជា</div>
-                                <div style="font-weight:bold;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
-                                <div>-------</div>
-                            </div>
-                        </div>
-
-                       <div class="cert-title">
-                            <h1>តារាងកិត្តិយស</h1>
-                            <p>ប្រចាំខែ ${month} ឆ្នាំសិក្សា ${year}</p>
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="students-grid">
-                            <div class="student-row">
-                                ${createCard(data[0], 1)}
-                                ${createCard(data[1], 2)}
-                                ${createCard(data[2], 3)}
-                                ${createCard(data[3], 4)}
-                                ${createCard(data[4], 5)}
-                            </div>
-                        </div>
-
-                        <div class="cert-footer">
-                            <div class="signature-block">
-                                បានឃើញ និងឯកភាព<br><br><br>
-                                <strong>នាយកសាលា</strong>
-                            </div>
-                            <div class="signature-block">
-                                ${today}<br><br><br>
-                                <strong>គ្រូប្រចាំថ្នាក់</strong>
-                            </div>
-                        </div>
-                    </div>
+            content += `
+                <div style="text-align:center; margin-top:10mm;">
+                    <h1 style="font-family:'Moul'; color:#be123c; font-size:40pt; margin:0;">តារាងកិត្តិយស</h1>
+                    <div style="width:200px; height:2px; background:#f59e0b; margin:5px auto;"></div>
+                    <p style="font-family:'Moul'; font-size:12pt; font-weight:bold; margin:10px 0; color:black;">ថ្នាក់៖ ${sel.value}</p>
+                    <p style="font-family:'Moul'; font-size:12pt; color:black;">ប្រចាំខែ ${month} ឆ្នាំសិក្សា ${year}</p>
                 </div>
-            `;
+                <div class="honor-grid">
+                    <div class="honor-row">
+                        <div class="student-card">
+                            <div class="rank-badge ${rankBadgeClass(0)}">១</div>
+                            <div class="photo-box">
+                                <img src="${top5[0].img || 'https://via.placeholder.com/200x250?text=No+Photo'}" alt="Student 1">
+                            </div>
+                            <div class="name-label">${top5[0].name}</div>
+                        </div>
+                    </div>
+                    
+                    ${top5.length >= 3 ? `
+                    <div class="honor-row">
+                        <div class="student-card">
+                            <div class="rank-badge ${rankBadgeClass(1)}">២</div>
+                            <div class="photo-box">
+                                <img src="${top5[1].img || 'https://via.placeholder.com/200x250?text=No+Photo'}" alt="Student 2">
+                            </div>
+                            <div class="name-label">${top5[1].name}</div>
+                        </div>
+                        <div class="student-card">
+                            <div class="rank-badge ${rankBadgeClass(2)}">៣</div>
+                            <div class="photo-box">
+                                <img src="${top5[2].img || 'https://via.placeholder.com/200x250?text=No+Photo'}" alt="Student 3">
+                            </div>
+                            <div class="name-label">${top5[2].name}</div>
+                        </div>
+                    </div>` : ''}
+                    
+                    ${top5.length >= 5 ? `
+                    <div class="honor-row">
+                        <div class="student-card">
+                            <div class="rank-badge ${rankBadgeClass(3)}">៤</div>
+                            <div class="photo-box">
+                                <img src="${top5[3].img || 'https://via.placeholder.com/200x250?text=No+Photo'}" alt="Student 4">
+                            </div>
+                            <div class="name-label">${top5[3].name}</div>
+                        </div>
+                        <div class="student-card">
+                            <div class="rank-badge ${rankBadgeClass(4)}">៥</div>
+                            <div class="photo-box">
+                                <img src="${top5[4].img || 'https://via.placeholder.com/200x250?text=No+Photo'}" alt="Student 5">
+                            </div>
+                            <div class="name-label">${top5[4].name}</div>
+                        </div>
+                    </div>` : ''}
+                </div>`;
         }
+
+        content += `
+                <div class="doc-footer">
+                    <div class="sig-block">បានឃើញ និងឯកភាព<br><b>នាយកសាលា</b></div>
+                    <div class="sig-block">${today}<br><b>គ្រូប្រចាំថ្នាក់</b></div>
+                </div>
+            </div>
+        </div>`;
         
-        document.getElementById('pdf-content').style.display = 'block';
+        const container = document.getElementById('pdf-content');
+        container.innerHTML = content;
+        container.style.display = 'block';
         document.getElementById('downloadBtn').style.display = 'block';
-        
-        setTimeout(() => {
-            document.getElementById('pdf-content').scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        container.scrollIntoView({ behavior: 'smooth' });
     }
 
     function downloadPDF() {
+        console.log('=== PDF Download Started ===');
+        
         const el = document.getElementById('pdf-content');
-        const btn = document.getElementById('downloadBtn');
         
-        btn.innerText = "⏳ កំពុងបង្កើត PDF... សូមរង់ចាំ";
-        btn.disabled = true;
+        if (!el || !el.innerHTML.trim()) {
+            alert('❌ ERROR: មិនមានខ្លឹមសារដើម្បី download!\n\nសូមចុច "បង្កើតតារាង..." ជាមុនសិន។');
+            return;
+        }
         
-        const opt = {
-            margin: 0,
-            filename: `MyKids_${sel.value}_${new Date().getTime()}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 3,
+        // Make element fully visible
+        el.style.display = 'block';
+        el.style.position = 'relative';
+        el.style.left = '0';
+        
+        // Show loading message
+        const downloadBtn = document.getElementById('downloadBtn');
+        const originalText = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = '⏳ កំពុងបង្កើត PDF...';
+        downloadBtn.disabled = true;
+        
+        // Wait for fonts and images to load
+        setTimeout(() => {
+            // Use html2canvas directly
+            html2canvas(el, {
+                scale: 2,
                 useCORS: true,
-                logging: false,
-                letterRendering: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff',
-                scrollY: 0,
-                scrollX: 0,
-                windowWidth: 794,
-                windowHeight: 1123
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait',
-                compress: true
-            }
-        };
-
-        html2pdf().set(opt).from(el).save().then(() => {
-            btn.innerText = "✅ ទាញយកបានជោគជ័យ!";
-            btn.disabled = false;
-            setTimeout(() => {
-                btn.innerText = "📥 ទាញយកជា PDF";
-            }, 3000);
-        }).catch(err => {
-            console.error('PDF Error:', err);
-            btn.innerText = "❌ មានបញ្ហា!";
-            btn.disabled = false;
-        });
+                logging: false,
+                letterRendering: true,
+                imageTimeout: 0,
+                onclone: function(clonedDoc) {
+                    const clonedEl = clonedDoc.getElementById('pdf-content');
+                    if (clonedEl) {
+                        // Apply all styles to cloned element
+                        clonedEl.style.display = 'block';
+                        clonedEl.style.width = '350mm';
+                        clonedEl.style.background = 'white';
+                        
+                        // Force all styles
+                        const allElements = clonedEl.getElementsByTagName('*');
+                        for (let elem of allElements) {
+                            const computed = window.getComputedStyle(elem);
+                            elem.style.fontFamily = computed.fontFamily;
+                            elem.style.fontSize = computed.fontSize;
+                            elem.style.color = computed.color;
+                            elem.style.backgroundColor = computed.backgroundColor;
+                        }
+                    }
+                }
+            }).then(canvas => {
+                // Convert canvas to PDF using jsPDF - FIT TO SINGLE PAGE
+                const { jsPDF } = window.jspdf;
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
+                
+                const pdfWidth = 210; // A4 width in mm
+                const pdfHeight = 297; // A4 height in mm
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                
+                // Calculate scaling to fit entire content in one page
+                const widthRatio = pdfWidth / canvasWidth;
+                const heightRatio = pdfHeight / canvasHeight;
+                const ratio = Math.min(widthRatio, heightRatio);
+                
+                const imgWidth = canvasWidth * ratio;
+                const imgHeight = canvasHeight * ratio;
+                
+                // Center the image on the page
+                const xOffset = (pdfWidth - imgWidth) / 2;
+                const yOffset = 0;
+                
+                // Add image to fit in single page
+                pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
+                
+                const className = sel.value || 'MyKids';
+                const month = document.getElementById('monthInput').value;
+                const timestamp = new Date().getTime();
+                const filename = `MyKids_${className}_${month}_${timestamp}.pdf`;
+                
+                pdf.save(filename);
+                
+                // Reset button
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                
+                console.log('=== PDF Download SUCCESS ===');
+                alert('✅ ទាញយក PDF បានជោគជ័យ!\n\nឯកសារ: ' + filename);
+                
+            }).catch(err => {
+                console.error('=== PDF Generation FAILED ===', err);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                alert('❌ មានបញ្ហា: ' + err.message + '\n\nសូមព្យាយាមម្តងទៀត ឬប្រើប្រាវ់សែរផ្សេង។');
+            });
+            
+        }, 1000); // Wait 1 second for full rendering
     }
 </script>
 </body>
