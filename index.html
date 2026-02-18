@@ -113,12 +113,31 @@
         </div>
     </div>
 
-    <table style="width:100%; background:white; border-radius:8px; overflow:hidden;" border="1" cellspacing="0" cellpadding="8">
-        <thead style="background:var(--navy); color:white; font-family:'Moul'; font-size:9pt;">
+    <table style="width:100%; background:white; border-radius:8px; overflow:hidden; font-size:8pt;" border="1" cellspacing="0" cellpadding="4">
+        <thead style="background:var(--navy); color:white; font-family:'Moul'; font-size:8pt;">
             <tr>
-                <th>អត្តលេខ</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th>
-                <th>ភាសាខ្មែរ</th><th>គណិតវិទ្យា</th><th>វិទ្យាសាស្ត្រ</th><th>សិក្សាសង្គម</th>
-                <th>រូបថត</th>
+                <th rowspan="2">អត្ត​លេខ</th>
+                <th rowspan="2">ឈ្មោះ​សិស្ស</th>
+                <th rowspan="2">ភេទ</th>
+                <th colspan="3">ភាសាខ្មែរ</th>
+                <th rowspan="2">គណិត​វិទ្យា</th>
+                <th rowspan="2">វិទ្យា​សាស្ត្រ</th>
+                <th colspan="4">សិក្សាសង្គម</th>
+                <th colspan="2">អប់រំ​កាយ</th>
+                <th rowspan="2">សិល្បៈ</th>
+                <th rowspan="2">អប់រំ​តម្លៃ</th>
+                <th rowspan="2">រូបថត</th>
+            </tr>
+            <tr>
+                <th style="font-size:7pt;">ស្ដាប់<br>និយាយ</th>
+                <th style="font-size:7pt;">អាន</th>
+                <th style="font-size:7pt;">សរសេរ</th>
+                <th style="font-size:7pt;">ប្រវត្តិ</th>
+                <th style="font-size:7pt;">ភូមិ</th>
+                <th style="font-size:7pt;">ពលរដ្ឋ</th>
+                <th style="font-size:7pt;">សណ្ដាប់</th>
+                <th style="font-size:7pt;">ទ1</th>
+                <th style="font-size:7pt;">ទ2</th>
             </tr>
         </thead>
         <tbody id="inputBody"></tbody>
@@ -286,14 +305,30 @@
             tbody.innerHTML += `
             <tr class="row-data" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
                 <td align="center"><b>${s.id}</b></td>
-                <td><input type="text" value="${s.name}" class="in-name" style="width:100%; border:none;"></td>
+                <td><input type="text" value="${s.name}" class="in-name" style="width:120px; border:none;"></td>
                 <td align="center">${s.sex}</td>
-                <td><input type="number" class="sc" value="95" style="width:50px"></td>
-                <td><input type="number" class="sc" value="90" style="width:50px"></td>
-                <td><input type="number" class="sc" value="85" style="width:50px"></td>
-                <td><input type="number" class="sc" value="88" style="width:50px"></td>
+                <!-- ភាសាខ្មែរ: ៣ ប្រអប់ -->
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- គណិតវិទ្យា: ១ ប្រអប់ -->
+                <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- វិទ្យាសាស្ត្រ: ១ ប្រអប់ -->
+                <td><input type="number" class="sc sci" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- សិក្សាសង្គម: ៤ ប្រអប់ -->
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- អប់រំកាយ: ២ ប្រអប់ -->
+                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- សិល្បៈ: ១ ប្រអប់ -->
+                <td><input type="number" class="sc art" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- អប់រំតម្លៃ: ១ ប្រអប់ -->
+                <td><input type="number" class="sc val" min="0" max="100" placeholder="0" style="width:40px"></td>
                 <td>
-                    <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:150px">
+                    <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:120px">
                     <input type="hidden" id="imgData${i}">
                 </td>
             </tr>`;
@@ -314,16 +349,26 @@
         
         let students = [];
         document.querySelectorAll('.row-data').forEach((r, i) => {
-            const scores = Array.from(r.querySelectorAll('.sc')).map(input => parseFloat(input.value) || 0);
-            const total = scores.reduce((a, b) => a + b, 0);
+            const getSubs = (cls) => Array.from(r.querySelectorAll(`.sc.${cls}`)).map(inp => parseFloat(inp.value)||0);
+            
+            const kmSubs = getSubs('km');
+            const mathSubs = getSubs('math');
+            const sciSubs = getSubs('sci');
+            const socSubs = getSubs('soc');
+            const phySubs = getSubs('phy');
+            const artSubs = getSubs('art');
+            const valSubs = getSubs('val');
+
+            const sum = (arr) => arr.reduce((a,b)=>a+b,0);
+            const total = sum(kmSubs) + sum(mathSubs) + sum(sciSubs) + sum(socSubs) + sum(phySubs) + sum(artSubs) + sum(valSubs);
             students.push({
                 id: r.dataset.id,
                 name: r.querySelector('.in-name').value,
                 sex: r.dataset.sex === 'M' ? 'ប្រុស' : 'ស្រី',
                 isFemale: r.dataset.sex === 'F',
-                scores: scores,
+                kmSubs, mathSubs, sciSubs, socSubs, phySubs, artSubs, valSubs,
                 total: total,
-                avg: total / 4,
+                avg: total / (kmSubs.length + mathSubs.length + sciSubs.length + socSubs.length + phySubs.length + artSubs.length + valSubs.length),
                 img: document.getElementById('imgData'+i).value
             });
         });
@@ -361,11 +406,35 @@
                     <h1 style="font-family:'Moul'; color:black; margin:0; font-size:16pt;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
                     <p style="font-family:'Moul'; font-size:12pt; font-weight:bold; color:black;">ថ្នាក់៖ ${sel.value} | ប្រចាំខែ៖ ${month} | ឆ្នាំសិក្សា៖ ${year}</p>
                 </div>
-                <table class="report-table">
+                <table class="report-table" style="font-size:7.5pt;">
                     <thead>
                         <tr>
-                            <th>ល.រ</th><th>អត្តលេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th>
-                            <th>សរុប</th><th>មធ្យមភាគ</th><th>ចំណាត់ថ្នាក់</th><th>និទ្ទេស</th>
+                            <th rowspan="2">ល.រ</th>
+                            <th rowspan="2">អត្ត​លេខ</th>
+                            <th rowspan="2">គោត្តនាម-នាម</th>
+                            <th rowspan="2">ភេទ</th>
+                            <th colspan="3" style="background:#dbeafe;">ភាសាខ្មែរ</th>
+                            <th rowspan="2" style="background:#dcfce7;">គណិត​វិទ្យា</th>
+                            <th rowspan="2" style="background:#fef9c3;">វិទ្យា​សាស្ត្រ</th>
+                            <th colspan="4" style="background:#fce7f3;">សិក្សាសង្គម</th>
+                            <th colspan="2" style="background:#ede9fe;">អប់រំ​កាយ</th>
+                            <th rowspan="2" style="background:#ffedd5;">សិល្បៈ</th>
+                            <th rowspan="2" style="background:#f0fdf4;">អប់រំ​តម្លៃ</th>
+                            <th rowspan="2">សរុប</th>
+                            <th rowspan="2">មធ្យម</th>
+                            <th rowspan="2">ចំណាត់</th>
+                            <th rowspan="2">និទ្ទេស</th>
+                        </tr>
+                        <tr>
+                            <th style="background:#dbeafe;font-size:6.5pt;">ស្ដាប់<br>និយាយ</th>
+                            <th style="background:#dbeafe;font-size:6.5pt;">អាន</th>
+                            <th style="background:#dbeafe;font-size:6.5pt;">សរសេរ</th>
+                            <th style="background:#fce7f3;font-size:6.5pt;">ប្រវត្តិ</th>
+                            <th style="background:#fce7f3;font-size:6.5pt;">ភូមិ</th>
+                            <th style="background:#fce7f3;font-size:6.5pt;">ពលរដ្ឋ</th>
+                            <th style="background:#fce7f3;font-size:6.5pt;">សណ្ដាប់</th>
+                            <th style="background:#ede9fe;font-size:6.5pt;">ទ1</th>
+                            <th style="background:#ede9fe;font-size:6.5pt;">ទ2</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -375,12 +444,20 @@
                             else if (s.avg >= 7.0) grade = 'ល្អបង្គួរ';
                             else if (s.avg >= 5.0) grade = 'មធ្យម';
                             else grade = 'យឺត';
+                            const subCell = (v) => `<td>${v}</td>`;
                             return `
                         <tr>
                             <td>${i+1}</td>
                             <td>${s.id}</td>
-                            <td align="left" style="padding-left:8px;">${s.name}</td>
+                            <td align="left" style="padding-left:4px;">${s.name}</td>
                             <td>${s.sex}</td>
+                            ${s.kmSubs.map(subCell).join('')}
+                            ${s.mathSubs.map(subCell).join('')}
+                            ${s.sciSubs.map(subCell).join('')}
+                            ${s.socSubs.map(subCell).join('')}
+                            ${s.phySubs.map(subCell).join('')}
+                            ${s.artSubs.map(subCell).join('')}
+                            ${s.valSubs.map(subCell).join('')}
                             <td><b>${s.total}</b></td>
                             <td><b>${s.avg.toFixed(2)}</b></td>
                             <td><b>${i+1}</b></td>
