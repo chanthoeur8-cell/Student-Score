@@ -113,37 +113,40 @@
         </div>
     </div>
 
-    <table style="width:100%; background:white; border-radius:8px; overflow:hidden; font-size:8pt;" border="1" cellspacing="0" cellpadding="4">
+    <div style="overflow-x:auto; width:100%;">
+    <table style="min-width:1300px; background:white; border-radius:8px; font-size:8pt; border-collapse:collapse;" border="1" cellspacing="0" cellpadding="4">
         <thead style="background:var(--navy); color:white; font-family:'Moul'; font-size:8pt;">
             <tr>
-                <th rowspan="2">អត្ត​លេខ</th>
-                <th rowspan="2">ឈ្មោះ​សិស្ស</th>
-                <th rowspan="2">ភេទ</th>
+                <th rowspan="2" style="min-width:45px;">អត្ត​លេខ</th>
+                <th rowspan="2" style="min-width:130px;">ឈ្មោះ​សិស្ស</th>
+                <th rowspan="2" style="min-width:35px;">ភេទ</th>
                 <th colspan="4">ភាសាខ្មែរ</th>
-                <th rowspan="2">គណិត​វិទ្យា</th>
-                <th rowspan="2">វិទ្យា​សាស្ត្រ</th>
+                <th rowspan="2" style="min-width:55px;">គណិត​វិទ្យា</th>
+                <th rowspan="2" style="min-width:55px;">វិទ្យា​សាស្ត្រ</th>
                 <th colspan="4">សិក្សាសង្គម</th>
                 <th colspan="2">អប់រំ​កាយ</th>
-                <th rowspan="2">កុំព្យូទ័រ</th>
-                <th rowspan="2">អក្សរផ្ចង់</th>
-                <th rowspan="2">ភាសាចិន</th>
-                <th rowspan="2">រូបថត</th>
+                <th rowspan="2" style="min-width:50px;">កុំព្យូទ័រ</th>
+                <th rowspan="2" style="min-width:55px;">អក្សរផ្ចង់</th>
+                <th rowspan="2" style="min-width:55px;">បំណិនជីវិត</th>
+                <th rowspan="2" style="min-width:55px;">ភាសា​ចិន</th>
+                <th rowspan="2" style="min-width:150px;">រូបថត</th>
             </tr>
             <tr>
-                <th style="font-size:7pt;">សមត្ថភាពស្ដាប់<br>និយាយ</th>
-                <th style="font-size:7pt;">សរសេរតាមអាន</th>
-                <th style="font-size:7pt;">អំណាន</th>
-                <th style="font-size:7pt;">តែងសេចក្ដី</th>
-                <th style="font-size:7pt;">ប្រវត្តិវិទ្យា</th>
-                <th style="font-size:7pt;">ភូមិវិទ្យា</th>
-                <th style="font-size:7pt;">សីលធម៍-ពលរដ្ឋវិជ្ជា</th>
-                <th style="font-size:7pt;">គេហវិទ្យា-អប់រំសិល្បៈ</th>
-                <th style="font-size:7pt;">អប់រំកាយ-កីឡា</th>
-                <th style="font-size:7pt;">សុខភាព-អនាម័យ</th>
+                <th style="font-size:6.5pt; min-width:55px;">សមត្ថភាពស្ដាប់<br>និយាយ</th>
+                <th style="font-size:6.5pt; min-width:45px;">សរសេរតាមអាន</th>
+                <th style="font-size:6.5pt; min-width:45px;">អំណាន</th>
+                <th style="font-size:6.5pt; min-width:45px;">តែង​សេចក្ដី</th>
+                <th style="font-size:6.5pt; min-width:55px;">ប្រវត្តិវិទ្យា</th>
+                <th style="font-size:6.5pt; min-width:45px;">ភូមិវិទ្យា</th>
+                <th style="font-size:6.5pt; min-width:55px;">ពលរដ្ឋ-ពលរដ្ឋវិជ្ជា</th>
+                <th style="font-size:6.5pt; min-width:55px;">គេហវិទ្យា-អប់រំសិល្បៈ</th>
+                <th style="font-size:6.5pt; min-width:40px;">អប់រំកាយ-កីឡា</th>
+                <th style="font-size:6.5pt; min-width:40px;">សុខភាព-អនាម័យ</th>
             </tr>
         </thead>
         <tbody id="inputBody"></tbody>
     </table>
+    </div>
 
     <div style="text-align:center; margin-top:25px;">
         <button class="btn-main" onclick="generate('REPORT')" style="background:var(--navy);">📋 បង្កើតតារាងចំណាត់ថ្នាក់</button>
@@ -309,28 +312,34 @@
                 <td align="center"><b>${s.id}</b></td>
                 <td><input type="text" value="${s.name}" class="in-name" style="width:120px; border:none;"></td>
                 <td align="center">${s.sex}</td>
-                <!-- ភាសាខ្មែរ: ៣ ប្រអប់ -->
-                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <!-- ភាសាខ្មែរ: ៤ ប្រអប់ -->
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- គណិតវិទ្យា: ១ ប្រអប់ -->
-                <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- វិទ្យាសាស្ត្រ: ១ ប្រអប់ -->
-                <td><input type="number" class="sc sci" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc sci" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- សិក្សាសង្គម: ៤ ប្រអប់ -->
-                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- អប់រំកាយ: ២ ប្រអប់ -->
-                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- សិល្បៈ: ១ ប្រអប់ -->
-                <td><input type="number" class="sc art" min="0" max="100" placeholder="0" style="width:40px"></td>
+                <td><input type="number" class="sc art" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <!-- អប់រំតម្លៃ: ១ ប្រអប់ -->
-                <td><input type="number" class="sc val" min="0" max="100" placeholder="0" style="width:40px"></td>
-                <td>
-                    <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:120px">
+                <td><input type="number" class="sc val" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <!-- អក្សរផ្ចង់: ១ ប្រអប់ -->
+                <td><input type="number" class="sc aksor" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <!-- ភាសាចិន: ១ ប្រអប់ -->
+                <td><input type="number" class="sc chinese" min="0" max="100" placeholder="0" style="width:42px"></td>
+                <!-- រូបថត -->
+                <td style="text-align:center;">
+                    <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:130px; display:block; margin:0 auto;">
                     <input type="hidden" id="imgData${i}">
                 </td>
             </tr>`;
@@ -343,34 +352,104 @@
         reader.readAsDataURL(e.target.files[0]);
     }
 
-    function generate(type) {
+        // ====== កាលបរិច្ឆេទខ្មែរបុរាណ ======
+        function getKhmerTraditionalDate(date) {
+            // ខែខ្មែរ
+            const khmerMonths = ['មិគសិរ','បុស្ស','មាឃ','ផល្គុន','ចេត្រ','វិសាខ','ជេស្ឋ','អាសាឍ','ស្រាពណ៍','ភទ្របទ','អស្សុជ','កត្តិក'];
+            // ឆ្នាំសត្វខ្មែរ (វដ្ត 12 ឆ្នាំ) - ចាប់ពី ឆ្នាំមមែ (ជ្រូក) = 1911
+            const khmerYearAnimals = ['ជូត','ឆ្លូវ','ខាល','ថោះ','រោង','ម្សាញ់','មមី','មមែ','វក','រកា','ជ','កុរ'];
+            // សសរ (十干) 10 cycles
+            const khmerSasors = ['កុរ​ស័ក','ឯក​ស័ក','ទោ​ស័ក','ត្រី​ស័ក','ចត្វា​ស័ក','បញ្ចស័ក','ច​ស័ក','សប្ត​ស័ក','អដ្ឋ​ស័ក','នព្វ​ស័ក'];
+            // ថ្ងៃសប្ដាហ៍
+            const khmerDays = ['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
+            // លេខខ្មែរ
+            const toKhmerNum = (n) => {
+                const kDigits = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
+                return String(n).split('').map(d => kDigits[parseInt(d)]).join('');
+            };
+
+            const d = new Date(date);
+            const dayOfWeek = khmerDays[d.getDay()];
+
+            // គណនាខែខ្មែរ និង kើត/រោច
+            // ប្រើ approximate algorithm: ខែខ្មែរ shift ~1-2 months behind Gregorian
+            // Approximate: Khmer month = (Gregorian month + 9) % 12, day = lunar approx
+            // More accurate: calculate lunar phase
+            // Using simplified lunar calculation
+            const year = d.getFullYear();
+            const month = d.getMonth() + 1;
+            const day = d.getDate();
+
+            // Julian Day Number
+            const a = Math.floor((14 - month) / 12);
+            const y = year + 4800 - a;
+            const m = month + 12 * a - 3;
+            const JDN = day + Math.floor((153*m+2)/5) + 365*y + Math.floor(y/4) - Math.floor(y/100) + Math.floor(y/400) - 32045;
+
+            // New Moon calculation (Khmer lunar)
+            const lunarDay = ((JDN - 2415021) % 29.53059) ;
+            const lunarDayNum = Math.floor(((JDN - 2415021) % 29.53059));
+
+            // Khmer lunar month (approx)
+            // Khmer year starts in April (Chaul Chnam)
+            // Lunar month index
+            const lunarMonthApprox = Math.floor(((JDN - 2415021) / 29.53059));
+            const khmerMonthIdx = lunarMonthApprox % 12;
+            const khmerMonth = khmerMonths[khmerMonthIdx];
+
+            // កើត (1-15) / រោច (1-15)
+            let lunarDayInMonth = (lunarDayNum % 30) + 1;
+            let paksha = 'កើត';
+            if (lunarDayInMonth > 15) {
+                paksha = 'រោច';
+                lunarDayInMonth = lunarDayInMonth - 15;
+            }
+
+            // ឆ្នាំខ្មែរ (Buddhist Era = Gregorian + 543, adjusted for Khmer new year in April)
+            const buddhistYear = (month >= 4) ? year + 543 : year + 542;
+            // ឆ្នាំសត្វ: cycle of 12, reference: 1900 = ឆ្នាំជូត
+            const animalIdx = (year - 1900) % 12;
+            const khmerAnimal = khmerYearAnimals[((animalIdx % 12) + 12) % 12];
+            // សសរ (10-year cycle): reference 1900 = កុរ​ស័ក  
+            const sasorIdx = (year - 1900) % 10;
+            const khmerSasor = khmerSasors[((sasorIdx % 10) + 10) % 10];
+
+            const kdayStr = toKhmerNum(lunarDayInMonth);
+            const kBEStr = toKhmerNum(buddhistYear);
+
+            return `ថ្ងៃ${dayOfWeek} ${kdayStr}${paksha} ខែ${khmerMonth} ឆ្នាំ${khmerAnimal} ${khmerSasor} ព.ស${kBEStr}`;
+        }
+
+        function generate(type) {
         if(!sel.value) return alert("សូមជ្រើសរើសថ្នាក់!");
         const month = document.getElementById('monthInput').value;
         const year = document.getElementById('yearInput').value;
-        const today = `ភ្នំពេញ, ថ្ងៃទី ${new Date().getDate()} ខែ ${month} ឆ្នាំ ${new Date().getFullYear()}`;
+        const nowDate = new Date();
+        const today = `ភ្នំពេញ, ថ្ងៃទី ${nowDate.getDate()} ខែ ${month} ឆ្នាំ ${nowDate.getFullYear()}`;
+        const todayKhmer = getKhmerTraditionalDate(nowDate);
         
         let students = [];
         document.querySelectorAll('.row-data').forEach((r, i) => {
             const getSubs = (cls) => Array.from(r.querySelectorAll(`.sc.${cls}`)).map(inp => parseFloat(inp.value)||0);
-            
-            const kmSubs = getSubs('km');
-            const mathSubs = getSubs('math');
+            const kmSubs  = getSubs('km');
+            const mathSubs= getSubs('math');
             const sciSubs = getSubs('sci');
             const socSubs = getSubs('soc');
             const phySubs = getSubs('phy');
             const artSubs = getSubs('art');
             const valSubs = getSubs('val');
-
+            const aksorSubs   = getSubs('aksor');
+            const chineseSubs = getSubs('chinese');
             const sum = (arr) => arr.reduce((a,b)=>a+b,0);
-            const total = sum(kmSubs) + sum(mathSubs) + sum(sciSubs) + sum(socSubs) + sum(phySubs) + sum(artSubs) + sum(valSubs);
+            const total = sum(kmSubs)+sum(mathSubs)+sum(sciSubs)+sum(socSubs)+sum(phySubs)+sum(artSubs)+sum(valSubs)+sum(aksorSubs)+sum(chineseSubs);
+            const numCols = kmSubs.length+mathSubs.length+sciSubs.length+socSubs.length+phySubs.length+artSubs.length+valSubs.length+aksorSubs.length+chineseSubs.length;
             students.push({
                 id: r.dataset.id,
                 name: r.querySelector('.in-name').value,
                 sex: r.dataset.sex === 'M' ? 'ប្រុស' : 'ស្រី',
                 isFemale: r.dataset.sex === 'F',
-                kmSubs, mathSubs, sciSubs, socSubs, phySubs, artSubs, valSubs,
-                total: total,
-                avg: total / (kmSubs.length + mathSubs.length + sciSubs.length + socSubs.length + phySubs.length + artSubs.length + valSubs.length),
+                kmSubs, mathSubs, sciSubs, socSubs, phySubs, artSubs, valSubs, aksorSubs, chineseSubs,
+                total, avg: numCols > 0 ? total / numCols : 0,
                 img: document.getElementById('imgData'+i).value
             });
         });
@@ -408,35 +487,16 @@
                     <h1 style="font-family:'Moul'; color:black; margin:0; font-size:16pt;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
                     <p style="font-family:'Moul'; font-size:12pt; font-weight:bold; color:black;">ថ្នាក់៖ ${sel.value} | ប្រចាំខែ៖ ${month} | ឆ្នាំសិក្សា៖ ${year}</p>
                 </div>
-                <table class="report-table" style="font-size:7.5pt;">
+                <table class="report-table" style="font-size:9pt;">
                     <thead>
                         <tr>
-                            <th rowspan="2">ល.រ</th>
-                            <th rowspan="2">អត្ត​លេខ</th>
-                            <th rowspan="2">គោត្តនាម-នាម</th>
-                            <th rowspan="2">ភេទ</th>
-                            <th colspan="3" style="background:#dbeafe;">ភាសាខ្មែរ</th>
-                            <th rowspan="2" style="background:#dcfce7;">គណិត​វិទ្យា</th>
-                            <th rowspan="2" style="background:#fef9c3;">វិទ្យា​សាស្ត្រ</th>
-                            <th colspan="4" style="background:#fce7f3;">សិក្សាសង្គម</th>
-                            <th colspan="2" style="background:#ede9fe;">អប់រំ​កាយ</th>
-                            <th rowspan="2" style="background:#ffedd5;">សិល្បៈ</th>
-                            <th rowspan="2" style="background:#f0fdf4;">អប់រំ​តម្លៃ</th>
-                            <th rowspan="2">សរុប</th>
-                            <th rowspan="2">មធ្យម</th>
-                            <th rowspan="2">ចំណាត់</th>
-                            <th rowspan="2">និទ្ទេស</th>
-                        </tr>
-                        <tr>
-                            <th style="background:#dbeafe;font-size:6.5pt;">ស្ដាប់<br>និយាយ</th>
-                            <th style="background:#dbeafe;font-size:6.5pt;">អាន</th>
-                            <th style="background:#dbeafe;font-size:6.5pt;">សរសេរ</th>
-                            <th style="background:#fce7f3;font-size:6.5pt;">ប្រវត្តិ</th>
-                            <th style="background:#fce7f3;font-size:6.5pt;">ភូមិ</th>
-                            <th style="background:#fce7f3;font-size:6.5pt;">ពលរដ្ឋ</th>
-                            <th style="background:#fce7f3;font-size:6.5pt;">សណ្ដាប់</th>
-                            <th style="background:#ede9fe;font-size:6.5pt;">ទ1</th>
-                            <th style="background:#ede9fe;font-size:6.5pt;">ទ2</th>
+                            <th>ល.រ</th>
+                            <th>អត្ត​លេខ</th>
+                            <th>គោត្តនាម-នាម</th>
+                            <th>ភេទ</th>
+                            <th>មធ្យម​ភាគ</th>
+                            <th>ចំណាត់​ថ្នាក់</th>
+                            <th>និទ្ទេស</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -446,25 +506,15 @@
                             else if (s.avg >= 7.0) grade = 'ល្អបង្គួរ';
                             else if (s.avg >= 5.0) grade = 'មធ្យម';
                             else grade = 'យឺត';
-                            const subCell = (v) => `<td>${v}</td>`;
-                            return `
-                        <tr>
+                            return `<tr>
                             <td>${i+1}</td>
                             <td>${s.id}</td>
-                            <td align="left" style="padding-left:4px;">${s.name}</td>
+                            <td align="left" style="padding-left:8px;">${s.name}</td>
                             <td>${s.sex}</td>
-                            ${s.kmSubs.map(subCell).join('')}
-                            ${s.mathSubs.map(subCell).join('')}
-                            ${s.sciSubs.map(subCell).join('')}
-                            ${s.socSubs.map(subCell).join('')}
-                            ${s.phySubs.map(subCell).join('')}
-                            ${s.artSubs.map(subCell).join('')}
-                            ${s.valSubs.map(subCell).join('')}
-                            <td><b>${s.total}</b></td>
                             <td><b>${s.avg.toFixed(2)}</b></td>
                             <td><b>${i+1}</b></td>
-                            <td style="color:${s.avg >= 8.5 ? 'green' : s.avg >= 7.0 ? 'blue' : s.avg >= 5.0 ? 'orange' : 'red'}"><b>${grade}</b></td>
-                        </tr>`;
+                            <td style="color:${s.avg>=8.5?'green':s.avg>=7.0?'blue':s.avg>=5.0?'orange':'red'}"><b>${grade}</b></td>
+                            </tr>`;
                         }).join('')}
                     </tbody>
                 </table>
@@ -541,7 +591,11 @@
         content += `
                 <div class="doc-footer">
                     <div class="sig-block">បានឃើញ និងឯកភាព<br><b>នាយកសាលា</b></div>
-                    <div class="sig-block">${today}<br><b>គ្រូប្រចាំថ្នាក់</b></div>
+                    <div class="sig-block" style="text-align:right;">
+                        ${todayKhmer}<br>
+                        ${today}<br>
+                        <b>គ្រូប្រចាំថ្នាក់</b>
+                    </div>
                 </div>
             </div>
         </div>`;
@@ -661,5 +715,3 @@
 </script>
 </body>
 </html>
-
-
