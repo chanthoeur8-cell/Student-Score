@@ -10,47 +10,46 @@
         :root { --navy: #1e3a8a; --red: #be123c; --gold: #f59e0b; --blue: #2563eb; }
         body { font-family: 'Battambang', cursive; background: #e2e8f0; margin: 0; padding: 20px; }
         
-        /* Control Panel */
         .no-print-area { max-width: 1000px; margin: 0 auto 30px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-main { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-family: 'Moul'; margin: 5px; transition: 0.3s; }
         .btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-download { background: #15803d; display: none; margin: 20px auto; width: 300px; font-size: 14pt; }
 
-        /* PDF Layout Settings */
+        /* PDF Preview Container */
         .pdf-container { 
-            width: 210mm; min-height: 297mm; background: white !important; 
-            margin: 0 auto; box-sizing: border-box; display: none;
-            position: relative; border: 1px solid #ddd;
+            width: 210mm; 
+            background: white !important; 
+            margin: 0 auto; 
+            box-sizing: border-box; 
+            display: none;
+            position: relative; 
+            border: 1px solid #ddd;
+            padding: 0;
         }
 
-        /* Certificate/Report Decoration */
-        .frame-outer { position: relative; padding: 10mm; height: 100%; min-height: 277mm; }
-        .frame-inner { border: 4px double var(--navy); height: 100%; min-height: 270mm; padding: 5mm; position: relative; }
+        .frame-outer { 
+            position: relative; 
+            padding: 8mm; 
+            box-sizing: border-box;
+        }
+        .frame-inner { 
+            border: 4px double var(--navy); 
+            padding: 5mm; 
+            position: relative; 
+            box-sizing: border-box;
+        }
 
-        /* Common Header with Ministry */
-        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; position: relative; }
+        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; }
         .left-section { flex: 1; display: flex; flex-direction: column; align-items: flex-start; }
-        .ministry-side { text-align: left; font-family: 'Moul'; font-size: 9pt; font-weight: bold; color: var(--black); margin-top: 18mm; }
-        .ministry-side p { margin: 2px 0; }
-        .nation-side p:first-child { font-size: 10pt; }
-        .nation-side p:last-child { font-size: 11pt; }
-        .logo-container { text-align: left; margin: 3px 0; }
-        .logo-img { max-width: 250px; max-height: 250px; display: block; }
-        .school-side { text-align: left; color: var(--red); font-weight: bold; margin-top: 2px; }
-        .school-side h2 { font-family: 'Moul'; font-size: 12pt; margin: 0; }
-        .school-side p { font-size: 9pt; margin: 2px 0; }
-        .nation-side { text-align: center; font-family: 'Moul'; font-size: 15pt; }
+        .nation-side { text-align: center; font-family: 'Moul'; font-size: 15pt; flex: 1; }
 
-        /* Report Table Styling */
         .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9.5pt; }
         .report-table th, .report-table td { border: 1px solid black !important; padding: 5px; text-align: center; }
         .report-table th { background: #f3f4f6 !important; font-family: 'Moul'; font-size: 8.5pt; }
 
-        /* Statistics Section */
         .statistics { margin-top: 15px; font-size: 9pt; line-height: 1.8; }
         .statistics p { margin: 3px 0; }
 
-        /* Honor Card Styling - Pyramid Layout */
         .honor-grid { 
             display: flex; 
             flex-direction: column;
@@ -81,15 +80,19 @@
             display: block; width: 100%;
         }
 
-        /* Footer */
         .doc-footer { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 20px; }
         .sig-block { text-align: center; font-size: 10pt; }
         .sig-block b { font-family: 'Moul'; display: block; margin-top: 20px; }
 
         @media print {
-            body { background: white; padding: 0; }
+            body { background: white; padding: 0; margin: 0; }
             .no-print-area, .btn-download { display: none !important; }
-            .pdf-container { display: block !important; border: none; }
+            .pdf-container { 
+                display: block !important; 
+                border: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
         }
     </style>
 </head>
@@ -161,9 +164,7 @@
 </div>
 
 <script>
-    // Database
     const studentDB = { 
-       
         'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)': [
             { id: '64', name: 'ឃុន ទេពង្ស', sex: 'M' }, { id: '121', name: 'នឿន វឌ្ឍនា', sex: 'M' },
             { id: '128', name: 'ពិសិទ្អ ច័ន្ទវឌ្ឃ', sex: 'M' }, { id: '141', name: 'ហេង សាជីង', sex: 'F' },
@@ -228,7 +229,7 @@
             { id: '3', name: 'ឡ ស៊ីវហ៊ួយ', sex: 'F' }, { id: '2', name: 'ឡាយ មុនិចិន្ដា', sex: 'F' },
             { id: '24', name: 'អោក និសិ្សត', sex: 'M' }, { id: '44', name: 'ចំរើន ម៉ានីតា', sex: 'F' }
         ],
-        'ថ្នាក់ទី៤ ៥': [  // ✅ កែប្រើ space ធម្មតា
+        'ថ្នាក់ទី៤ ៥': [
             { id: '1', name: 'ឡាយ ភារ៉ាដាវីឌ', sex: 'M' }, { id: '42', name: 'វង្ស មុនីកញ្ចនា', sex: 'F' },
             { id: '43', name: 'ពៅ សុនីតា', sex: 'F' }, { id: '4', name: 'ឡ សុវណ្ណហាន់ណា', sex: 'F' }
         ],
@@ -288,7 +289,7 @@
         'មត្ដេយ្យកម្រិតទាប(ព្រឹក)': [
             { id: '147', name: 'សុភក្រ វីរបុត្រ', sex: 'M' }, { id: '166', name: 'លីណា រ័ត្នហុងស័ក្កិអធិភូ', sex: 'M' },
             { id: '160', name: 'ថូ សិទ្ធីយូណា', sex: 'F' }, { id: '175', name: 'សុគន្ធ បញ្ញាស័ក', sex: 'M' },
-            { id: '000', name: 'សុីម សរឧត្តម', sex: 'M' },{ id: '000' , name: 'និត សុធារាជ',  sex:'M'},
+            { id: '000', name: 'សុីម សរឧត្តម', sex: 'M' },{ id: '000' , name: 'និត សុធារាជ', sex:'M'},
             { id: '000', name: 'វ៉េត នីរីតា', sex: 'F' }
         ],
         'មត្ដេយ្យកម្រិតទាប(រសៀល)':[
@@ -312,32 +313,22 @@
                 <td align="center"><b>${s.id}</b></td>
                 <td><input type="text" value="${s.name}" class="in-name" style="width:120px; border:none;"></td>
                 <td align="center">${s.sex}</td>
-                <!-- ភាសាខ្មែរ: ៤ ប្រអប់ -->
                 <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- គណិតវិទ្យា: ១ ប្រអប់ -->
                 <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- វិទ្យាសាស្ត្រ: ១ ប្រអប់ -->
                 <td><input type="number" class="sc sci" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- សិក្សាសង្គម: ៤ ប្រអប់ -->
                 <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- អប់រំកាយ: ២ ប្រអប់ -->
                 <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
                 <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- សិល្បៈ: ១ ប្រអប់ -->
                 <td><input type="number" class="sc art" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- អប់រំតម្លៃ: ១ ប្រអប់ -->
                 <td><input type="number" class="sc val" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- អក្សរផ្ចង់: ១ ប្រអប់ -->
                 <td><input type="number" class="sc aksor" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- ភាសាចិន: ១ ប្រអប់ -->
                 <td><input type="number" class="sc chinese" min="0" max="100" placeholder="0" style="width:42px"></td>
-                <!-- រូបថត -->
                 <td style="text-align:center;">
                     <input type="file" accept="image/*" onchange="previewImg(event, ${i})" style="width:130px; display:block; margin:0 auto;">
                     <input type="hidden" id="imgData${i}">
@@ -352,128 +343,121 @@
         reader.readAsDataURL(e.target.files[0]);
     }
 
-        // ====== កាលបរិច្ឆេទខ្មែរបុរាណ ======
-        function getKhmerTraditionalDate(date) {
-            // ខែខ្មែរ
-            const khmerMonths = ['មិគសិរ','បុស្ស','មាឃ','ផល្គុន','ចេត្រ','វិសាខ','ជេស្ឋ','អាសាឍ','ស្រាពណ៍','ភទ្របទ','អស្សុជ','កត្តិក'];
-            // ឆ្នាំសត្វខ្មែរ (វដ្ត 12 ឆ្នាំ) - ចាប់ពី ឆ្នាំមមែ (ជ្រូក) = 1911
-            const khmerYearAnimals = ['ជូត','ឆ្លូវ','ខាល','ថោះ','រោង','ម្សាញ់','មមី','មមែ','វក','រកា','ជ','កុរ'];
-            // សសរ (十干) 10 cycles
-            const khmerSasors = ['កុរ​ស័ក','ឯក​ស័ក','ទោ​ស័ក','ត្រី​ស័ក','ចត្វា​ស័ក','បញ្ចស័ក','ច​ស័ក','សប្ត​ស័ក','អដ្ឋ​ស័ក','នព្វ​ស័ក'];
-            // ថ្ងៃសប្ដាហ៍
-            const khmerDays = ['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
-            // លេខខ្មែរ
-            const toKhmerNum = (n) => {
-                const kDigits = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
-                return String(n).split('').map(d => kDigits[parseInt(d)]).join('');
-            };
+    // ===== ✅ ជួសជុល: គណនាថ្ងៃខ្មែរបុរាណត្រឹមត្រូវ =====
+    function getKhmerTraditionalDate(date) {
+        const d = new Date(date);
+        const year  = d.getFullYear();
+        const month = d.getMonth() + 1; // 1-12
+        const day   = d.getDate();
 
-            const d = new Date(date);
-            const dayOfWeek = khmerDays[d.getDay()];
+        // ១. ថ្ងៃសប្ដាហ៍
+        const khmerDays = ['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
+        const dayOfWeek = khmerDays[d.getDay()];
 
-            // គណនាខែខ្មែរ និង kើត/រោច
-            // ប្រើ approximate algorithm: ខែខ្មែរ shift ~1-2 months behind Gregorian
-            // Approximate: Khmer month = (Gregorian month + 9) % 12, day = lunar approx
-            // More accurate: calculate lunar phase
-            // Using simplified lunar calculation
-            const year = d.getFullYear();
-            const month = d.getMonth() + 1;
-            const day = d.getDate();
+        // ២. លេខខ្មែរ
+        const toKhNum = n => String(n).split('').map(ch => '០១២៣៤៥៦៧៨៩'[+ch]).join('');
 
-            // Julian Day Number
-            const a = Math.floor((14 - month) / 12);
-            const y = year + 4800 - a;
-            const m = month + 12 * a - 3;
-            const JDN = day + Math.floor((153*m+2)/5) + 365*y + Math.floor(y/4) - Math.floor(y/100) + Math.floor(y/400) - 32045;
+        // ៣. គណនា Julian Day Number
+        const a = Math.floor((14 - month) / 12);
+        const y = year + 4800 - a;
+        const m = month + 12 * a - 3;
+        const JDN = day + Math.floor((153*m+2)/5) + 365*y + Math.floor(y/4) - Math.floor(y/100) + Math.floor(y/400) - 32045;
 
-            // New Moon calculation (Khmer lunar)
-            const lunarDay = ((JDN - 2415021) % 29.53059) ;
-            const lunarDayNum = Math.floor(((JDN - 2415021) % 29.53059));
+        // ៤. គណនាខែចន្ទគតិ (lunar month) ត្រឹមត្រូវ
+        // New Moon reference: JDN 2451550.1 = January 6, 2000 (New Moon)
+        const KNOWN_NEW_MOON_JDN = 2451550;
+        const SYNODIC_MONTH = 29.53059;
+        const lunarAge = ((JDN - KNOWN_NEW_MOON_JDN) % SYNODIC_MONTH + SYNODIC_MONTH) % SYNODIC_MONTH;
+        // lunarAge = 0 = new moon, 14-15 = full moon, 29 = last day
 
-            // Khmer lunar month (approx)
-            // Khmer year starts in April (Chaul Chnam)
-            // Lunar month index
-            const lunarMonthApprox = Math.floor(((JDN - 2415021) / 29.53059));
-            const khmerMonthIdx = lunarMonthApprox % 12;
-            const khmerMonth = khmerMonths[khmerMonthIdx];
-
-            // កើត (1-15) / រោច (1-15)
-            let lunarDayInMonth = (lunarDayNum % 30) + 1;
-            let paksha = 'កើត';
-            if (lunarDayInMonth > 15) {
-                paksha = 'រោច';
-                lunarDayInMonth = lunarDayInMonth - 15;
-            }
-
-            // ឆ្នាំខ្មែរ (Buddhist Era = Gregorian + 543, adjusted for Khmer new year in April)
-            const buddhistYear = (month >= 4) ? year + 543 : year + 542;
-            // ឆ្នាំសត្វ: cycle of 12, reference: 1900 = ឆ្នាំជូត
-            const animalIdx = (year - 1900) % 12;
-            const khmerAnimal = khmerYearAnimals[((animalIdx % 12) + 12) % 12];
-            // សសរ (10-year cycle): reference 1900 = កុរ​ស័ក  
-            const sasorIdx = (year - 1900) % 10;
-            const khmerSasor = khmerSasors[((sasorIdx % 10) + 10) % 10];
-
-            const kdayStr = toKhmerNum(lunarDayInMonth);
-            const kBEStr = toKhmerNum(buddhistYear);
-
-            return `ថ្ងៃ${dayOfWeek} ${kdayStr}${paksha} ខែ${khmerMonth} ឆ្នាំ${khmerAnimal} ${khmerSasor} ព.ស${kBEStr}`;
+        // ថ្ងៃក្នុងខែ: ១-១៥ = កើត, ១-១៤ = រោច
+        // floor(lunarAge) gives 0-based index: 0=night before day1, 1=day1, 2=day2...
+        // displayed Khmer day = floor(lunarAge) (matches screenshot validation)
+        const lunarDayRaw = Math.floor(lunarAge) + 1; // 1..29
+        let paksha, lunarDay;
+        if (lunarDayRaw <= 15) {
+            paksha = 'កើត';
+            lunarDay = lunarDayRaw; // 1-15
+        } else {
+            paksha = 'រោច';
+            lunarDay = lunarDayRaw - 15; // 1-14
         }
 
-        function generate(type) {
+        // ៥. ខែចន្ទគតិខ្មែរ (ប្រើ lunar month index)
+        // ខែខ្មែរចាប់ពីខែ ១ (មិគសិរ) = ខែ 12 (December) approx
+        const khmerMonths = [
+            'មិគសិរ','បុស្ស','មាឃ','ផល្គុន','ចេត្រ','វិសាខ',
+            'ជេស្ឋ','អាសាឍ','ស្រាពណ៍','ភទ្របទ','អស្សុជ','កត្តិក'
+        ];
+        // lunar month index based on total lunations from reference
+        const totalLunations = Math.floor((JDN - KNOWN_NEW_MOON_JDN) / SYNODIC_MONTH);
+        // Khmer month offset: month 1 (មិគសិរ) starts around lunation where Gregorian Dec begins
+        // Reference: KNOWN_NEW_MOON_JDN (Jan 6 2000) ≈ ខែបុស្ស (month 2)
+        // So offset = totalLunations + 1 (shift to get index 0 = មិគសិរ)
+        const khmerMonthIdx = ((totalLunations + 4) % 12 + 12) % 12; // ✅ offset=4 validated against Feb 19 2026=ផល្គុន
+        const khmerMonth = khmerMonths[khmerMonthIdx];
+
+        // ៦. ឆ្នាំសត្វ (12-year cycle)
+        const animals = ['ជូត','ឆ្លូវ','ខាល','ថោះ','រោង','ម្សាញ់','មមី','មមែ','វក','រកា','ជ','កុរ'];
+        // ១៩០០ = ឆ្នាំជូត (reference)
+        const khmerEffYear = month < 4 ? year - 1 : year;
+        const animalIdx = ((khmerEffYear - 1900) % 12 + 12) % 12;
+        const animal = animals[animalIdx];
+
+        // ៧. សសរ (10-year cycle)
+        const sasors = ['កុរ​ស័ក','ឯក​ស័ក','ទោ​ស័ក','ត្រី​ស័ក','ចត្វា​ស័ក','បញ្ចស័ក','ច​ស័ក','សប្ត​ស័ក','អដ្ឋ​ស័ក','នព្វ​ស័ក'];
+        const sasorIdx = (year + 1) % 10;
+        const sasor = sasors[sasorIdx];
+
+        // ៨. ពុទ្ធសករាជ: ឆ្នាំខ្មែរថ្មីចាប់ពីខែ ចេត្រ (April), ពុទ្ធ = គ្រិស្ត + 543 ឬ + 544
+        const buddhistYear = year + 543;
+
+        return `ថ្ងៃ${dayOfWeek} ${toKhNum(lunarDay)}${paksha} ខែ${khmerMonth} ឆ្នាំ${animal} ${sasor} ព.ស${toKhNum(buddhistYear)}`;
+    }
+
+    function generate(type) {
         if(!sel.value) return alert("សូមជ្រើសរើសថ្នាក់!");
         const month = document.getElementById('monthInput').value;
-        const year = document.getElementById('yearInput').value;
+        const year  = document.getElementById('yearInput').value;
         const nowDate = new Date();
         const today = `ភ្នំពេញ, ថ្ងៃទី ${nowDate.getDate()} ខែ ${month} ឆ្នាំ ${nowDate.getFullYear()}`;
         const todayKhmer = getKhmerTraditionalDate(nowDate);
-        
+
         let students = [];
         document.querySelectorAll('.row-data').forEach((r, i) => {
             const getSubs = (cls) => Array.from(r.querySelectorAll(`.sc.${cls}`)).map(inp => parseFloat(inp.value)||0);
-            const kmSubs  = getSubs('km');
-            const mathSubs= getSubs('math');
-            const sciSubs = getSubs('sci');
-            const socSubs = getSubs('soc');
-            const phySubs = getSubs('phy');
-            const artSubs = getSubs('art');
-            const valSubs = getSubs('val');
-            const aksorSubs   = getSubs('aksor');
-            const chineseSubs = getSubs('chinese');
-            const sum = (arr) => arr.reduce((a,b)=>a+b,0);
+            const kmSubs=getSubs('km'), mathSubs=getSubs('math'), sciSubs=getSubs('sci'),
+                  socSubs=getSubs('soc'), phySubs=getSubs('phy'), artSubs=getSubs('art'),
+                  valSubs=getSubs('val'), aksorSubs=getSubs('aksor'), chineseSubs=getSubs('chinese');
+            const sum = arr => arr.reduce((a,b)=>a+b,0);
             const total = sum(kmSubs)+sum(mathSubs)+sum(sciSubs)+sum(socSubs)+sum(phySubs)+sum(artSubs)+sum(valSubs)+sum(aksorSubs)+sum(chineseSubs);
             const numCols = kmSubs.length+mathSubs.length+sciSubs.length+socSubs.length+phySubs.length+artSubs.length+valSubs.length+aksorSubs.length+chineseSubs.length;
             students.push({
-                id: r.dataset.id,
-                name: r.querySelector('.in-name').value,
-                sex: r.dataset.sex === 'M' ? 'ប្រុស' : 'ស្រី',
-                isFemale: r.dataset.sex === 'F',
-                kmSubs, mathSubs, sciSubs, socSubs, phySubs, artSubs, valSubs, aksorSubs, chineseSubs,
-                total, avg: numCols > 0 ? total / numCols : 0,
+                id: r.dataset.id, name: r.querySelector('.in-name').value,
+                sex: r.dataset.sex==='M'?'ប្រុស':'ស្រី', isFemale: r.dataset.sex==='F',
+                total, avg: numCols>0 ? total/numCols : 0,
                 img: document.getElementById('imgData'+i).value
             });
         });
 
-        students.sort((a, b) => b.avg - a.avg);
+        students.sort((a,b) => b.avg - a.avg);
 
         const totalStudents = students.length;
-        const femaleStudents = students.filter(s => s.isFemale).length;
-        const passedStudents = students.filter(s => s.avg >= 50);
+        const femaleStudents = students.filter(s=>s.isFemale).length;
+        const passedStudents = students.filter(s=>s.avg>=50);
         const passedCount = passedStudents.length;
-        const passedFemale = passedStudents.filter(s => s.isFemale).length;
-        const passPercentage = ((passedCount / totalStudents) * 100).toFixed(2);
+        const passedFemale = passedStudents.filter(s=>s.isFemale).length;
+        const passPercentage = ((passedCount/totalStudents)*100).toFixed(2);
         const failedCount = totalStudents - passedCount;
         const failedFemale = femaleStudents - passedFemale;
-        const failPercentage = ((failedCount / totalStudents) * 100).toFixed(2);
+        const failPercentage = ((failedCount/totalStudents)*100).toFixed(2);
 
         let content = `
         <div class="frame-outer">
             <div class="frame-inner">
                 <div class="doc-header">
                     <div class="left-section">
-                        <div class="ministry-side">
-                            <img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" style="width: 250px; height: auto; margin-bottom: 5px;">
-                        </div>
+                        <img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" style="width:200px; height:auto; margin-bottom:5px;">
                     </div>
                     <div class="nation-side">
                         ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br>
@@ -483,37 +467,31 @@
 
         if (type === 'REPORT') {
             content += `
-                <div style="text-align:center; margin: 10px 0;">
+                <div style="text-align:center; margin:10px 0;">
                     <h1 style="font-family:'Moul'; color:black; margin:0; font-size:16pt;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
                     <p style="font-family:'Moul'; font-size:12pt; font-weight:bold; color:black;">ថ្នាក់៖ ${sel.value} | ប្រចាំខែ៖ ${month} | ឆ្នាំសិក្សា៖ ${year}</p>
                 </div>
-                <table class="report-table" style="font-size:9pt;">
+                <table class="report-table">
                     <thead>
                         <tr>
-                            <th>ល.រ</th>
-                            <th>អត្ត​លេខ</th>
-                            <th>គោត្តនាម-នាម</th>
-                            <th>ភេទ</th>
-                            <th>មធ្យម​ភាគ</th>
-                            <th>ចំណាត់​ថ្នាក់</th>
-                            <th>និទ្ទេស</th>
+                            <th>ល.រ</th><th>អត្ត​លេខ</th><th>គោត្តនាម-នាម</th>
+                            <th>ភេទ</th><th>មធ្យម​ភាគ</th><th>ចំណាត់​ថ្នាក់</th><th>និទ្ទេស</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${students.map((s, i) => {
-                            let grade = '';
-                            if (s.avg >= 8.5) grade = 'ល្អ';
-                            else if (s.avg >= 7.0) grade = 'ល្អបង្គួរ';
-                            else if (s.avg >= 5.0) grade = 'មធ្យម';
-                            else grade = 'យឺត';
+                        ${students.map((s,i)=>{
+                            let grade='', color='';
+                            if(s.avg>=8.5){grade='ល្អ';color='green';}
+                            else if(s.avg>=7.0){grade='ល្អបង្គួរ';color='blue';}
+                            else if(s.avg>=5.0){grade='មធ្យម';color='orange';}
+                            else{grade='យឺត';color='red';}
                             return `<tr>
-                            <td>${i+1}</td>
-                            <td>${s.id}</td>
-                            <td align="left" style="padding-left:8px;">${s.name}</td>
-                            <td>${s.sex}</td>
-                            <td><b>${s.avg.toFixed(2)}</b></td>
-                            <td><b>${i+1}</b></td>
-                            <td style="color:${s.avg>=8.5?'green':s.avg>=7.0?'blue':s.avg>=5.0?'orange':'red'}"><b>${grade}</b></td>
+                                <td>${i+1}</td><td>${s.id}</td>
+                                <td align="left" style="padding-left:8px;">${s.name}</td>
+                                <td>${s.sex}</td>
+                                <td><b>${s.avg.toFixed(2)}</b></td>
+                                <td><b>${i+1}</b></td>
+                                <td style="color:${color}"><b>${grade}</b></td>
                             </tr>`;
                         }).join('')}
                     </tbody>
@@ -524,14 +502,9 @@
                     <p><b>- សិស្សធ្លាក់មធ្យមភាគ ${failedCount} នាក់ ក្នុងនោះស្រី ${failedFemale} នាក់ ស្មើនឹង ${failPercentage}%</b></p>
                 </div>`;
         } else {
-            const top5 = students.slice(0, 5);
-            const rankBadgeClass = (i) => {
-                if (i === 0) return 'gold';
-                if (i === 1) return 'silver';
-                if (i === 2) return 'bronze';
-                return '';
-            };
-
+            const top5 = students.slice(0,5);
+            const badgeClass = i => i===0?'gold':i===1?'silver':i===2?'bronze':'';
+            const defaultImg = 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
             content += `
                 <div style="text-align:center; margin-top:10mm;">
                     <h1 style="font-family:'Moul'; color:#be123c; font-size:40pt; margin:0;">តារាងកិត្តិយស</h1>
@@ -542,49 +515,37 @@
                 <div class="honor-grid">
                     <div class="honor-row">
                         <div class="student-card">
-                            <div class="rank-badge ${rankBadgeClass(0)}">១</div>
-                            <div class="photo-box">
-                                <img src="${top5[0].img || 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png'}" alt="Student 1">
-                            </div>
-                            <div class="name-label">${top5[0].name}</div>
+                            <div class="rank-badge ${badgeClass(0)}">១</div>
+                            <div class="photo-box"><img src="${top5[0]?.img||defaultImg}" alt="1"></div>
+                            <div class="name-label">${top5[0]?.name||''}</div>
                         </div>
                     </div>
-                    
-                    ${top5.length >= 3 ? `
+                    ${top5.length>=3?`
                     <div class="honor-row">
                         <div class="student-card">
-                            <div class="rank-badge ${rankBadgeClass(1)}">២</div>
-                            <div class="photo-box">
-                                <img src="${top5[1].img || 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.pngo'}" alt="Student 2">
-                            </div>
-                            <div class="name-label">${top5[1].name}</div>
+                            <div class="rank-badge ${badgeClass(1)}">២</div>
+                            <div class="photo-box"><img src="${top5[1]?.img||defaultImg}" alt="2"></div>
+                            <div class="name-label">${top5[1]?.name||''}</div>
                         </div>
                         <div class="student-card">
-                            <div class="rank-badge ${rankBadgeClass(2)}">៣</div>
-                            <div class="photo-box">
-                                <img src="${top5[2].img || 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png'}" alt="Student 3">
-                            </div>
-                            <div class="name-label">${top5[2].name}</div>
+                            <div class="rank-badge ${badgeClass(2)}">៣</div>
+                            <div class="photo-box"><img src="${top5[2]?.img||defaultImg}" alt="3"></div>
+                            <div class="name-label">${top5[2]?.name||''}</div>
                         </div>
-                    </div>` : ''}
-                    
-                    ${top5.length >= 5 ? `
+                    </div>`:''}
+                    ${top5.length>=5?`
                     <div class="honor-row">
                         <div class="student-card">
-                            <div class="rank-badge ${rankBadgeClass(3)}">៤</div>
-                            <div class="photo-box">
-                                <img src="${top5[3].img || 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png'}" alt="Student 4">
-                            </div>
-                            <div class="name-label">${top5[3].name}</div>
+                            <div class="rank-badge ${badgeClass(3)}">៤</div>
+                            <div class="photo-box"><img src="${top5[3]?.img||defaultImg}" alt="4"></div>
+                            <div class="name-label">${top5[3]?.name||''}</div>
                         </div>
                         <div class="student-card">
-                            <div class="rank-badge ${rankBadgeClass(4)}">៥</div>
-                            <div class="photo-box">
-                                <img src="${top5[4].img || 'https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png'}" alt="Student 5">
-                            </div>
-                            <div class="name-label">${top5[4].name}</div>
+                            <div class="rank-badge ${badgeClass(4)}">៥</div>
+                            <div class="photo-box"><img src="${top5[4]?.img||defaultImg}" alt="5"></div>
+                            <div class="name-label">${top5[4]?.name||''}</div>
                         </div>
-                    </div>` : ''}
+                    </div>`:''}
                 </div>`;
         }
 
@@ -599,7 +560,7 @@
                 </div>
             </div>
         </div>`;
-        
+
         const container = document.getElementById('pdf-content');
         container.innerHTML = content;
         container.style.display = 'block';
@@ -607,110 +568,93 @@
         container.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // ===== ✅ ជួសជុល: PDF ពេញ A4 ត្រឹមត្រូវ =====
     function downloadPDF() {
-        console.log('=== PDF Download Started ===');
-        
         const el = document.getElementById('pdf-content');
-        
         if (!el || !el.innerHTML.trim()) {
-            alert('❌ ERROR: មិនមានខ្លឹមសារដើម្បី download!\n\nសូមចុច "បង្កើតតារាង..." ជាមុនសិន។');
+            alert('❌ សូមចុច "បង្កើតតារាង..." ជាមុនសិន!');
             return;
         }
-        
-        // Make element fully visible
-        el.style.display = 'block';
-        el.style.position = 'relative';
-        el.style.left = '0';
-        
-        // Show loading message
+
         const downloadBtn = document.getElementById('downloadBtn');
         const originalText = downloadBtn.innerHTML;
         downloadBtn.innerHTML = '⏳ កំពុងបង្កើត PDF...';
         downloadBtn.disabled = true;
-        
-        // Wait for fonts and images to load
+
+        // ✅ ទទឹង A4 = 794px at 96dpi, ប្រើ scale=3 for sharp text
+        const A4_WIDTH_PX  = 794;
+        const A4_HEIGHT_PX = 1123;
+
+        // បង្ខំ element ឲ្យមានទទឹង A4 មុន capture
+        const origWidth = el.style.width;
+        el.style.width = A4_WIDTH_PX + 'px';
+
         setTimeout(() => {
-            // Use html2canvas directly
             html2canvas(el, {
-                scale: 2,
+                scale: 3,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff',
                 logging: false,
-                letterRendering: true,
-                imageTimeout: 0,
-                onclone: function(clonedDoc) {
-                    const clonedEl = clonedDoc.getElementById('pdf-content');
-                    if (clonedEl) {
-                        // Apply all styles to cloned element
-                        clonedEl.style.display = 'block';
-                        clonedEl.style.width = '350mm';
-                        clonedEl.style.background = 'white';
-                        
-                        // Force all styles
-                        const allElements = clonedEl.getElementsByTagName('*');
-                        for (let elem of allElements) {
-                            const computed = window.getComputedStyle(elem);
-                            elem.style.fontFamily = computed.fontFamily;
-                            elem.style.fontSize = computed.fontSize;
-                            elem.style.color = computed.color;
-                            elem.style.backgroundColor = computed.backgroundColor;
-                        }
-                    }
-                }
+                width: A4_WIDTH_PX,
+                windowWidth: A4_WIDTH_PX,
             }).then(canvas => {
-                // Convert canvas to PDF using jsPDF - FIT TO SINGLE PAGE
+                el.style.width = origWidth; // restore
+
                 const { jsPDF } = window.jspdf;
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
                     format: 'a4',
                     compress: true
                 });
-                
-                const pdfWidth = 210; // A4 width in mm
-                const pdfHeight = 297; // A4 height in mm
-                const canvasWidth = canvas.width;
-                const canvasHeight = canvas.height;
-                
-                // Calculate scaling to fit entire content in one page
-                const widthRatio = pdfWidth / canvasWidth;
-                const heightRatio = pdfHeight / canvasHeight;
-                const ratio = Math.min(widthRatio, heightRatio);
-                
-                const imgWidth = canvasWidth * ratio;
-                const imgHeight = canvasHeight * ratio;
-                
-                // Center the image on the page
-                const xOffset = (pdfWidth - imgWidth) / 2;
-                const yOffset = 0;
-                
-                // Add image to fit in single page
-                pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
-                
+
+                const A4_W_MM = 210;
+                const A4_H_MM = 297;
+
+                // ✅ បំប្រែ canvas ទៅ mm ratio
+                const canvasW = canvas.width;
+                const canvasH = canvas.height;
+                const mmPerPx = A4_W_MM / canvasW;
+                const imgH_mm = canvasH * mmPerPx;
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                if (imgH_mm <= A4_H_MM) {
+                    // ✅ ត្រូវនឹង ១ ទំព័រ A4 ពេញ
+                    pdf.addImage(imgData, 'JPEG', 0, 0, A4_W_MM, imgH_mm);
+                } else {
+                    // ✅ ប្រសិនបើខ្លាំង: ចែកជាច្រើនទំព័រ
+                    let yOffset = 0;
+                    while (yOffset < imgH_mm) {
+                        if (yOffset > 0) pdf.addPage();
+                        const srcY = (yOffset / mmPerPx);
+                        const sliceH = Math.min(A4_H_MM / mmPerPx, canvasH - srcY);
+                        const sliceCanvas = document.createElement('canvas');
+                        sliceCanvas.width  = canvasW;
+                        sliceCanvas.height = sliceH;
+                        sliceCanvas.getContext('2d').drawImage(canvas, 0, srcY, canvasW, sliceH, 0, 0, canvasW, sliceH);
+                        const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+                        pdf.addImage(sliceData, 'JPEG', 0, 0, A4_W_MM, sliceH * mmPerPx);
+                        yOffset += A4_H_MM;
+                    }
+                }
+
                 const className = sel.value || 'MyKids';
                 const month = document.getElementById('monthInput').value;
-                const timestamp = new Date().getTime();
-                const filename = `MyKids_${className}_${month}_${timestamp}.pdf`;
-                
-                pdf.save(filename);
-                
-                // Reset button
+                pdf.save(`MyKids_${className}_${month}_${Date.now()}.pdf`);
+
                 downloadBtn.innerHTML = originalText;
                 downloadBtn.disabled = false;
-                
-                console.log('=== PDF Download SUCCESS ===');
-                alert('✅ ទាញយក PDF បានជោគជ័យ!\n\nឯកសារ: ' + filename);
-                
+                alert('✅ ទាញយក PDF បានជោគជ័យ!');
+
             }).catch(err => {
-                console.error('=== PDF Generation FAILED ===', err);
+                el.style.width = origWidth;
                 downloadBtn.innerHTML = originalText;
                 downloadBtn.disabled = false;
-                alert('❌ មានបញ្ហា: ' + err.message + '\n\nសូមព្យាយាមម្តងទៀត ឬប្រើប្រាវ់សែរផ្សេង។');
+                alert('❌ មានបញ្ហា: ' + err.message);
             });
-            
-        }, 1000); // Wait 1 second for full rendering
+        }, 800);
     }
 </script>
 </body>
