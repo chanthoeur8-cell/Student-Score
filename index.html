@@ -2,7 +2,7 @@
 <html lang="km">
 <head>
     <meta charset="UTF-8">
-    <title>MiKids International School — Management System</title>
+    <title>MyKids International School — Management System</title>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -165,9 +165,9 @@
 <!-- ===== APP HEADER ===== -->
 <div class="app-header">
     <div class="app-header-top">
-        <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MiKids">
+        <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MyKids">
         <div class="app-title-block">
-            <div class="app-title">MiKids International School</div>
+            <div class="app-title">MyKids International School</div>
             <div class="app-subtitle">Student Score Management System · ប្រព័ន្ធគ្រប់គ្រងពិន្ទុសិស្ស</div>
         </div>
     </div>
@@ -259,11 +259,11 @@
                 <option>Fount1 Morning</option>
                 <option>Fount1 Evening</option>
                 <option>Fount2 Morning</option>
-                <option>Fount2 Evening</option>
+                <option>Fount2 Afternoon</option>
                 <option>Nursery Morning</option>
-                <option>Nursery Evening</option>
+                <option>Nursery Afternoon</option>
                 <option>Level1 Morning</option>
-                <option>Level1 Evening</option>
+                <option>Level1 Afternoon</option>
                 <option>Level 2</option>
             </select>
         </div>
@@ -398,7 +398,8 @@ const khStudentDB = {
     ],
     'មត្ដេយ្យកម្រិតទាប(រសៀល)': [
         { id:'175', name:'ហេង ជ័រមុីង', sex:'F' },{ id:'000', name:'សាយ សុខហេង', sex:'M' },
-        { id:'000', name:'លាង លក្សុិកញ្ចនា', sex:'M' }, { id:'177', name:'វាសនា ពេជ្រសុម៉ាលី', sex:'F' }
+        { id:'181', name:'ឈន ចេស្ដា', sex:'M' },{ id:'000', name:'លាង លក្សុិកញ្ចនា', sex:'M' },
+        { id:'177', name:'វាសនា ពេជ្រសុម៉ាលី', sex:'F' }
     ]
 };
 
@@ -574,21 +575,20 @@ const enStudentDB = {
         {id:'90',name:'Huy Vannrothsetha',sex:'M'},{id:'116',name:'Nit Sotheara',sex:'M'},
         {id:'159',name:'Thon Sigech',sex:'F'}
     ],
-    'Fount2 Mornoing': [
+    'Fount2 Morning': [
         {id:'86',name:'Theng Mengly',sex:'M'},{id:'00',name:'Sreang Sievfong',sex:'F'},
         {id:'00',name:'Heng Meyich',sex:'F'},{id:'00',name:'Eurn Povoleak',sex:'F'},
         {id:'00',name:'Han Sivhor',sex:'F'},{id:'00',name:'Roth Sovannchanthnaka',sex:'M'},
         {id:'00',name:'Chomreun Manita',sex:'F'},{id:'70',name:'Roth Ratheb',sex:'M'},
-        {id:'00',name:'Chomreun chanoudom',sex:'F'}
+        {id:'00',name:'Chomreun Chanoudom',sex:'F'}
     ],
     'Fount2 Afternoon': [
         {id:'68',name:'Song Rithysak',sex:'M'},{id:'00',name:'Pov Sokchen',sex:'M'},
         {id:'66',name:'Bunleng Aidek',sex:'M'},{id:'67',name:'Pheak Speeddy',sex:'M'},
         {id:'00',name:'Em Raechna',sex:'F'},{id:'00',name:'Ngoun Panhaputhysak',sex:'M'},
-        {id:'00',name:'chen kolin',sex:'M'},{id:'00',name:'Nara Hengly',sex:'M'},
+        {id:'00',name:'Chen Kolin',sex:'M'},{id:'00',name:'Nara Hengly',sex:'M'},
         {id:'00',name:'Chan Vireasith',sex:'M'},{id:'00',name:'Sok Sambath',sex:'M'},
-        {id:'00',name:'Sok Dalls',sex:'F'},
-        {id:'00',name:'Ly Chaychon',sex:'M'}
+        {id:'00',name:'Sok Dalls',sex:'F'},{id:'00',name:'Ly Chaychon',sex:'M'}
     ],
     'Nursery Morning': [
         {id:'148',name:'Beres Maikeus',sex:'M'},{id:'144',name:'Heng Santipheap',sex:'M'},
@@ -604,16 +604,16 @@ const enStudentDB = {
         {id:'166',name:'Lina Hongsakiathiphu',sex:'M'}
     ],
     'Level1 Morning': [
-        {id:'00',name:'Pov Sunita',sex:'F'},
-        {id:'00',name:'Kaev Vinsouottara',sex:'F'},{id:'00',name:'Chhuonta Rataknakhondou',sex:'F'},
-        {id:'64',name:'Leang Voatchhanathnu',sex:'M'},{id:'00',name:'Ya Pichmonika',sex:'F'},
-        {id:'00',name:'Lim Puthireach',sex:'M'},{id:'00',name:'Lor Sivhuoy',sex:'F'},
-        {id:'00',name:'Lay Monichenda',sex:'F'},{id:'00',name:'ork Niset',sex:'M'},
-        {id:'00',name:'Chan Sophayameakh',sex:'M'},{id:'00',name:'Sonvirak Panhatepey',sex:'F'}
+        {id:'00',name:'Pov Sunita',sex:'F'},{id:'00',name:'Kaev Vinsouottara',sex:'F'},
+        {id:'00',name:'Chhuonta Rataknakhondou',sex:'F'},{id:'64',name:'Leang Voatchhanathnu',sex:'M'},
+        {id:'00',name:'Ya Pichmonika',sex:'F'},{id:'00',name:'Lim Puthireach',sex:'M'},
+        {id:'00',name:'Lor Sivhuoy',sex:'F'},{id:'00',name:'Lay Monichenda',sex:'F'},
+        {id:'00',name:'Ork Niset',sex:'M'},{id:'00',name:'Chan Sophayameakh',sex:'M'},
+        {id:'00',name:'Sonvirak Panhatepey',sex:'F'}
     ],
-     'Level1 Afternoon': [
+    'Level1 Afternoon': [
         {id:'00',name:'Aok Outtom',sex:'M'},{id:'00',name:'Nara Henglay',sex:'M'},
-        {id:'62',name:'Chhuk Chenlong',sex:'M'},
+        {id:'62',name:'Chhuk Chenlong',sex:'M'}
     ],
     'Level 2': [
         {id:'48',name:'Sopheak Titthdana',sex:'F'},{id:'63',name:'Neourn Vathanac',sex:'M'},
@@ -785,4 +785,3 @@ function downloadPDF(contentId, btnId, className, month) {
 </script>
 </body>
 </html>
-
