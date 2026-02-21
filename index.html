@@ -127,7 +127,7 @@
         .stats { margin-top: 14px; font-size: 9pt; line-height: 2; }
 
         /* Honor Board PDF */
-        .honor-grid { display: flex; flex-direction: column; align-items: center; gap: 3mm; margin-top: 3mm; }
+        .honor-grid { display: flex; flex-direction: column; align-items: center; gap: 2mm; margin-top: 2mm; }
         .honor-row  { display: flex; justify-content: center; gap: 8mm; }
         .student-card { width: 46mm; text-align: center; }
         .rank-badge {
@@ -140,8 +140,22 @@
         .rank-badge.silver { background: #94a3b8 !important; }
         .rank-badge.bronze { background: #d97706 !important; }
         .rank-badge.plain  { background: var(--red) !important; }
-        .photo-box { width: 46mm; height: 38mm; border: 3px solid var(--gold) !important; overflow: hidden; }
+
+        /* Photo box for honor board */
+        .photo-frame-wrap {
+            position: relative;
+            width: 46mm;
+            height: 38mm;
+            display: inline-block;
+        }
+        .photo-box {
+            width: 46mm;
+            height: 38mm;
+            border: 3px solid white !important;
+            overflow: hidden;
+        }
         .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
         .name-tag {
             background: var(--navy) !important; color: white !important; padding: 4px 3px;
             border-radius: 8px; font-size: 8.5pt; font-weight: 700; margin-top: 4px; display: block;
@@ -149,9 +163,9 @@
         .score-tag { font-size: 7.5pt; color: #64748b; margin-top: 2px; }
 
         /* Footer */
-        .doc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; padding: 0 16px; font-size: 9.5pt; }
+        .doc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 16px; font-size: 9.5pt; }
         .sig-block { text-align: center; }
-        .sig-block strong { display: block; margin-top: 18px; font-size: 10pt; font-family: 'Moul', 'Playfair Display', serif; }
+        .sig-block strong { display: block; margin-top: 10px; font-size: 10pt; font-family: 'Moul', 'Playfair Display', serif; }
 
         @media print {
             body { background: white; }
@@ -320,6 +334,19 @@ function switchTab(id, el) {
     el.classList.add('active');
 }
 
+// ===== CORNER FRAME HTML helper =====
+function cornerFrame(imgSrc, isKh) {
+    return `<div class="photo-frame-wrap">
+        <div class="photo-box"><img src="${imgSrc}"></div>
+        <div class="corner-frame-overlay">
+            <div class="cf-tl"></div>
+            <div class="cf-tr"></div>
+            <div class="cf-bl"></div>
+            <div class="cf-br"></div>
+        </div>
+    </div>`;
+}
+
 // ===== KHMER STUDENT DB =====
 const khStudentDB = {
     'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)': [
@@ -472,6 +499,39 @@ function getKhmerDate(date) {
     return `ថ្ងៃ${khDays[d.getDay()]} ${toKh(lunarDay)}${paksha} ខែ${khMonth} ឆ្នាំ${animal} ${sasor} ព.ស${toKh(BE)}`;
 }
 
+// ===== SHARED HONOR CARD BUILDER =====
+function buildHonorCard(student, rank, isKh, defaultImg) {
+    const khRanks = ['', '១', '២', '៣', '៤', '៥'];
+    const badgeClass = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'plain';
+    const rankLabel = isKh ? khRanks[rank] : String(rank);
+    const moulfont = isKh ? `style="font-family:'Moul',serif;"` : '';
+    const imgSrc = student?.img || defaultImg;
+    const scoreTag = !isKh ? `<div class="score-tag">Avg: ${student?.avg.toFixed(2)||'0.00'}</div>` : '';
+
+    const C = 'white';
+    const S = '20px';
+    const T = '4px';
+
+    const corners = `
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;">
+        <div style="position:absolute;top:0;left:0;width:${S};height:${S};border-top:${T} solid ${C};border-left:${T} solid ${C};"></div>
+        <div style="position:absolute;top:0;right:0;width:${S};height:${S};border-top:${T} solid ${C};border-right:${T} solid ${C};"></div>
+        <div style="position:absolute;bottom:0;left:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-left:${T} solid ${C};"></div>
+        <div style="position:absolute;bottom:0;right:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-right:${T} solid ${C};"></div>
+    </div>`;
+
+    return `
+    <div class="student-card">
+        <div class="rank-badge ${badgeClass}" ${moulfont}>${rankLabel}</div>
+        <div style="position:relative;display:inline-block;width:46mm;height:38mm;">
+            <div class="photo-box"><img src="${imgSrc}"></div>
+            ${corners}
+        </div>
+        <span class="name-tag">${student?.name||''}</span>
+        ${scoreTag}
+    </div>`;
+}
+
 function khGenerate(type) {
     if(!khSel.value) return alert('សូមជ្រើសរើសថ្នាក់!');
     const month=document.getElementById('kh-monthInput').value;
@@ -495,7 +555,6 @@ function khGenerate(type) {
     const passCount=passed.length,passFemale=passed.filter(s=>s.isFemale).length;
     const failCount=totalS-passCount,failFemale=femaleS-passFemale;
     const defaultImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
-    const badgeClass=i=>i===0?'gold':i===1?'silver':i===2?'bronze':'plain';
     let html=`<div class="page-frame"><div class="frame-border">
     <div class="doc-header">
         <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
@@ -510,7 +569,7 @@ function khGenerate(type) {
             <thead><tr><th>ល.រ</th><th>អត្ត​លេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th><th>មធ្យមភាគ</th><th>ចំណាត់ថ្នាក់</th><th>និទ្ទេស</th></tr></thead>
             <tbody>${students.map((s,i)=>{
                 let grade='',color='';
-                if(s.avg>=85){grade='ល្អ';color='#15803d';}else if(s.avg>=70){grade='ល្អបង្គួរ';color='#2563eb';}else if(s.avg>=50){grade='មធ្យម';color='#d97706';}else{grade='យឺត';color='#be123c';}
+                if(s.avg>=85){grade='ល្អ';color='#15803d';}else if(s.avg>=70){grade='ល្អបង្គួរ';color='#2563eb';}else if(s.avg>=50){grade='មធ្យម';color='#d97706';}else{grade='ខ្សោយ';color='#be123c';}
                 return `<tr><td>${i+1}</td><td>${s.id}</td><td class="name-col">${s.name}</td><td>${s.sex}</td><td><b>${s.avg.toFixed(2)}</b></td><td><b>${i+1}</b></td><td style="color:${color};font-weight:700;">${grade}</td></tr>`;
             }).join('')}</tbody>
         </table>
@@ -521,27 +580,23 @@ function khGenerate(type) {
         </div>`;
     } else {
         const top5=students.slice(0,5);
-        html+=`<div style="text-align:center;margin-top:1mm;">
+        html+=`<div style="text-align:center;margin-top:0mm;">
             <h1 style="font-family:'Moul',serif;color:#be123c;font-size:36pt;margin:0;">តារាងកិត្តិយស</h1>
-            <div style="width:180px;height:2px;background:#f59e0b;margin:5px auto;"></div>
-            <p style="font-family:'Moul',serif;font-size:12pt;font-weight:bold;margin-top:8px;">ថ្នាក់៖ ${khSel.value}</p>
+            <div style="width:180px;height:2px;background:#f59e0b;margin:3px auto;"></div>
+            <p style="font-family:'Moul',serif;font-size:12pt;font-weight:bold;margin-top:4px;">ថ្នាក់៖ ${khSel.value}</p>
             <p style="font-family:'Moul',serif;font-size:11pt;">ប្រចាំខែ ${month} ឆ្នាំ ${year}</p>
         </div>
         <div class="honor-grid">
             <div class="honor-row">
-                <div class="student-card">
-                    <div class="rank-badge gold" style="font-family:'Moul',serif;">១</div>
-                    <div class="photo-box"><img src="${top5[0]?.img||defaultImg}"></div>
-                    <span class="name-tag">${top5[0]?.name||''}</span>
-                </div>
+                ${buildHonorCard(top5[0], 1, true, defaultImg)}
             </div>
             ${top5.length>=3?`<div class="honor-row">
-                <div class="student-card"><div class="rank-badge silver" style="font-family:'Moul',serif;">២</div><div class="photo-box"><img src="${top5[1]?.img||defaultImg}"></div><span class="name-tag">${top5[1]?.name||''}</span></div>
-                <div class="student-card"><div class="rank-badge bronze" style="font-family:'Moul',serif;">៣</div><div class="photo-box"><img src="${top5[2]?.img||defaultImg}"></div><span class="name-tag">${top5[2]?.name||''}</span></div>
+                ${buildHonorCard(top5[1], 2, true, defaultImg)}
+                ${buildHonorCard(top5[2], 3, true, defaultImg)}
             </div>`:''}
             ${top5.length>=5?`<div class="honor-row">
-                <div class="student-card"><div class="rank-badge plain" style="font-family:'Moul',serif;">៤</div><div class="photo-box"><img src="${top5[3]?.img||defaultImg}"></div><span class="name-tag">${top5[3]?.name||''}</span></div>
-                <div class="student-card"><div class="rank-badge plain" style="font-family:'Moul',serif;">៥</div><div class="photo-box"><img src="${top5[4]?.img||defaultImg}"></div><span class="name-tag">${top5[4]?.name||''}</span></div>
+                ${buildHonorCard(top5[3], 4, true, defaultImg)}
+                ${buildHonorCard(top5[4], 5, true, defaultImg)}
             </div>`:''}
         </div>`;
     }
@@ -702,27 +757,23 @@ function enGenerate(type) {
         </div>`;
     } else {
         const top5=students.slice(0,5);
-        const badgeClass=i=>i===0?'gold':i===1?'silver':i===2?'bronze':'plain';
-        html+=`<div style="text-align:center;margin-top:1mm;">
+        html+=`<div style="text-align:center;margin-top:0mm;">
             <h1 style="font-family:'Playfair Display',serif;font-size:28pt;color:#be123c;">Honor Board</h1>
-            <div style="width:140px;height:2px;background:#f59e0b;margin:4px auto;"></div>
-            <p style="font-weight:700;font-size:12pt;margin-top:6px;">Class: ${enSel.value}</p>
+            <div style="width:140px;height:2px;background:#f59e0b;margin:3px auto;"></div>
+            <p style="font-weight:700;font-size:12pt;margin-top:4px;">Class: ${enSel.value}</p>
             <p style="font-size:11pt;">Month: ${month} &nbsp;|&nbsp; Academic Year: ${year}</p>
         </div>
         <div class="honor-grid">
-            <div class="honor-row"><div class="student-card">
-                <div class="rank-badge gold">1</div>
-                <div class="photo-box"><img src="${top5[0]?.img||defaultImg}"></div>
-                <span class="name-tag">${top5[0]?.name||''}</span>
-                <div class="score-tag">Avg: ${top5[0]?.avg.toFixed(2)||'0.00'}</div>
-            </div></div>
+            <div class="honor-row">
+                ${buildHonorCard(top5[0], 1, false, defaultImg)}
+            </div>
             ${top5.length>=3?`<div class="honor-row">
-                <div class="student-card"><div class="rank-badge silver">2</div><div class="photo-box"><img src="${top5[1]?.img||defaultImg}"></div><span class="name-tag">${top5[1]?.name||''}</span><div class="score-tag">Avg: ${top5[1]?.avg.toFixed(2)||'0.00'}</div></div>
-                <div class="student-card"><div class="rank-badge bronze">3</div><div class="photo-box"><img src="${top5[2]?.img||defaultImg}"></div><span class="name-tag">${top5[2]?.name||''}</span><div class="score-tag">Avg: ${top5[2]?.avg.toFixed(2)||'0.00'}</div></div>
+                ${buildHonorCard(top5[1], 2, false, defaultImg)}
+                ${buildHonorCard(top5[2], 3, false, defaultImg)}
             </div>`:''}
             ${top5.length>=5?`<div class="honor-row">
-                <div class="student-card"><div class="rank-badge plain">4</div><div class="photo-box"><img src="${top5[3]?.img||defaultImg}"></div><span class="name-tag">${top5[3]?.name||''}</span><div class="score-tag">Avg: ${top5[3]?.avg.toFixed(2)||'0.00'}</div></div>
-                <div class="student-card"><div class="rank-badge plain">5</div><div class="photo-box"><img src="${top5[4]?.img||defaultImg}"></div><span class="name-tag">${top5[4]?.name||''}</span><div class="score-tag">Avg: ${top5[4]?.avg.toFixed(2)||'0.00'}</div></div>
+                ${buildHonorCard(top5[3], 4, false, defaultImg)}
+                ${buildHonorCard(top5[4], 5, false, defaultImg)}
             </div>`:''}
         </div>`;
     }
