@@ -2,171 +2,76 @@
 <html lang="km">
 <head>
     <meta charset="UTF-8">
-    <title>MyKids International School — Management System</title>
+    <title>MiKids International School — Management System</title>
     <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        :root {
-            --navy: #1e3a8a; --red: #be123c; --gold: #f59e0b;
-            --blue: #2563eb; --green: #15803d; --border: #e2e8f0;
-        }
-
+        :root { --navy: #1e3a8a; --red: #be123c; --gold: #f59e0b; --blue: #2563eb; --green: #15803d; --border: #e2e8f0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DM Sans', 'Battambang', sans-serif; background: #eef2f7; min-height: 100vh; }
-
-        /* ===== APP HEADER ===== */
-        .app-header {
-            background: linear-gradient(135deg, var(--navy) 0%, #2d4fa3 50%, var(--blue) 100%);
-            padding: 18px 30px 0;
-            box-shadow: 0 4px 20px rgba(30,58,138,0.3);
-        }
-        .app-header-top {
-            display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
-        }
+        .app-header { background: linear-gradient(135deg, var(--navy) 0%, #2d4fa3 50%, var(--blue) 100%); padding: 18px 30px 0; box-shadow: 0 4px 20px rgba(30,58,138,0.3); }
+        .app-header-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
         .app-logo { width: 70px; height: auto; filter: brightness(0) invert(1); }
-        .app-title-block {}
-        .app-title {
-            font-family: 'Playfair Display', 'Moul', serif;
-            font-size: 20pt; color: white; font-weight: 700; line-height: 1.2;
-        }
+        .app-title { font-family: 'Playfair Display', 'Moul', serif; font-size: 20pt; color: white; font-weight: 700; line-height: 1.2; }
         .app-subtitle { font-size: 9.5pt; color: rgba(255,255,255,0.75); margin-top: 2px; letter-spacing: .5px; }
-
-        /* ===== TABS ===== */
         .tab-bar { display: flex; gap: 4px; }
-        .tab-btn {
-            padding: 12px 28px 14px;
-            border: none; border-radius: 10px 10px 0 0;
-            font-family: 'DM Sans', sans-serif; font-size: 10.5pt; font-weight: 600;
-            cursor: pointer; transition: .2s; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);
-            position: relative;
-        }
+        .tab-btn { padding: 12px 28px 14px; border: none; border-radius: 10px 10px 0 0; font-family: 'DM Sans', sans-serif; font-size: 10.5pt; font-weight: 600; cursor: pointer; transition: .2s; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); position: relative; }
         .tab-btn:hover { background: rgba(255,255,255,0.25); color: white; }
-        .tab-btn.active {
-            background: white; color: var(--navy);
-            box-shadow: 0 -3px 12px rgba(0,0,0,0.1);
-        }
-        .tab-btn.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 3px; background: var(--gold);
-        }
+        .tab-btn.active { background: white; color: var(--navy); box-shadow: 0 -3px 12px rgba(0,0,0,0.1); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
         .tab-icon { margin-right: 7px; }
-
-        /* ===== TAB PANELS ===== */
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
         .panel-body { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
-
-        /* ===== CONTROL CARD ===== */
-        .ctrl-card {
-            background: white; padding: 26px; border-radius: 14px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.07); margin-bottom: 24px;
-        }
-        .ctrl-card h2 {
-            font-family: 'Moul', 'Playfair Display', serif; font-size: 13pt;
-            color: var(--navy); margin-bottom: 18px; text-align: center;
-        }
+        .ctrl-card { background: white; padding: 26px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); margin-bottom: 24px; }
+        .ctrl-card h2 { font-family: 'Moul', 'Playfair Display', serif; font-size: 13pt; color: var(--navy); margin-bottom: 18px; text-align: center; }
         .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-bottom: 18px; }
         label { display: block; font-size: 8.5pt; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
-        select, input[type=text] {
-            width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
-            border-radius: 8px; font-family: inherit; font-size: 10pt;
-            color: #1e293b; outline: none; transition: border .2s;
-        }
+        select, input[type=text] { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 10pt; color: #1e293b; outline: none; transition: border .2s; }
         select:focus, input[type=text]:focus { border-color: var(--blue); }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            border: none; padding: 11px 22px; border-radius: 8px; cursor: pointer;
-            font-family: inherit; font-weight: 700; font-size: 10pt; margin: 4px;
-            transition: .2s; display: inline-flex; align-items: center; gap: 6px;
-        }
+        .btn { border: none; padding: 11px 22px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 10pt; margin: 4px; transition: .2s; display: inline-flex; align-items: center; gap: 6px; }
         .btn:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-navy  { background: var(--navy);  color: white; }
-        .btn-red   { background: var(--red);   color: white; }
+        .btn-navy { background: var(--navy); color: white; }
+        .btn-red { background: var(--red); color: white; }
         .btn-green { background: var(--green); color: white; display:none; margin: 18px auto; width: 260px; font-size: 11pt; justify-content: center; }
-        .btn-moul  { font-family: 'Moul', serif; }
-
-        /* ===== SCORE TABLE ===== */
+        .btn-moul { font-family: 'Moul', serif; }
         .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
         table.score-tbl { min-width: 1300px; width: 100%; border-collapse: collapse; font-size: 8pt; }
-        .score-tbl th {
-            background: var(--navy); color: white; padding: 8px 5px;
-            font-weight: 600; font-size: 7.5pt; text-align: center;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
+        .score-tbl th { background: var(--navy); color: white; padding: 8px 5px; font-weight: 600; font-size: 7.5pt; text-align: center; border: 1px solid rgba(255,255,255,0.15); }
         .score-tbl td { border: 1px solid #e2e8f0; padding: 5px 4px; text-align: center; }
         .score-tbl tbody tr:nth-child(even) { background: #f8fafc; }
         .score-tbl tbody tr:hover { background: #eff6ff; }
-        .score-tbl input[type=number] {
-            width: 44px; padding: 4px; border: 1px solid #cbd5e1;
-            border-radius: 4px; text-align: center; font-size: 8.5pt;
-        }
+        .score-tbl input[type=number] { width: 44px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 8.5pt; }
         .score-tbl input[type=number]:focus { outline: none; border-color: var(--blue); }
         .score-tbl input.in-name { width: 130px; border: none; background: transparent; font-size: 8.5pt; font-family: 'Battambang', 'DM Sans', sans-serif; }
-
-        /* ===== PDF CONTAINER (shared) ===== */
-        .pdf-wrap {
-            display: none; width: 210mm; background: white !important;
-            margin: 0 auto; border: 1px solid #ddd;
-        }
+        .pdf-wrap { display: none; width: 210mm; background: white !important; margin: 0 auto; border: 1px solid #ddd; }
         .page-frame { padding: 7mm; box-sizing: border-box; }
         .frame-border { padding: 2mm; }
-
-        /* PDF Header */
         .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1mm; }
         .hd-logo img { width: 190px; height: auto; }
         .hd-nation-kh { text-align: center; font-family: 'Moul', serif; font-size: 14pt; line-height: 1.6; }
         .hd-nation-en { text-align: center; font-family: 'Playfair Display', serif; font-size: 13pt; font-weight: 700; line-height: 1.5; color: #1e293b; }
-
-        /* Report Table PDF */
         .rpt-tbl { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-top: 8px; }
         .rpt-tbl th, .rpt-tbl td { border: 1px solid black !important; padding: 5px 6px; text-align: center; }
         .rpt-tbl th { background: #f1f5f9 !important; font-weight: 700; font-size: 9pt; }
         .rpt-tbl td.name-col { text-align: left; padding-left: 10px; }
         .stats { margin-top: 14px; font-size: 9pt; line-height: 2; }
-
-        /* Honor Board PDF */
         .honor-grid { display: flex; flex-direction: column; align-items: center; gap: 2mm; margin-top: 2mm; }
-        .honor-row  { display: flex; justify-content: center; gap: 8mm; }
+        .honor-row { display: flex; justify-content: center; gap: 8mm; }
         .student-card { width: 46mm; text-align: center; }
-        .rank-badge {
-            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; margin: 0 auto -14px; font-weight: 800; font-size: 13pt;
-            color: white !important; position: relative; z-index: 2; border: 3px solid white;
-            box-shadow: 0 2px 6px rgba(0,0,0,.25);
-        }
-        .rank-badge.gold   { background: var(--gold) !important; }
+        .rank-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto -14px; font-weight: 800; font-size: 13pt; color: white !important; position: relative; z-index: 2; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+        .rank-badge.gold { background: var(--gold) !important; }
         .rank-badge.silver { background: #94a3b8 !important; }
         .rank-badge.bronze { background: #d97706 !important; }
-        .rank-badge.plain  { background: var(--red) !important; }
-
-        /* Photo box for honor board */
-        .photo-frame-wrap {
-            position: relative;
-            width: 46mm;
-            height: 38mm;
-            display: inline-block;
-        }
-        .photo-box {
-            width: 46mm;
-            height: 38mm;
-            border: 3px solid white !important;
-            overflow: hidden;
-        }
+        .rank-badge.plain { background: var(--red) !important; }
+        .photo-box { width: 46mm; height: 38mm; border: 3px solid white !important; overflow: hidden; }
         .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        .name-tag {
-            background: var(--navy) !important; color: white !important; padding: 4px 3px;
-            border-radius: 8px; font-size: 8.5pt; font-weight: 700; margin-top: 4px; display: block;
-        }
+        .name-tag { background: var(--navy) !important; color: white !important; padding: 4px 3px; border-radius: 8px; font-size: 8.5pt; font-weight: 700; margin-top: 4px; display: block; }
         .score-tag { font-size: 7.5pt; color: #64748b; margin-top: 2px; }
-
-        /* Footer */
         .doc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 16px; font-size: 9.5pt; }
         .sig-block { text-align: center; }
         .sig-block strong { display: block; margin-top: 10px; font-size: 10pt; font-family: 'Moul', 'Playfair Display', serif; }
-
         @media print {
             body { background: white; }
             .app-header, .ctrl-card, .btn-green, .tab-panel:not(.active) { display: none !important; }
@@ -176,43 +81,29 @@
 </head>
 <body>
 
-<!-- ===== APP HEADER ===== -->
 <div class="app-header">
     <div class="app-header-top">
-        <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MyKids">
+        <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MiKids">
         <div class="app-title-block">
-            <div class="app-title">MyKids International School</div>
+            <div class="app-title">MiKids International School</div>
             <div class="app-subtitle">Student Score Management System · ប្រព័ន្ធគ្រប់គ្រងពិន្ទុសិស្ស</div>
         </div>
     </div>
     <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('kh', this)">
-            <span class="tab-icon">🇰🇭</span> ថ្នាក់ភាសាខ្មែរ
-        </button>
-        <button class="tab-btn" onclick="switchTab('en', this)">
-            <span class="tab-icon">🇬🇧</span> English Classes
-        </button>
+        <button class="tab-btn active" onclick="switchTab('kh', this)"><span class="tab-icon">🇰🇭</span> ថ្នាក់ភាសាខ្មែរ</button>
+        <button class="tab-btn" onclick="switchTab('en', this)"><span class="tab-icon">🇬🇧</span> English Classes</button>
     </div>
 </div>
 
-<!-- ========== TAB: KHMER ========== -->
+<!-- TAB: KHMER -->
 <div id="tab-kh" class="tab-panel active">
 <div class="panel-body">
 <div class="ctrl-card">
     <h2>ប្រព័ន្ធគ្រប់គ្រងពិន្ទុ — ថ្នាក់ភាសាខ្មែរ</h2>
     <div class="grid3">
-        <div>
-            <label>ជ្រើសរើសថ្នាក់</label>
-            <select id="kh-classSelect" onchange="khLoadStudents()"></select>
-        </div>
-        <div>
-            <label>ប្រចាំខែ</label>
-            <input type="text" id="kh-monthInput" value="មករា">
-        </div>
-        <div>
-            <label>ឆ្នាំសិក្សា</label>
-            <input type="text" id="kh-yearInput" value="២០២៥-២០២៦">
-        </div>
+        <div><label>ជ្រើសរើសថ្នាក់</label><select id="kh-classSelect" onchange="khLoadStudents()"></select></div>
+        <div><label>ប្រចាំខែ</label><input type="text" id="kh-monthInput" value="មករា"></div>
+        <div><label>ឆ្នាំសិក្សា</label><input type="text" id="kh-yearInput" value="២០២៥-២០២៦"></div>
     </div>
     <div class="tbl-wrap">
     <table class="score-tbl" border="1" cellspacing="0" cellpadding="4">
@@ -254,13 +145,11 @@
     </div>
 </div>
 <div id="kh-pdf-content" class="pdf-wrap"></div>
-<div style="text-align:center;">
-    <button id="kh-downloadBtn" class="btn btn-green" onclick="khDownloadPDF()">📥 ទាញយក PDF</button>
-</div>
+<div style="text-align:center;"><button id="kh-downloadBtn" class="btn btn-green" onclick="khDownloadPDF()">📥 ទាញយក PDF</button></div>
 </div>
 </div>
 
-<!-- ========== TAB: ENGLISH ========== -->
+<!-- TAB: ENGLISH -->
 <div id="tab-en" class="tab-panel">
 <div class="panel-body">
 <div class="ctrl-card">
@@ -270,25 +159,15 @@
             <label>Select Class</label>
             <select id="en-classSelect" onchange="enLoadStudents()">
                 <option value="">-- Choose a Class --</option>
-                <option>Fount1 Morning</option>
-                <option>Fount1 Evening</option>
-                <option>Fount2 Morning</option>
-                <option>Fount2 Afternoon</option>
-                <option>Nursery Morning</option>
-                <option>Nursery Afternoon</option>
-                <option>Level1 Morning</option>
-                <option>Level1 Afternoon</option>
+                <option>Fount1 Morning</option><option>Fount1 Evening</option>
+                <option>Fount2 Morning</option><option>Fount2 Afternoon</option>
+                <option>Nursery Morning</option><option>Nursery Afternoon</option>
+                <option>Level1 Morning</option><option>Level1 Afternoon</option>
                 <option>Level 2</option>
             </select>
         </div>
-        <div>
-            <label>Month</label>
-            <input type="text" id="en-monthInput" value="January">
-        </div>
-        <div>
-            <label>Academic Year</label>
-            <input type="text" id="en-yearInput" value="2025-2026">
-        </div>
+        <div><label>Month</label><input type="text" id="en-monthInput" value="January"></div>
+        <div><label>Academic Year</label><input type="text" id="en-yearInput" value="2025-2026"></div>
     </div>
     <div class="tbl-wrap">
     <table class="score-tbl" border="1" cellspacing="0">
@@ -315,18 +194,15 @@
     </div>
     <div style="text-align:center; margin-top:20px;">
         <button class="btn btn-navy" onclick="enGenerate('REPORT')">📋 Generate Rankings Report</button>
-        <button class="btn btn-red"  onclick="enGenerate('HONOR')">🏆 Generate Honor Board</button>
+        <button class="btn btn-red" onclick="enGenerate('HONOR')">🏆 Generate Honor Board</button>
     </div>
 </div>
 <div id="en-pdf-content" class="pdf-wrap"></div>
-<div style="text-align:center;">
-    <button id="en-downloadBtn" class="btn btn-green" onclick="enDownloadPDF()">📥 Download PDF</button>
-</div>
+<div style="text-align:center;"><button id="en-downloadBtn" class="btn btn-green" onclick="enDownloadPDF()">📥 Download PDF</button></div>
 </div>
 </div>
 
 <script>
-// ===== TAB SWITCH =====
 function switchTab(id, el) {
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -334,103 +210,124 @@ function switchTab(id, el) {
     el.classList.add('active');
 }
 
-// ===== CORNER FRAME HTML helper =====
-function cornerFrame(imgSrc, isKh) {
-    return `<div class="photo-frame-wrap">
-        <div class="photo-box"><img src="${imgSrc}"></div>
-        <div class="corner-frame-overlay">
-            <div class="cf-tl"></div>
-            <div class="cf-tr"></div>
-            <div class="cf-bl"></div>
-            <div class="cf-br"></div>
+// ===== KEY FIX: Only divide by subjects that have scores entered =====
+function calcAvg(row) {
+    const inputs = row.querySelectorAll('.sc');
+    const values = Array.from(inputs)
+        .filter(x => x.value.trim() !== '')
+        .map(x => parseFloat(x.value))
+        .filter(v => !isNaN(v));
+    if (values.length === 0) return { total: 0, avg: 0 };
+    const total = values.reduce((a, b) => a + b, 0);
+    return { total, avg: total / values.length };
+}
+
+function buildHonorCard(student, rank, isKh, defaultImg) {
+    const khRanks = ['','១','២','៣','៤','៥'];
+    const badgeClass = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'plain';
+    const rankLabel = isKh ? khRanks[rank] : String(rank);
+    const moulfont = isKh ? `style="font-family:'Moul',serif;"` : '';
+    const imgSrc = student?.img || defaultImg;
+    const scoreTag = !isKh ? `<div class="score-tag">Avg: ${student?.avg.toFixed(2)||'0.00'}</div>` : '';
+    const C='white', S='20px', T='4px';
+    const corners = `<div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;">
+        <div style="position:absolute;top:0;left:0;width:${S};height:${S};border-top:${T} solid ${C};border-left:${T} solid ${C};"></div>
+        <div style="position:absolute;top:0;right:0;width:${S};height:${S};border-top:${T} solid ${C};border-right:${T} solid ${C};"></div>
+        <div style="position:absolute;bottom:0;left:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-left:${T} solid ${C};"></div>
+        <div style="position:absolute;bottom:0;right:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-right:${T} solid ${C};"></div>
+    </div>`;
+    return `<div class="student-card">
+        <div class="rank-badge ${badgeClass}" ${moulfont}>${rankLabel}</div>
+        <div style="position:relative;display:inline-block;width:46mm;height:38mm;">
+            <div class="photo-box"><img src="${imgSrc}"></div>${corners}
         </div>
+        <span class="name-tag">${student?.name||''}</span>${scoreTag}
     </div>`;
 }
 
-// ===== KHMER STUDENT DB =====
+// ===== KHMER DB =====
 const khStudentDB = {
     'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)': [
-        { id:'64', name:'ឃុន ទេពង្ស', sex:'M' },{ id:'121', name:'នឿន វឌ្ឍនា', sex:'M' },
-        { id:'128', name:'ពិសិទ្អ ច័ន្ទវឌ្ឃ', sex:'M' },{ id:'141', name:'ហេង សាជីង', sex:'F' },
-        { id:'132', name:'សុ បញ្ញា មុនិរាជ', sex:'M' },{ id:'67', name:'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex:'M' },
-        { id:'173', name:'សាន្ត លីប៉េង', sex:'M' },{ id:'163', name:'អេង លីឆេង', sex:'M' },
-        { id:'179', name:'ចន្ថា វឌ្ឍនា', sex:'M' },{ id:'162', name:'យ៉ាន់ សុខឡេង', sex:'M' }
+        {id:'64',name:'ឃុន ទេពង្ស',sex:'M'},{id:'121',name:'នឿន វឌ្ឍនា',sex:'M'},
+        {id:'128',name:'ពិសិទ្អ ច័ន្ទវឌ្ឃ',sex:'M'},{id:'141',name:'ហេង សាជីង',sex:'F'},
+        {id:'132',name:'សុ បញ្ញា មុនិរាជ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
+        {id:'173',name:'សាន្ត លីប៉េង',sex:'M'},{id:'163',name:'អេង លីឆេង',sex:'M'},
+        {id:'179',name:'ចន្ថា វឌ្ឍនា',sex:'M'},{id:'162',name:'យ៉ាន់ សុខឡេង',sex:'M'}
     ],
     'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(រសៀល)': [
-        { id:'139', name:'ហ៊ឺម ម៉ីអ៊ិ', sex:'M' },{ id:'146', name:'លន វេស្សភូ', sex:'M' },
-        { id:'102', name:'សំណាង វីរៈបុត្រ', sex:'M' },{ id:'67', name:'ឈឿន ប៊ុនធឿនពុទ្ធិ', sex:'M' },
-        { id:'87', name:'អ៊ុំ រតនាសិទ្ធីការ', sex:'F' },{ id:'113', name:'ស៊ីម សិទ្ធីការ', sex:'F' },
-        { id:'164', name:'អ៊ូសុវណ្ណ វេហា៍', sex:'M' },{ id:'177', name:'តាំង ហ៊ួយលីន', sex:'F' },
-        { id:'165', name:'លឹម លីម៉េងគ័ង្គ', sex:'M' }
+        {id:'139',name:'ហ៊ឺម ម៉ីអ៊ិ',sex:'M'},{id:'146',name:'លន វេស្សភូ',sex:'M'},
+        {id:'102',name:'សំណាង វីរៈបុត្រ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
+        {id:'87',name:'អ៊ុំ រតនាសិទ្ធីការ',sex:'F'},{id:'113',name:'ស៊ីម សិទ្ធីការ',sex:'F'},
+        {id:'164',name:'អ៊ូសុវណ្ណ វេហា៍',sex:'M'},{id:'177',name:'តាំង ហ៊ួយលីន',sex:'F'},
+        {id:'165',name:'លឹម លីម៉េងគ័ង្គ',sex:'M'}
     ],
     'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(ព្រឹក)': [
-        { id:'29', name:'ខាន់ មុនីវល្លភា', sex:'F' },{ id:'101', name:'ឈុំ វីរ់សិទ្ធ', sex:'M' },
-        { id:'65', name:'និត សុធារ៉ា', sex:'M' },{ id:'78', name:'នី លីជីង', sex:'F' },
-        { id:'117', name:'ហ៊ុន រាណ្ណជេណស្ដា', sex:'M' },{ id:'47', name:'បុណ្ណជេ ជេននី', sex:'F' },
-        { id:'14', name:'ឃុន ទេពី', sex:'F' },{ id:'62', name:'រិទ្ធី ពិស្សុតសុក្រឹត', sex:'M' },
-        { id:'49', name:'ងិន ទៀនវិន', sex:'M' },{ id:'107', name:'សុភក្រ័ វរៈសិទ្ធ', sex:'M' },
-        { id:'170', name:'អុលវឿន ដាវីន', sex:'F' },{ id:'137', name:'សឿន ចាន់សុមេធា', sex:'F' },
-        { id:'1', name:'ប៊ុនរីន ខេមរា', sex:'M' }
+        {id:'29',name:'ខាន់ មុនីវល្លភា',sex:'F'},{id:'101',name:'ឈុំ វីរ់សិទ្ធ',sex:'M'},
+        {id:'65',name:'និត សុធារ៉ា',sex:'M'},{id:'78',name:'នី លីជីង',sex:'F'},
+        {id:'117',name:'ហ៊ុន រាណ្ណជេណស្ដា',sex:'M'},{id:'47',name:'បុណ្ណជេ ជេននី',sex:'F'},
+        {id:'14',name:'ឃុន ទេពី',sex:'F'},{id:'62',name:'រិទ្ធី ពិស្សុតសុក្រឹត',sex:'M'},
+        {id:'49',name:'ងិន ទៀនវិន',sex:'M'},{id:'107',name:'សុភក្រ័ វរៈសិទ្ធ',sex:'M'},
+        {id:'170',name:'អុលវឿន ដាវីន',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
+        {id:'1',name:'ប៊ុនរីន ខេមរា',sex:'M'}
     ],
     'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(រសៀល)': [
-        { id:'54', name:'យន់ លីហេង', sex:'M' },{ id:'75', name:'វិន បញ្ញាវ័ន្ត', sex:'M' },
-        { id:'90', name:'សូ រស្មីពនិតា', sex:'F' },{ id:'50', name:'សូយ រក្សា', sex:'M' },
-        { id:'72', name:'អ៊ូ សុខអាមី', sex:'F' },{ id:'137', name:'សឿន ចាន់សុមេធា', sex:'F' },
-        { id:'176', name:'ប៉ឹម ម៉ីជូ', sex:'F' },{ id:'85', name:'សេរី ចន្ទវឌ្ឍនា', sex:'M' },
-        { id:'161', name:'លីម ហ៊ីប៉', sex:'M' },{ id:'55', name:'អ៊ា ជីងហ័រ', sex:'F' },
-        { id:'79', name:'មិត្ត ម៉េងហេង', sex:'M' },{ id:'74', name:'ចាន់នី​ ស៊ូសាន់ណា', sex:'F' }
+        {id:'54',name:'យន់ លីហេង',sex:'M'},{id:'75',name:'វិន បញ្ញាវ័ន្ត',sex:'M'},
+        {id:'90',name:'សូ រស្មីពនិតា',sex:'F'},{id:'50',name:'សូយ រក្សា',sex:'M'},
+        {id:'72',name:'អ៊ូ សុខអាមី',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
+        {id:'176',name:'ប៉ឹម ម៉ីជូ',sex:'F'},{id:'85',name:'សេរី ចន្ទវឌ្ឍនា',sex:'M'},
+        {id:'161',name:'លីម ហ៊ីប៉',sex:'M'},{id:'55',name:'អ៊ា ជីងហ័រ',sex:'F'},
+        {id:'79',name:'មិត្ត ម៉េងហេង',sex:'M'},{id:'74',name:'ចាន់នី​ ស៊ូសាន់ណា',sex:'F'}
     ],
     'ថ្នាក់ទី១(ព្រឹក)': [
-        { id:'75', name:'ឆន វិរៈសិទ្ធ', sex:'M' },{ id:'47', name:'ជាឡិច កូលីន', sex:'M' },
-        { id:'92', name:'សុបញ្ញា សោម៉ា', sex:'F' },{ id:'83', name:'ភឺន ថិរាយុ', sex:'M' },
-        { id:'69', name:'លី ឆាយឈ័ន', sex:'M' },{ id:'77', name:'វុឌ្ឍី ដាវីកា', sex:'F' },
-        { id:'93', name:'អ៊ឹម រោចនា', sex:'F' },{ id:'72', name:'វង្ស ដារ៉ាវីន', sex:'M' },
-        { id:'95', name:'ចាវ វិនហាវ', sex:'M' },{ id:'80', name:'ងួន បញ្ញាពុទ្ធិស័ក្តិ', sex:'M' }
+        {id:'75',name:'ឆន វិរៈសិទ្ធ',sex:'M'},{id:'47',name:'ជាឡិច កូលីន',sex:'M'},
+        {id:'92',name:'សុបញ្ញា សោម៉ា',sex:'F'},{id:'83',name:'ភឺន ថិរាយុ',sex:'M'},
+        {id:'69',name:'លី ឆាយឈ័ន',sex:'M'},{id:'77',name:'វុឌ្ឍី ដាវីកា',sex:'F'},
+        {id:'93',name:'អ៊ឹម រោចនា',sex:'F'},{id:'72',name:'វង្ស ដារ៉ាវីន',sex:'M'},
+        {id:'95',name:'ចាវ វិនហាវ',sex:'M'},{id:'80',name:'ងួន បញ្ញាពុទ្ធិស័ក្តិ',sex:'M'}
     ],
     'ថ្នាក់ទី១(រសៀល)': [
-        { id:'88', name:'ចំរើន ចន្ទឧត្តម', sex:'M' },{ id:'91', name:'ប៊ូ សាធុការ', sex:'F' },
-        { id:'82', name:'សេន យ៉ាស្មីនណា', sex:'F' },{ id:'85', name:'ដន សុភ័ណ្ឌម៉ូនីកា', sex:'F' },
-        { id:'78', name:'ស៊្រាង សៀវហ្វុង', sex:'F' },{ id:'73', name:'ហេង ម៉ីអ៊ិ', sex:'F' },
-        { id:'74', name:'អឿន ពៅវល័ក្ខ', sex:'F' },{ id:'70', name:'រ័ត្ន រ៉ាថេប', sex:'M' }
+        {id:'88',name:'ចំរើន ចន្ទឧត្តម',sex:'M'},{id:'91',name:'ប៊ូ សាធុការ',sex:'F'},
+        {id:'82',name:'សេន យ៉ាស្មីនណា',sex:'F'},{id:'85',name:'ដន សុភ័ណ្ឌម៉ូនីកា',sex:'F'},
+        {id:'78',name:'ស៊្រាង សៀវហ្វុង',sex:'F'},{id:'73',name:'ហេង ម៉ីអ៊ិ',sex:'F'},
+        {id:'74',name:'អឿន ពៅវល័ក្ខ',sex:'F'},{id:'70',name:'រ័ត្ន រ៉ាថេប',sex:'M'}
     ],
     'ថ្នាក់ទី២(ព្រឹក)': [
-        { id:'21', name:'ចន្ថា លីតា', sex:'F' },{ id:'20', name:'ពៅ សុខចិន', sex:'M' },
-        { id:'17', name:'ណារ៉ា ហេងលី', sex:'M' },{ id:'23', name:'សុខ សម្បត្តិ', sex:'M' },
-        { id:'22', name:'សុខ ដាលីស', sex:'F' },{ id:'29', name:'ស្រស់ រីហ្សា', sex:'F' },
-        { id:'41', name:'ប៉ុន រីយ៉ា', sex:'F' }
+        {id:'21',name:'ចន្ថា លីតា',sex:'F'},{id:'20',name:'ពៅ សុខចិន',sex:'M'},
+        {id:'17',name:'ណារ៉ា ហេងលី',sex:'M'},{id:'23',name:'សុខ សម្បត្តិ',sex:'M'},
+        {id:'22',name:'សុខ ដាលីស',sex:'F'},{id:'29',name:'ស្រស់ រីហ្សា',sex:'F'},
+        {id:'41',name:'ប៉ុន រីយ៉ា',sex:'F'}
     ],
     'ថ្នាក់ទី២(រសៀល)': [
-        { id:'59', name:'អុង បញ្ញារ័ត្ន', sex:'M' },{ id:'31', name:'មិត្ត ម៉េងហួរ', sex:'M' },
-        { id:'14', name:'យស់ នរិន្ទ', sex:'M' },{ id:'33', name:'វង់ ពុទ្ធិតា', sex:'F' },
-        { id:'62', name:'សូយ បញ្ញា', sex:'M' },{ id:'40', name:'សេង សាណា', sex:'F' },
-        { id:'39', name:'ចន្ទ សុផាយ៉ាមេឃ', sex:'M' },{ id:'30', name:'ស៊នវីរៈ បញ្ញាទេពី', sex:'F' },
-        { id:'27', name:'ប៊ូ តាម៉ា', sex:'M' },{ id:'65', name:'កែវ មុន្នីឧត្តម', sex:'M' },
-        { id:'56', name:'វន្តវិន ថាណា', sex:'F' },{ id:'36', name:'ហាន ស៊ីវហ័រ', sex:'F' }
+        {id:'59',name:'អុង បញ្ញារ័ត្ន',sex:'M'},{id:'31',name:'មិត្ត ម៉េងហួរ',sex:'M'},
+        {id:'14',name:'យស់ នរិន្ទ',sex:'M'},{id:'33',name:'វង់ ពុទ្ធិតា',sex:'F'},
+        {id:'62',name:'សូយ បញ្ញា',sex:'M'},{id:'40',name:'សេង សាណា',sex:'F'},
+        {id:'39',name:'ចន្ទ សុផាយ៉ាមេឃ',sex:'M'},{id:'30',name:'ស៊នវីរៈ បញ្ញាទេពី',sex:'F'},
+        {id:'27',name:'ប៊ូ តាម៉ា',sex:'M'},{id:'65',name:'កែវ មុន្នីឧត្តម',sex:'M'},
+        {id:'56',name:'វន្តវិន ថាណា',sex:'F'},{id:'36',name:'ហាន ស៊ីវហ័រ',sex:'F'}
     ],
     'ថ្នាក់ទី៣(រសៀល)': [
-        { id:'9', name:'កែវ វីនសុឧត្តតារា', sex:'F' },{ id:'28', name:'ឈុនតា រតនៈខុនដូ', sex:'F' },
-        { id:'10', name:'យ៉ា ពេជ្រម៉ូនីកា', sex:'F' },{ id:'15', name:'លីម ពុទ្ធិរាជ', sex:'M' },
-        { id:'3', name:'ឡ ស៊ីវហ៊ួយ', sex:'F' },{ id:'2', name:'ឡាយ មុនិចិន្ដា', sex:'F' },
-        { id:'24', name:'អោក និសិ្សត', sex:'M' },{ id:'44', name:'ចំរើន ម៉ានីតា', sex:'F' }
+        {id:'9',name:'កែវ វីនសុឧត្តតារា',sex:'F'},{id:'28',name:'ឈុនតា រតនៈខុនដូ',sex:'F'},
+        {id:'10',name:'យ៉ា ពេជ្រម៉ូនីកា',sex:'F'},{id:'15',name:'លីម ពុទ្ធិរាជ',sex:'M'},
+        {id:'3',name:'ឡ ស៊ីវហ៊ួយ',sex:'F'},{id:'2',name:'ឡាយ មុនិចិន្ដា',sex:'F'},
+        {id:'24',name:'អោក និសិ្សត',sex:'M'},{id:'44',name:'ចំរើន ម៉ានីតា',sex:'F'}
     ],
     'ថ្នាក់ទី៤ ៥': [
-        { id:'1', name:'ឡាយ ភារ៉ាដាវីឌ', sex:'M' },{ id:'42', name:'វង្ស មុនីកញ្ចនា', sex:'F' },
-        { id:'43', name:'ពៅ សុនីតា', sex:'F' },{ id:'4', name:'ឡ សុវណ្ណហាន់ណា', sex:'F' }
+        {id:'1',name:'ឡាយ ភារ៉ាដាវីឌ',sex:'M'},{id:'42',name:'វង្ស មុនីកញ្ចនា',sex:'F'},
+        {id:'43',name:'ពៅ សុនីតា',sex:'F'},{id:'4',name:'ឡ សុវណ្ណហាន់ណា',sex:'F'}
     ],
     'មត្ដេយ្យកម្រិតទាប(ព្រឹក)': [
-        { id:'147', name:'សុភក្រ វីរបុត្រ', sex:'M' },{ id:'166', name:'លីណា រ័ត្នហុងស័ក្កិអធិភូ', sex:'M' },
-        { id:'160', name:'ថូ សិទ្ធីយូណា', sex:'F' },{ id:'175', name:'សុគន្ធ បញ្ញាស័ក', sex:'M' },
-        { id:'000', name:'សុីម សរឧត្តម', sex:'M' },{ id:'000', name:'និត សុធារាជ', sex:'M' },
-        { id:'000', name:'វ៉េត នីរីតា', sex:'F' }
+        {id:'147',name:'សុភក្រ វីរបុត្រ',sex:'M'},{id:'166',name:'លីណា រ័ត្នហុងស័ក្កិអធិភូ',sex:'M'},
+        {id:'160',name:'ថូ សិទ្ធីយូណា',sex:'F'},{id:'175',name:'សុគន្ធ បញ្ញាស័ក',sex:'M'},
+        {id:'000',name:'សុីម សរឧត្តម',sex:'M'},{id:'000',name:'និត សុធារាជ',sex:'M'},
+        {id:'000',name:'វ៉េត នីរីតា',sex:'F'}
     ],
     'មត្ដេយ្យកម្រិតទាប(រសៀល)': [
-        { id:'175', name:'ហេង ជ័រមុីង', sex:'F' },{ id:'000', name:'សាយ សុខហេង', sex:'M' },
-        { id:'181', name:'ឈន ចេស្ដា', sex:'M' },{ id:'000', name:'លាង លក្សុិកញ្ចនា', sex:'M' },
-        { id:'177', name:'វាសនា ពេជ្រសុម៉ាលី', sex:'F' }
+        {id:'175',name:'ហេង ជ័រមុីង',sex:'F'},{id:'000',name:'សាយ សុខហេង',sex:'M'},
+        {id:'181',name:'ឈន ចេស្ដា',sex:'M'},{id:'000',name:'លាង លក្សុិកញ្ចនា',sex:'M'},
+        {id:'177',name:'វាសនា ពេជ្រសុម៉ាលី',sex:'F'}
     ]
 };
 
-// Init KH select
 const khSel = document.getElementById('kh-classSelect');
 khSel.add(new Option('-- ជ្រើសរើសថ្នាក់ --', ''));
 Object.keys(khStudentDB).forEach(c => khSel.add(new Option(c, c)));
@@ -445,22 +342,22 @@ function khLoadStudents() {
             <td><b>${s.id}</b></td>
             <td><input type="text" value="${s.name}" class="in-name" style="width:128px;border:none;font-family:'Battambang',sans-serif;"></td>
             <td>${s.sex}</td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc sci" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc art" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc aksor" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc val" min="0" max="100" placeholder="0" style="width:42px"></td>
-            <td><input type="number" class="sc chinese" min="0" max="100" placeholder="0" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc math" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc sci" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc art" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc aksor" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc val" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc chinese" min="0" max="100" placeholder="-" style="width:42px"></td>
             <td style="text-align:center;">
                 <input type="file" accept="image/*" onchange="previewImg(event,'kh-img${i}')" style="width:130px;display:block;margin:0 auto;">
                 <input type="hidden" id="kh-img${i}">
@@ -476,8 +373,8 @@ function previewImg(e, id) {
 }
 
 function getKhmerDate(date) {
-    const d = new Date(date);
-    const year=d.getFullYear(), month=d.getMonth()+1, day=d.getDate();
+    const d=new Date(date);
+    const year=d.getFullYear(),month=d.getMonth()+1,day=d.getDate();
     const khDays=['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
     const toKh=n=>String(n).split('').map(c=>'០១២៣៤៥៦៧៨៩'[+c]).join('');
     const a=Math.floor((14-month)/12),y=year+4800-a,m=month+12*a-3;
@@ -499,39 +396,6 @@ function getKhmerDate(date) {
     return `ថ្ងៃ${khDays[d.getDay()]} ${toKh(lunarDay)}${paksha} ខែ${khMonth} ឆ្នាំ${animal} ${sasor} ព.ស${toKh(BE)}`;
 }
 
-// ===== SHARED HONOR CARD BUILDER =====
-function buildHonorCard(student, rank, isKh, defaultImg) {
-    const khRanks = ['', '១', '២', '៣', '៤', '៥'];
-    const badgeClass = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'plain';
-    const rankLabel = isKh ? khRanks[rank] : String(rank);
-    const moulfont = isKh ? `style="font-family:'Moul',serif;"` : '';
-    const imgSrc = student?.img || defaultImg;
-    const scoreTag = !isKh ? `<div class="score-tag">Avg: ${student?.avg.toFixed(2)||'0.00'}</div>` : '';
-
-    const C = 'white';
-    const S = '20px';
-    const T = '4px';
-
-    const corners = `
-    <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;">
-        <div style="position:absolute;top:0;left:0;width:${S};height:${S};border-top:${T} solid ${C};border-left:${T} solid ${C};"></div>
-        <div style="position:absolute;top:0;right:0;width:${S};height:${S};border-top:${T} solid ${C};border-right:${T} solid ${C};"></div>
-        <div style="position:absolute;bottom:0;left:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-left:${T} solid ${C};"></div>
-        <div style="position:absolute;bottom:0;right:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-right:${T} solid ${C};"></div>
-    </div>`;
-
-    return `
-    <div class="student-card">
-        <div class="rank-badge ${badgeClass}" ${moulfont}>${rankLabel}</div>
-        <div style="position:relative;display:inline-block;width:46mm;height:38mm;">
-            <div class="photo-box"><img src="${imgSrc}"></div>
-            ${corners}
-        </div>
-        <span class="name-tag">${student?.name||''}</span>
-        ${scoreTag}
-    </div>`;
-}
-
 function khGenerate(type) {
     if(!khSel.value) return alert('សូមជ្រើសរើសថ្នាក់!');
     const month=document.getElementById('kh-monthInput').value;
@@ -541,12 +405,7 @@ function khGenerate(type) {
     const today=`ភ្នំពេញ, ថ្ងៃទី ${now.getDate()} ខែ ${month} ឆ្នាំ ${now.getFullYear()}`;
     let students=[];
     document.querySelectorAll('.kh-row').forEach((r,i)=>{
-        const get=cls=>Array.from(r.querySelectorAll(`.sc.${cls}`)).map(x=>parseFloat(x.value)||0);
-        const km=get('km'),math=get('math'),sci=get('sci'),soc=get('soc'),phy=get('phy'),art=get('art'),val=get('val'),aksor=get('aksor'),chinese=get('chinese');
-        const sum=a=>a.reduce((x,y)=>x+y,0);
-        const all=[...km,...math,...sci,...soc,...phy,...art,...val,...aksor,...chinese];
-        const total=sum(all);
-        const avg=all.length>0?total/all.length:0;
+        const {total,avg} = calcAvg(r);
         students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',isFemale:r.dataset.sex==='F',total,avg,img:document.getElementById('kh-img'+i).value});
     });
     students.sort((a,b)=>b.avg-a.avg);
@@ -575,8 +434,8 @@ function khGenerate(type) {
         </table>
         <div class="stats">
             <p>បញ្ជីបញ្ចប់ត្រឹមលេខ ${totalS} (${totalS} នាក់) ក្នុងនោះស្រី ${femaleS} នាក់</p>
-            <p>សិស្សជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${((passCount/totalS)*100).toFixed(2)}%</p>
-            <p>សិស្សធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${((failCount/totalS)*100).toFixed(2)}%</p>
+            <p>សិស្សជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${totalS>0?((passCount/totalS)*100).toFixed(2):0}%</p>
+            <p>សិស្សធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${totalS>0?((failCount/totalS)*100).toFixed(2):0}%</p>
         </div>`;
     } else {
         const top5=students.slice(0,5);
@@ -587,17 +446,9 @@ function khGenerate(type) {
             <p style="font-family:'Moul',serif;font-size:11pt;">ប្រចាំខែ ${month} ឆ្នាំ ${year}</p>
         </div>
         <div class="honor-grid">
-            <div class="honor-row">
-                ${buildHonorCard(top5[0], 1, true, defaultImg)}
-            </div>
-            ${top5.length>=3?`<div class="honor-row">
-                ${buildHonorCard(top5[1], 2, true, defaultImg)}
-                ${buildHonorCard(top5[2], 3, true, defaultImg)}
-            </div>`:''}
-            ${top5.length>=5?`<div class="honor-row">
-                ${buildHonorCard(top5[3], 4, true, defaultImg)}
-                ${buildHonorCard(top5[4], 5, true, defaultImg)}
-            </div>`:''}
+            <div class="honor-row">${buildHonorCard(top5[0],1,true,defaultImg)}</div>
+            ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,true,defaultImg)}${buildHonorCard(top5[2],3,true,defaultImg)}</div>`:''}
+            ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,true,defaultImg)}${buildHonorCard(top5[4],5,true,defaultImg)}</div>`:''}
         </div>`;
     }
     html+=`<div class="doc-footer">
@@ -612,7 +463,7 @@ function khGenerate(type) {
 
 function khDownloadPDF(){downloadPDF('kh-pdf-content','kh-downloadBtn',khSel.value,document.getElementById('kh-monthInput').value);}
 
-// ===== ENGLISH STUDENT DB =====
+// ===== ENGLISH DB =====
 const enStudentDB = {
     'Fount1 Morning': [
         {id:'82',name:'Chhang Singreay',sex:'F'},{id:'149',name:'Thi Sovann Sithika',sex:'F'},
@@ -690,16 +541,16 @@ function enLoadStudents() {
             <td><b>${s.id}</b></td>
             <td><input class="in-name" type="text" value="${s.name}" style="width:138px;border:none;font-family:'DM Sans',sans-serif;"></td>
             <td>${s.sex==='M'?'Male':'Female'}</td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc math" min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc sci"  min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc soc"  min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc art"  min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc phy"  min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc comp" min="0" max="100" placeholder="0" style="width:44px"></td>
-            <td><input type="number" class="sc life" min="0" max="100" placeholder="0" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc math" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc sci" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc art" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc comp" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc life" min="0" max="100" placeholder="-" style="width:44px"></td>
             <td>
                 <input type="file" accept="image/*" onchange="previewImg(event,'en-img${i}')" style="width:135px;display:block;margin:0 auto;">
                 <input type="hidden" id="en-img${i}">
@@ -717,11 +568,7 @@ function enGenerate(type) {
     const todayKh=getKhmerDate(now);
     let students=[];
     document.querySelectorAll('.en-row').forEach((r,i)=>{
-        const get=cls=>Array.from(r.querySelectorAll(`.sc.${cls}`)).map(x=>parseFloat(x.value)||0);
-        const en=get('en'),math=get('math'),sci=get('sci'),soc=get('soc'),art=get('art'),phy=get('phy'),comp=get('comp'),life=get('life');
-        const all=[...en,...math,...sci,...soc,...art,...phy,...comp,...life];
-        const total=all.reduce((a,b)=>a+b,0);
-        const avg=all.length>0?total/all.length:0;
+        const {total,avg} = calcAvg(r);
         students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'Male':'Female',isFemale:r.dataset.sex==='F',total,avg,img:document.getElementById('en-img'+i).value});
     });
     students.sort((a,b)=>b.avg-a.avg);
@@ -752,8 +599,8 @@ function enGenerate(type) {
         </table>
         <div class="stats" style="font-size:9pt;line-height:2;margin-top:14px;">
             <p>Total students: <b>${totalS}</b> (Female: <b>${femaleS}</b>)</p>
-            <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${((passCount/totalS)*100).toFixed(1)}%</p>
-            <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${((failCount/totalS)*100).toFixed(1)}%</p>
+            <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${totalS>0?((passCount/totalS)*100).toFixed(1):0}%</p>
+            <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${totalS>0?((failCount/totalS)*100).toFixed(1):0}%</p>
         </div>`;
     } else {
         const top5=students.slice(0,5);
@@ -764,17 +611,9 @@ function enGenerate(type) {
             <p style="font-size:11pt;">Month: ${month} &nbsp;|&nbsp; Academic Year: ${year}</p>
         </div>
         <div class="honor-grid">
-            <div class="honor-row">
-                ${buildHonorCard(top5[0], 1, false, defaultImg)}
-            </div>
-            ${top5.length>=3?`<div class="honor-row">
-                ${buildHonorCard(top5[1], 2, false, defaultImg)}
-                ${buildHonorCard(top5[2], 3, false, defaultImg)}
-            </div>`:''}
-            ${top5.length>=5?`<div class="honor-row">
-                ${buildHonorCard(top5[3], 4, false, defaultImg)}
-                ${buildHonorCard(top5[4], 5, false, defaultImg)}
-            </div>`:''}
+            <div class="honor-row">${buildHonorCard(top5[0],1,false,defaultImg)}</div>
+            ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,false,defaultImg)}${buildHonorCard(top5[2],3,false,defaultImg)}</div>`:''}
+            ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,false,defaultImg)}${buildHonorCard(top5[4],5,false,defaultImg)}</div>`:''}
         </div>`;
     }
     html+=`<div class="doc-footer">
@@ -789,14 +628,12 @@ function enGenerate(type) {
 
 function enDownloadPDF(){downloadPDF('en-pdf-content','en-downloadBtn',enSel.value,document.getElementById('en-monthInput').value);}
 
-// ===== SHARED PDF DOWNLOAD =====
 function downloadPDF(contentId, btnId, className, month) {
     const el=document.getElementById(contentId);
     if(!el||!el.innerHTML.trim()){alert('Please generate a report first!');return;}
     const btn=document.getElementById(btnId);
     const orig=btn.innerHTML;
-    btn.innerHTML='⏳ Generating PDF...';
-    btn.disabled=true;
+    btn.innerHTML='⏳ Generating PDF...'; btn.disabled=true;
     const W=794;
     el.style.width=W+'px';
     setTimeout(()=>{
@@ -818,13 +655,13 @@ function downloadPDF(contentId, btnId, className, month) {
                     const srcY=yOff/mmPerPx;
                     const sliceH=Math.min(A4H/mmPerPx,canvas.height-srcY);
                     const sc=document.createElement('canvas');
-                    sc.width=canvas.width;sc.height=sliceH;
+                    sc.width=canvas.width; sc.height=sliceH;
                     sc.getContext('2d').drawImage(canvas,0,srcY,canvas.width,sliceH,0,0,canvas.width,sliceH);
                     pdf.addImage(sc.toDataURL('image/jpeg',0.95),'JPEG',0,0,A4W,sliceH*mmPerPx);
                     yOff+=A4H;
                 }
             }
-            pdf.save(`MyKids_${(className||'class').replace(/\s+/g,'_')}_${month}_${Date.now()}.pdf`);
+            pdf.save(`MiKids_${(className||'class').replace(/\s+/g,'_')}_${month}_${Date.now()}.pdf`);
             btn.innerHTML=orig; btn.disabled=false;
             alert('✅ PDF downloaded successfully!');
         }).catch(err=>{
