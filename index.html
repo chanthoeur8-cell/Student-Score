@@ -210,7 +210,7 @@ function switchTab(id, el) {
     el.classList.add('active');
 }
 
-// ===== KEY FIX: Only divide by subjects that have scores entered =====
+// ===== Average: divide only by subjects with entered scores =====
 function calcAvg(row) {
     const inputs = row.querySelectorAll('.sc');
     const values = Array.from(inputs)
@@ -220,6 +220,23 @@ function calcAvg(row) {
     if (values.length === 0) return { total: 0, avg: 0 };
     const total = values.reduce((a, b) => a + b, 0);
     return { total, avg: total / values.length };
+}
+
+// ===== KH Grade: <5=ខ្សោយ, <6.5=មធ្យម, <8=ល្អបង្គួរ, >=8=ល្អ =====
+function khGrade(avg) {
+    if (avg >= 8)   return { text: 'ល្អ',        color: '#15803d' };
+    if (avg >= 6.5) return { text: 'ល្អបង្គួរ',  color: '#2563eb' };
+    if (avg >= 5)   return { text: 'មធ្យម',      color: '#d97706' };
+    return               { text: 'ខ្សោយ',      color: '#be123c' };
+}
+
+// ===== EN Grade: same thresholds scaled to 100 =====
+// <50=Fail, <65=Average, <80=Good, >=80=Excellent
+function enGrade(avg) {
+    if (avg >= 8)   return { text: 'A — Excellent', color: '#15803d' };
+    if (avg >= 6.5) return { text: 'B — Good',      color: '#2563eb' };
+    if (avg >= 5)   return { text: 'C — Average',   color: '#d97706' };
+    return               { text: 'F — Fail',        color: '#be123c' };
 }
 
 function buildHonorCard(student, rank, isKh, defaultImg) {
@@ -342,22 +359,22 @@ function khLoadStudents() {
             <td><b>${s.id}</b></td>
             <td><input type="text" value="${s.name}" class="in-name" style="width:128px;border:none;font-family:'Battambang',sans-serif;"></td>
             <td>${s.sex}</td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc math" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc sci" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc art" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc aksor" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc val" min="0" max="100" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc chinese" min="0" max="100" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc math" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc sci" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc art" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc aksor" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc val" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
+            <td><input type="number" class="sc chinese" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
             <td style="text-align:center;">
                 <input type="file" accept="image/*" onchange="previewImg(event,'kh-img${i}')" style="width:130px;display:block;margin:0 auto;">
                 <input type="hidden" id="kh-img${i}">
@@ -406,36 +423,68 @@ function khGenerate(type) {
     let students=[];
     document.querySelectorAll('.kh-row').forEach((r,i)=>{
         const {total,avg} = calcAvg(r);
-        students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',isFemale:r.dataset.sex==='F',total,avg,img:document.getElementById('kh-img'+i).value});
+        students.push({
+            id:r.dataset.id,
+            name:r.querySelector('.in-name').value,
+            sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',
+            isFemale:r.dataset.sex==='F',
+            total, avg,
+            img:document.getElementById('kh-img'+i).value
+        });
     });
     students.sort((a,b)=>b.avg-a.avg);
-    const totalS=students.length,femaleS=students.filter(s=>s.isFemale).length;
-    const passed=students.filter(s=>s.avg>=50);
-    const passCount=passed.length,passFemale=passed.filter(s=>s.isFemale).length;
-    const failCount=totalS-passCount,failFemale=femaleS-passFemale;
+    const totalS=students.length, femaleS=students.filter(s=>s.isFemale).length;
+    // Pass = avg >= 5
+    const passed=students.filter(s=>s.avg>=5);
+    const passCount=passed.length, passFemale=passed.filter(s=>s.isFemale).length;
+    const failCount=totalS-passCount, failFemale=femaleS-passFemale;
     const defaultImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
+
     let html=`<div class="page-frame"><div class="frame-border">
     <div class="doc-header">
         <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
         <div class="hd-nation-kh">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br><span style="font-family:serif;font-weight:normal;">✵✵✵</span></div>
     </div>`;
+
     if(type==='REPORT'){
         html+=`<div style="text-align:center;margin:4px 0 8px;">
             <h1 style="font-family:'Moul',serif;font-size:16pt;color:black;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
             <p style="font-family:'Moul',serif;font-size:11pt;font-weight:bold;">ថ្នាក់៖ ${khSel.value} | ខែ${month} | ឆ្នាំ${year}</p>
         </div>
         <table class="rpt-tbl">
-            <thead><tr><th>ល.រ</th><th>អត្ត​លេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th><th>មធ្យមភាគ</th><th>ចំណាត់ថ្នាក់</th><th>និទ្ទេស</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>ល.រ</th>
+                    <th>អត្ត​លេខ</th>
+                    <th>គោត្តនាម-នាម</th>
+                    <th>ភេទ</th>
+                    <th>ពិន្ទុសរុប</th>
+                    <th>មធ្យមភាគ</th>
+                    <th>ចំណាត់ថ្នាក់</th>
+                    <th>និទ្ទេស</th>
+                </tr>
+            </thead>
             <tbody>${students.map((s,i)=>{
-                let grade='',color='';
-                if(s.avg>=85){grade='ល្អ';color='#15803d';}else if(s.avg>=70){grade='ល្អបង្គួរ';color='#2563eb';}else if(s.avg>=50){grade='មធ្យម';color='#d97706';}else{grade='ខ្សោយ';color='#be123c';}
-                return `<tr><td>${i+1}</td><td>${s.id}</td><td class="name-col">${s.name}</td><td>${s.sex}</td><td><b>${s.avg.toFixed(2)}</b></td><td><b>${i+1}</b></td><td style="color:${color};font-weight:700;">${grade}</td></tr>`;
+                const g = khGrade(s.avg);
+                return `<tr>
+                    <td>${i+1}</td>
+                    <td>${s.id}</td>
+                    <td class="name-col">${s.name}</td>
+                    <td>${s.sex}</td>
+                    <td><b>${s.total.toFixed(2)}</b></td>
+                    <td><b>${s.avg.toFixed(2)}</b></td>
+                    <td><b>${i+1}</b></td>
+                    <td style="color:${g.color};font-weight:700;">${g.text}</td>
+                </tr>`;
             }).join('')}</tbody>
         </table>
         <div class="stats">
             <p>បញ្ជីបញ្ចប់ត្រឹមលេខ ${totalS} (${totalS} នាក់) ក្នុងនោះស្រី ${femaleS} នាក់</p>
             <p>សិស្សជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${totalS>0?((passCount/totalS)*100).toFixed(2):0}%</p>
             <p>សិស្សធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${totalS>0?((failCount/totalS)*100).toFixed(2):0}%</p>
+            <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
+                &#9632; ល្អ: ≥ ៨ &nbsp;|&nbsp; &#9632; ល្អបង្គួរ: ៦,៥–៧,៩ &nbsp;|&nbsp; &#9632; មធ្យម: ៥–៦,៤ &nbsp;|&nbsp; &#9632; ខ្សោយ: &lt; ៥
+            </p>
         </div>`;
     } else {
         const top5=students.slice(0,5);
@@ -451,10 +500,12 @@ function khGenerate(type) {
             ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,true,defaultImg)}${buildHonorCard(top5[4],5,true,defaultImg)}</div>`:''}
         </div>`;
     }
+
     html+=`<div class="doc-footer">
         <div class="sig-block">បានឃើញ និងឯកភាព<strong>នាយកសាលា</strong></div>
         <div class="sig-block" style="text-align:right;">${todayKh}<br><span style="display:block;text-align:center;">${today}</span><strong style="text-align:center;">គ្រូប្រចាំថ្នាក់</strong></div>
     </div></div></div>`;
+
     const c=document.getElementById('kh-pdf-content');
     c.innerHTML=html; c.style.display='block';
     document.getElementById('kh-downloadBtn').style.display='block';
@@ -541,16 +592,16 @@ function enLoadStudents() {
             <td><b>${s.id}</b></td>
             <td><input class="in-name" type="text" value="${s.name}" style="width:138px;border:none;font-family:'DM Sans',sans-serif;"></td>
             <td>${s.sex==='M'?'Male':'Female'}</td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc math" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc sci" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc soc" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc art" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc phy" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc comp" min="0" max="100" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc life" min="0" max="100" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc math" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc sci" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc art" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc comp" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
+            <td><input type="number" class="sc life" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
             <td>
                 <input type="file" accept="image/*" onchange="previewImg(event,'en-img${i}')" style="width:135px;display:block;margin:0 auto;">
                 <input type="hidden" id="en-img${i}">
@@ -569,38 +620,67 @@ function enGenerate(type) {
     let students=[];
     document.querySelectorAll('.en-row').forEach((r,i)=>{
         const {total,avg} = calcAvg(r);
-        students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'Male':'Female',isFemale:r.dataset.sex==='F',total,avg,img:document.getElementById('en-img'+i).value});
+        students.push({
+            id:r.dataset.id,
+            name:r.querySelector('.in-name').value,
+            sex:r.dataset.sex==='M'?'Male':'Female',
+            isFemale:r.dataset.sex==='F',
+            total, avg,
+            img:document.getElementById('en-img'+i).value
+        });
     });
     students.sort((a,b)=>b.avg-a.avg);
-    const totalS=students.length,femaleS=students.filter(s=>s.isFemale).length;
-    const passed=students.filter(s=>s.avg>=50);
-    const passCount=passed.length,passFemale=passed.filter(s=>s.isFemale).length;
-    const failCount=totalS-passCount,failFemale=femaleS-passFemale;
+    const totalS=students.length, femaleS=students.filter(s=>s.isFemale).length;
+    const passed=students.filter(s=>s.avg>=5);
+    const passCount=passed.length, passFemale=passed.filter(s=>s.isFemale).length;
+    const failCount=totalS-passCount, failFemale=femaleS-passFemale;
     const defaultImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
-    const gradeLabel=avg=>{
-        if(avg>=90)return{text:'A — Excellent',color:'#15803d'};
-        if(avg>=75)return{text:'B — Good',color:'#2563eb'};
-        if(avg>=50)return{text:'C — Average',color:'#d97706'};
-        return{text:'F — Fail',color:'#be123c'};
-    };
+
     let html=`<div class="page-frame"><div class="frame-border">
     <div class="doc-header">
         <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
         <div class="hd-nation-en">Kingdom of Cambodia<br>Nation · Religion · King<br>✵ ✵ ✵</div>
     </div>`;
+
     if(type==='REPORT'){
         html+=`<div style="text-align:center;margin:4px 0 8px;">
             <h1 style="font-family:'Playfair Display',serif;font-size:17pt;font-weight:700;">Monthly Academic Rankings</h1>
             <p style="font-size:10.5pt;font-weight:600;margin-top:3px;">Class: ${enSel.value} &nbsp;|&nbsp; Month: ${month} &nbsp;|&nbsp; Academic Year: ${year}</p>
         </div>
         <table class="rpt-tbl">
-            <thead><tr><th>#</th><th>Student ID</th><th>Full Name</th><th>Gender</th><th>Average</th><th>Rank</th><th>Grade</th></tr></thead>
-            <tbody>${students.map((s,i)=>{const g=gradeLabel(s.avg);return`<tr><td>${i+1}</td><td>${s.id}</td><td class="name-col">${s.name}</td><td>${s.sex}</td><td><b>${s.avg.toFixed(2)}</b></td><td><b>${i+1}</b></td><td style="color:${g.color};font-weight:700;">${g.text}</td></tr>`;}).join('')}</tbody>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student ID</th>
+                    <th>Full Name</th>
+                    <th>Gender</th>
+                    <th>Total</th>
+                    <th>Average</th>
+                    <th>Rank</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>${students.map((s,i)=>{
+                const g=enGrade(s.avg);
+                return `<tr>
+                    <td>${i+1}</td>
+                    <td>${s.id}</td>
+                    <td class="name-col">${s.name}</td>
+                    <td>${s.sex}</td>
+                    <td><b>${s.total.toFixed(2)}</b></td>
+                    <td><b>${s.avg.toFixed(2)}</b></td>
+                    <td><b>${i+1}</b></td>
+                    <td style="color:${g.color};font-weight:700;">${g.text}</td>
+                </tr>`;
+            }).join('')}</tbody>
         </table>
         <div class="stats" style="font-size:9pt;line-height:2;margin-top:14px;">
             <p>Total students: <b>${totalS}</b> (Female: <b>${femaleS}</b>)</p>
             <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${totalS>0?((passCount/totalS)*100).toFixed(1):0}%</p>
             <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${totalS>0?((failCount/totalS)*100).toFixed(1):0}%</p>
+            <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
+                &#9632; Excellent (A): ≥ 8 &nbsp;|&nbsp; &#9632; Good (B): 6.5–7.9 &nbsp;|&nbsp; &#9632; Average (C): 5–6.4 &nbsp;|&nbsp; &#9632; Fail (F): &lt; 5
+            </p>
         </div>`;
     } else {
         const top5=students.slice(0,5);
@@ -616,10 +696,12 @@ function enGenerate(type) {
             ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,false,defaultImg)}${buildHonorCard(top5[4],5,false,defaultImg)}</div>`:''}
         </div>`;
     }
+
     html+=`<div class="doc-footer">
         <div class="sig-block">Approved by<strong>School Director</strong></div>
         <div class="sig-block" style="text-align:right;">${todayKh}<br><span style="display:block;text-align:center;">${todayEn}</span><strong style="display:block;text-align:center;">Class Teacher</strong></div>
     </div></div></div>`;
+
     const c=document.getElementById('en-pdf-content');
     c.innerHTML=html; c.style.display='block';
     document.getElementById('en-downloadBtn').style.display='block';
