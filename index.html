@@ -222,21 +222,22 @@ function calcAvg(row) {
     return { total, avg: total / values.length };
 }
 
-// ===== KH Grade: <5=ខ្សោយ, <6.5=មធ្យម, <8=ល្អបង្គួរ, >=8=ល្អ =====
+// ===== KH Grade: <5=ខ្សោយ, <6.5=មធ្យម, <8=ល្អបង្គួរ, <9.5=ល្អ, >=9.5=ល្អណាស់ =====
 function khGrade(avg) {
-    if (avg >= 8)   return { text: 'ល្អ',        color: '#15803d' };
+    if (avg >= 9.5) return { text: 'ល្អណាស់',    color: '#7c3aed' };
+    if (avg >= 8)   return { text: 'ល្អ',         color: '#15803d' };
     if (avg >= 6.5) return { text: 'ល្អបង្គួរ',  color: '#2563eb' };
-    if (avg >= 5)   return { text: 'មធ្យម',      color: '#d97706' };
-    return               { text: 'ខ្សោយ',      color: '#be123c' };
+    if (avg >= 5)   return { text: 'មធ្យម',       color: '#d97706' };
+    return               { text: 'ខ្សោយ',       color: '#be123c' };
 }
 
-// ===== EN Grade: same thresholds scaled to 100 =====
-// <50=Fail, <65=Average, <80=Good, >=80=Excellent
+// ===== EN Grade: <5=Fail, <6.5=Average, <8=Good, <9.5=Excellent, >=9.5=Outstanding =====
 function enGrade(avg) {
-    if (avg >= 8)   return { text: 'A — Excellent', color: '#15803d' };
-    if (avg >= 6.5) return { text: 'B — Good',      color: '#2563eb' };
-    if (avg >= 5)   return { text: 'C — Average',   color: '#d97706' };
-    return               { text: 'F — Fail',        color: '#be123c' };
+    if (avg >= 9.5) return { text: 'A+ — Outstanding', color: '#7c3aed' };
+    if (avg >= 8)   return { text: 'A — Excellent',    color: '#15803d' };
+    if (avg >= 6.5) return { text: 'B — Good',         color: '#2563eb' };
+    if (avg >= 5)   return { text: 'C — Average',      color: '#d97706' };
+    return               { text: 'F — Fail',           color: '#be123c' };
 }
 
 function buildHonorCard(student, rank, isKh, defaultImg) {
@@ -483,7 +484,7 @@ function khGenerate(type) {
             <p>សិស្សជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${totalS>0?((passCount/totalS)*100).toFixed(2):0}%</p>
             <p>សិស្សធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${totalS>0?((failCount/totalS)*100).toFixed(2):0}%</p>
             <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
-                &#9632; ល្អ: ≥ ៨ &nbsp;|&nbsp; &#9632; ល្អបង្គួរ: ៦,៥–៧,៩ &nbsp;|&nbsp; &#9632; មធ្យម: ៥–៦,៤ &nbsp;|&nbsp; &#9632; ខ្សោយ: &lt; ៥
+                &#9632; ល្អណាស់: ≥ ៩,៥ &nbsp;|&nbsp; &#9632; ល្អ: ៨–៩,៤ &nbsp;|&nbsp; &#9632; ល្អបង្គួរ: ៦,៥–៧,៩ &nbsp;|&nbsp; &#9632; មធ្យម: ៥–៦,៤ &nbsp;|&nbsp; &#9632; ខ្សោយ: &lt; ៥
             </p>
         </div>`;
     } else {
@@ -679,7 +680,7 @@ function enGenerate(type) {
             <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${totalS>0?((passCount/totalS)*100).toFixed(1):0}%</p>
             <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${totalS>0?((failCount/totalS)*100).toFixed(1):0}%</p>
             <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
-                &#9632; Excellent (A): ≥ 8 &nbsp;|&nbsp; &#9632; Good (B): 6.5–7.9 &nbsp;|&nbsp; &#9632; Average (C): 5–6.4 &nbsp;|&nbsp; &#9632; Fail (F): &lt; 5
+                &#9632; Outstanding (A+): ≥ 9.5 &nbsp;|&nbsp; &#9632; Excellent (A): 8–9.4 &nbsp;|&nbsp; &#9632; Good (B): 6.5–7.9 &nbsp;|&nbsp; &#9632; Average (C): 5–6.4 &nbsp;|&nbsp; &#9632; Fail (F): &lt; 5
             </p>
         </div>`;
     } else {
