@@ -1,757 +1,909 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-    <meta charset="UTF-8">
-    <title>MiKids International School — Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root { --navy: #1e3a8a; --red: #be123c; --gold: #f59e0b; --blue: #2563eb; --green: #15803d; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', 'Battambang', sans-serif; background: #eef2f7; min-height: 100vh; }
-        .app-header { background: linear-gradient(135deg, var(--navy) 0%, #2d4fa3 50%, var(--blue) 100%); padding: 18px 30px 0; box-shadow: 0 4px 20px rgba(30,58,138,0.3); }
-        .app-header-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-        .app-logo { width: 70px; height: auto; filter: brightness(0) invert(1); }
-        .app-title { font-family: 'Playfair Display', 'Moul', serif; font-size: 20pt; color: white; font-weight: 700; line-height: 1.2; }
-        .app-subtitle { font-size: 9.5pt; color: rgba(255,255,255,0.75); margin-top: 2px; letter-spacing: .5px; }
-        .tab-bar { display: flex; gap: 4px; }
-        .tab-btn { padding: 12px 28px 14px; border: none; border-radius: 10px 10px 0 0; font-family: 'DM Sans', sans-serif; font-size: 10.5pt; font-weight: 600; cursor: pointer; transition: .2s; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); position: relative; }
-        .tab-btn:hover { background: rgba(255,255,255,0.25); color: white; }
-        .tab-btn.active { background: white; color: var(--navy); box-shadow: 0 -3px 12px rgba(0,0,0,0.1); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
-        .tab-icon { margin-right: 7px; }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-        .panel-body { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
-        .ctrl-card { background: white; padding: 26px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.07); margin-bottom: 24px; }
-        .ctrl-card h2 { font-family: 'Moul', 'Playfair Display', serif; font-size: 13pt; color: var(--navy); margin-bottom: 18px; text-align: center; }
-        .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-bottom: 18px; }
-        label { display: block; font-size: 8.5pt; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
-        select, input[type=text] { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 10pt; color: #1e293b; outline: none; transition: border .2s; }
-        select:focus, input[type=text]:focus { border-color: var(--blue); }
-        .btn { border: none; padding: 11px 22px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 700; font-size: 10pt; margin: 4px; transition: .2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-navy { background: var(--navy); color: white; }
-        .btn-red { background: var(--red); color: white; }
-        .btn-green { background: var(--green); color: white; display:none; margin: 18px auto; width: 260px; font-size: 11pt; justify-content: center; }
-        .btn-moul { font-family: 'Moul', serif; }
-        .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-        table.score-tbl { min-width: 1300px; width: 100%; border-collapse: collapse; font-size: 8pt; }
-        .score-tbl th { background: var(--navy); color: white; padding: 8px 5px; font-weight: 600; font-size: 7.5pt; text-align: center; border: 1px solid rgba(255,255,255,0.15); }
-        .score-tbl td { border: 1px solid #e2e8f0; padding: 5px 4px; text-align: center; }
-        .score-tbl tbody tr:nth-child(even) { background: #f8fafc; }
-        .score-tbl tbody tr:hover { background: #eff6ff; }
-        .score-tbl input[type=number] { width: 44px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 8.5pt; }
-        .score-tbl input[type=number]:focus { outline: none; border-color: var(--blue); }
-        .score-tbl input.in-name { width: 130px; border: none; background: transparent; font-size: 8.5pt; font-family: 'Battambang', 'DM Sans', sans-serif; }
-        .pdf-wrap { display: none; width: 210mm; background: white !important; margin: 0 auto; border: 1px solid #ddd; }
-        .page-frame { padding: 7mm; box-sizing: border-box; }
-        .frame-border { padding: 2mm; }
-        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1mm; }
-        .hd-logo img { width: 190px; height: auto; }
-        .hd-nation-kh { text-align: center; font-family: 'Moul', serif; font-size: 14pt; line-height: 1.6; }
-        .hd-nation-en { text-align: center; font-family: 'Playfair Display', serif; font-size: 13pt; font-weight: 700; line-height: 1.5; color: #1e293b; }
-        .rpt-tbl { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-top: 8px; }
-        .rpt-tbl th, .rpt-tbl td { border: 1px solid black !important; padding: 5px 6px; text-align: center; }
-        .rpt-tbl th { background: #f1f5f9 !important; font-weight: 700; font-size: 9pt; }
-        .rpt-tbl td.name-col { text-align: left; padding-left: 10px; }
-        .stats { margin-top: 14px; font-size: 9pt; line-height: 2; }
-        .honor-grid { display: flex; flex-direction: column; align-items: center; gap: 2mm; margin-top: 2mm; }
-        .honor-row { display: flex; justify-content: center; gap: 8mm; }
-        .student-card { width: 46mm; text-align: center; }
-        .rank-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto -14px; font-weight: 800; font-size: 13pt; color: white !important; position: relative; z-index: 2; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
-        .rank-badge.gold { background: var(--gold) !important; }
-        .rank-badge.silver { background: #94a3b8 !important; }
-        .rank-badge.bronze { background: #d97706 !important; }
-        .rank-badge.plain { background: var(--red) !important; }
-        .photo-box { width: 46mm; height: 38mm; border: 3px solid white !important; overflow: hidden; }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .name-tag { background: var(--navy) !important; color: white !important; padding: 4px 3px; border-radius: 8px; font-size: 8.5pt; font-weight: 700; margin-top: 4px; display: block; }
-        .score-tag { font-size: 7.5pt; color: #64748b; margin-top: 2px; }
-        .doc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 16px; font-size: 9.5pt; }
-        .sig-block { text-align: center; }
-        .sig-block strong { display: block; margin-top: 10px; font-size: 10pt; font-family: 'Moul', 'Playfair Display', serif; }
-        @media print {
-            body { background: white; }
-            .app-header, .ctrl-card, .btn-green, .tab-panel:not(.active) { display: none !important; }
-            .pdf-wrap { display: block !important; border: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyKids International School — Score Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Moul&family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--navy:#1e3a8a;--red:#be123c;--gold:#f59e0b;--blue:#2563eb;--green:#15803d;--border:#e2e8f0;--sem1:#1e5a8a;--sem2:#1e6a5a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Battambang',sans-serif;background:#eef2f7;min-height:100vh;}
+.app-header{background:linear-gradient(135deg,var(--navy)0%,#2d4fa3 50%,var(--blue)100%);padding:18px 30px 0;box-shadow:0 4px 20px rgba(30,58,138,.3);}
+.app-header-top{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+.app-logo{width:70px;height:auto;filter:brightness(0) invert(1);}
+.app-title{font-family:'Playfair Display','Moul',serif;font-size:20pt;color:white;font-weight:700;line-height:1.2;}
+.app-subtitle{font-size:9.5pt;color:rgba(255,255,255,.75);margin-top:2px;}
+.tab-bar{display:flex;gap:4px;}
+.tab-btn{padding:12px 28px 14px;border:none;border-radius:10px 10px 0 0;font-family:'DM Sans',sans-serif;font-size:10.5pt;font-weight:600;cursor:pointer;transition:.2s;background:rgba(255,255,255,.15);color:rgba(255,255,255,.8);position:relative;}
+.tab-btn:hover{background:rgba(255,255,255,.25);color:white;}
+.tab-btn.active{background:white;color:var(--navy);box-shadow:0 -3px 12px rgba(0,0,0,.1);}
+.tab-btn.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.panel-body{max-width:1400px;margin:0 auto;padding:28px 20px;}
+.ctrl-card{background:white;padding:26px;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.07);margin-bottom:24px;}
+.ctrl-card h2{font-family:'Moul','Playfair Display',serif;font-size:13pt;color:var(--navy);margin-bottom:18px;text-align:center;}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:15px;margin-bottom:18px;}
+label{display:block;font-size:8.5pt;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+select,input[type=text]{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:10pt;color:#1e293b;outline:none;transition:border .2s;}
+select:focus,input[type=text]:focus{border-color:var(--blue);}
+.btn{border:none;padding:11px 22px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;font-size:10pt;margin:4px;transition:.2s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.btn-navy{background:var(--navy);color:white;}
+.btn-red{background:var(--red);color:white;}
+.btn-green{background:var(--green);color:white;display:none;margin:18px auto;width:260px;font-size:11pt;justify-content:center;}
+.btn-moul{font-family:'Moul',serif;}
+.mode-bar{display:flex;gap:8px;margin-bottom:16px;align-items:center;}
+.mode-btn{padding:7px 18px;border-radius:8px;border:2px solid var(--border);background:white;font-family:inherit;font-size:9.5pt;font-weight:600;cursor:pointer;color:#64748b;transition:.2s;}
+.mode-btn.active{border-color:var(--navy);background:var(--navy);color:white;}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
+.score-tbl th{background:var(--navy);color:white;padding:8px 5px;font-weight:600;font-size:7.5pt;text-align:center;border:1px solid rgba(255,255,255,.15);}
+.score-tbl th.h-sem1{background:var(--sem1);}
+.score-tbl th.h-sem2{background:var(--sem2);}
+.score-tbl th.h-dark{background:#334155;}
+.score-tbl td{border:1px solid #e2e8f0;padding:5px 4px;text-align:center;vertical-align:middle;}
+.score-tbl tbody tr:nth-child(even){background:#f8fafc;}
+.score-tbl tbody tr:hover{background:#eff6ff;}
+.score-tbl input[type=number]{width:40px;padding:3px;border:1px solid #cbd5e1;border-radius:4px;text-align:center;font-size:8pt;}
+.score-tbl input[type=number]:focus{outline:none;border-color:var(--blue);}
+.score-tbl input.in-name{width:130px;border:none;background:transparent;font-size:8.5pt;font-family:'Battambang','DM Sans',sans-serif;}
+.pdf-wrap{display:none;width:210mm;background:white!important;margin:0 auto;border:1px solid #ddd;}
+.page-frame{padding:7mm;box-sizing:border-box;}
+.doc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1mm;}
+.hd-logo img{width:190px;height:auto;}
+.hd-nation-kh{text-align:center;font-family:'Moul',serif;font-size:14pt;line-height:1.6;}
+.hd-nation-en{text-align:center;font-family:'Playfair Display',serif;font-size:13pt;font-weight:700;line-height:1.5;color:#1e293b;}
+.rpt-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-top:8px;}
+.rpt-tbl th,.rpt-tbl td{border:1px solid black!important;padding:5px 6px;text-align:center;}
+.rpt-tbl th{background:#f1f5f9!important;font-weight:700;font-size:9pt;}
+.rpt-tbl td.name-col{text-align:left;padding-left:10px;}
+.stats{margin-top:14px;font-size:9pt;line-height:2;}
+.honor-grid{display:flex;flex-direction:column;align-items:center;gap:2mm;margin-top:2mm;}
+.honor-row{display:flex;justify-content:center;gap:8mm;}
+.rank-badge{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto -14px;font-weight:800;font-size:13pt;color:white!important;position:relative;z-index:2;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+.rank-badge.gold{background:var(--gold)!important;}
+.rank-badge.silver{background:#94a3b8!important;}
+.rank-badge.bronze{background:#d97706!important;}
+.rank-badge.plain{background:var(--red)!important;}
+.photo-box{width:46mm;height:38mm;border:3px solid white!important;overflow:hidden;}
+.photo-box img{width:100%;height:100%;object-fit:cover;}
+.name-tag{background:var(--navy)!important;color:white!important;padding:4px 3px;border-radius:8px;font-size:8.5pt;font-weight:700;margin-top:4px;display:block;}
+@media print{body{background:white;}.app-header,.ctrl-card,.btn-green,.tab-panel:not(.active){display:none!important;}.pdf-wrap{display:block!important;border:none;}}
+</style>
 </head>
 <body>
 
 <div class="app-header">
-    <div class="app-header-top">
-        <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MiKids">
-        <div class="app-title-block">
-            <div class="app-title">MiKids International School</div>
-            <div class="app-subtitle">Student Score Management System · ប្រព័ន្ធគ្រប់គ្រងពិន្ទុសិស្ស</div>
-        </div>
+  <div class="app-header-top">
+    <img class="app-logo" src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" alt="MiKids">
+    <div>
+      <div class="app-title">MiKids International School</div>
+      <div class="app-subtitle">Student Score Management System · ប្រព័ន្ធគ្រប់គ្រងពិន្ទុសិស្ស</div>
     </div>
-    <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('kh', this)"><span class="tab-icon">🇰🇭</span> ថ្នាក់ភាសាខ្មែរ</button>
-        <button class="tab-btn" onclick="switchTab('en', this)"><span class="tab-icon">🇬🇧</span> English Classes</button>
-    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('kh',this)">ថ្នាក់ភាសាខ្មែរ</button>
+    <button class="tab-btn" onclick="switchTab('en',this)">English Classes</button>
+  </div>
 </div>
 
-<!-- TAB: KHMER -->
+<!-- ══════════════════════════════════════════════════════ KH TAB -->
 <div id="tab-kh" class="tab-panel active">
 <div class="panel-body">
 <div class="ctrl-card">
-    <h2>ប្រព័ន្ធគ្រប់គ្រងពិន្ទុ — ថ្នាក់ភាសាខ្មែរ</h2>
-    <div class="grid3">
-        <div><label>ជ្រើសរើសថ្នាក់</label><select id="kh-classSelect" onchange="khLoadStudents()"></select></div>
-        <div><label>ប្រចាំខែ</label><input type="text" id="kh-monthInput" value="មករា"></div>
-        <div><label>ឆ្នាំសិក្សា</label><input type="text" id="kh-yearInput" value="២០២៥-២០២៦"></div>
-    </div>
-    <div class="tbl-wrap">
-    <table class="score-tbl" border="1" cellspacing="0" cellpadding="4">
-        <thead>
-            <tr>
-                <th rowspan="2" style="min-width:40px;">អត្ត​លេខ</th>
-                <th rowspan="2" style="min-width:130px;">ឈ្មោះ​សិស្ស</th>
-                <th rowspan="2" style="min-width:32px;">ភេទ</th>
-                <th colspan="4">ភាសាខ្មែរ</th>
-                <th rowspan="2" style="min-width:52px;">គណិត​វិទ្យា</th>
-                <th rowspan="2" style="min-width:52px;">វិទ្យា​សាស្ត្រ</th>
-                <th colspan="4">សិក្សាសង្គម</th>
-                <th colspan="2">អប់រំ​កាយ</th>
-                <th rowspan="2" style="min-width:48px;">កុំព្យូទ័រ</th>
-                <th rowspan="2" style="min-width:52px;">អក្សរផ្ចង់</th>
-                <th rowspan="2" style="min-width:52px;">បំណិនជីវិត</th>
-                <th rowspan="2" style="min-width:52px;">ភាសា​ចិន</th>
-                <th rowspan="2" style="min-width:145px;">រូបថត</th>
-            </tr>
-            <tr>
-                <th style="font-size:6pt; min-width:52px;">សមត្ថភាពស្ដាប់<br>និយាយ</th>
-                <th style="font-size:6pt; min-width:44px;">សរសេរ<br>តាមអាន</th>
-                <th style="font-size:6pt; min-width:44px;">អំណាន</th>
-                <th style="font-size:6pt; min-width:44px;">តែង​<br>សេចក្ដី</th>
-                <th style="font-size:6pt; min-width:52px;">ប្រវត្តិ<br>វិទ្យា</th>
-                <th style="font-size:6pt; min-width:44px;">ភូមិ<br>វិទ្យា</th>
-                <th style="font-size:6pt; min-width:52px;">ពលរដ្ឋ<br>វិជ្ជា</th>
-                <th style="font-size:6pt; min-width:52px;">គេហវិទ្យា<br>-សិល្បៈ</th>
-                <th style="font-size:6pt; min-width:40px;">អប់រំ<br>កាយ-កីឡា</th>
-                <th style="font-size:6pt; min-width:40px;">សុខភាព<br>-អនាម័យ</th>
-            </tr>
-        </thead>
-        <tbody id="kh-inputBody"></tbody>
-    </table>
-    </div>
-    <div style="text-align:center; margin-top:20px;">
-        <button class="btn btn-navy btn-moul" onclick="khGenerate('REPORT')">📋 បង្កើតតារាងចំណាត់ថ្នាក់</button>
-        <button class="btn btn-red btn-moul" onclick="khGenerate('HONOR')">🏆 បង្កើតតារាងកិត្តិយស</button>
-    </div>
+  <h2>ប្រព័ន្ធគ្រប់គ្រងពិន្ទុ — ថ្នាក់ភាសាខ្មែរ</h2>
+  <div class="mode-bar">
+    <span style="font-size:9pt;color:#64748b;">របៀប:</span>
+    <button class="mode-btn active" onclick="setKhMode('month',this)">📅 ប្រចាំខែ</button>
+    <button class="mode-btn" onclick="setKhMode('sem',this)">📊 ប្រចាំឆមាស</button>
+  </div>
+  <div class="grid3">
+    <div><label>ជ្រើសរើសថ្នាក់</label><select id="kh-classSelect" onchange="khOnClassChange()"></select></div>
+    <div><label id="kh-period-label">ប្រចាំខែ</label><input type="text" id="kh-monthInput" value="មករា"></div>
+    <div><label>ឆ្នាំសិក្សា</label><input type="text" id="kh-yearInput" value="២០២៥-២០២៦"></div>
+  </div>
+
+  <!-- KH MONTHLY TABLE -->
+  <div class="tbl-wrap" id="kh-wrap-month">
+  <table class="score-tbl">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:38px;">អត្ត​លេខ</th>
+        <th rowspan="2" style="min-width:128px;">ឈ្មោះ​សិស្ស</th>
+        <th rowspan="2" style="min-width:28px;">ភេទ</th>
+        <th colspan="4">ភាសាខ្មែរ</th>
+        <th rowspan="2" style="min-width:42px;">គណិតវិទ្យា</th>
+        <th rowspan="2" style="min-width:42px;">វិទ្យា​សាស្ត្រ</th>
+        <th colspan="4">សិក្សាសង្គម</th>
+        <th colspan="2">អប់រំ​កាយ</th>
+        <th rowspan="2" style="min-width:40px;">កុំព្យូទ័រ</th>
+        <th rowspan="2" style="min-width:40px;">អក្សរផ្ចង់</th>
+        <th rowspan="2" style="min-width:40px;">បំណិន​ជីវិត</th>
+        <th rowspan="2" style="min-width:40px;">ភាសា​ចិន</th>
+        <th rowspan="2" style="min-width:46px;background:#6d28d9;color:white;font-size:6.5pt;padding:4px 2px;">កិច្ចការ​ផ្ទះ<br><span style="font-weight:400;">/១០</span></th>
+        <th rowspan="2" style="min-width:130px;">រូបថត</th>
+      </tr>
+      <tr>
+        <th style="font-size:6pt;min-width:40px;">ការស្ដាប់-និយាយ</th>
+        <th style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
+        <th style="font-size:6pt;min-width:38px;">អំណាន</th>
+        <th style="font-size:6pt;min-width:38px;">តែង​សេចក្ដី</th>
+        <th style="font-size:6pt;min-width:40px;">ប្រវត្តិវិទ្យា</th>
+        <th style="font-size:6pt;min-width:38px;">ភូមិវិទ្យា</th>
+        <th style="font-size:6pt;min-width:40px;">សីលធម៍ពលរដ្ឋវិជ្ជា</th>
+        <th style="font-size:6pt;min-width:40px;">គេហវិទ្យា-អប់រំសិល្បៈ</th>
+        <th style="font-size:6pt;min-width:38px;">អប់រំកាយ-កីឡា</th>
+        <th style="font-size:6pt;min-width:38px;">សុខ​ភាព</th>
+      </tr>
+    </thead>
+    <tbody id="kh-monthBody"></tbody>
+  </table>
+  </div>
+
+  <!-- KH SEMESTER TABLE -->
+  <div class="tbl-wrap" id="kh-wrap-sem" style="display:none;">
+  <table class="score-tbl">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:38px;">អត្ត​លេខ</th>
+        <th rowspan="2" style="min-width:128px;">ឈ្មោះ​សិស្ស</th>
+        <th rowspan="2" style="min-width:28px;">ភេទ</th>
+        <th class="h-sem1" colspan="15">មធ្យមភាគប្រឡងឆមាស</th>
+        <th class="h-sem2" colspan="7">មធ្យមភាគប្រចាំខែ</th>
+        <th rowspan="2" style="min-width:46px;background:#6d28d9;color:white;font-size:6.5pt;padding:4px 2px;border:1px solid rgba(255,255,255,.15);">កិច្ចការ​ផ្ទះ<br><span style="font-weight:400;">/១០</span></th>
+        <th class="h-dark" rowspan="2" style="min-width:130px;">រូបថត</th>
+      </tr>
+      <tr>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">អំណាន</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">ស្ដាប់ និង និយាយ</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">តែងសេចក្ដី</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">គណិតវិទ្យា</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">វិទ្យាសាស្ត្រ</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">ប្រវត្តិវិទ្យា</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">ភូមិវិទ្យា</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">សីលធ៍ម-ពលរដ្ឋវិជ្ជា</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">គេហវិទ្យា-អប់រំសិល្បៈ</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">អប់រំកាយ-សុខភាព</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">បំណិនជីវិត</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">អក្សរផ្ចង់</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">ភាសា​ចិន</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">កុំព្យូទ័រ</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">មធ្យមភាគប្រឡងឆមាស</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">មធ្យមភាគប្រចាំខែ</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">មធ្យមភាគប្រចាំឆមាស</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">ចំណេះដឹង</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">បំណិន-ចំណោះធ្វើ</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">តម្លៃ-សីលធម៍</th>
+        <th class="h-sem2" style="font-size:6pt;min-width:38px;">សាមគ្គីភាព-ការចូលរួម</th>
+      </tr>
+    </thead>
+    <tbody id="kh-semBody"></tbody>
+  </table>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;" id="kh-action-btns">
+    <button class="btn btn-navy btn-moul" onclick="khGenerate('REPORT')">📋 បង្កើតតារាងចំណាត់ថ្នាក់</button>
+    <button class="btn btn-red btn-moul" onclick="khGenerate('HONOR')">🏆 បង្កើតតារាងកិត្តិយស</button>
+    <button class="btn" style="background:#64748b;color:white;" onclick="clearAllData()">🗑️ លុបទិន្នន័យទាំងអស់</button>
+  </div>
 </div>
 <div id="kh-pdf-content" class="pdf-wrap"></div>
-<div style="text-align:center;"><button id="kh-downloadBtn" class="btn btn-green" onclick="khDownloadPDF()">📥 ទាញយក PDF</button></div>
+<div style="text-align:center;">
+  <button id="kh-downloadBtn" class="btn btn-green" onclick="khDownloadPDF()">📥 ទាញយក PDF</button>
+</div>
 </div>
 </div>
 
-<!-- TAB: ENGLISH -->
+<!-- ══════════════════════════════════════════════════════ EN TAB -->
 <div id="tab-en" class="tab-panel">
 <div class="panel-body">
 <div class="ctrl-card">
-    <h2 style="font-family:'Playfair Display',serif;">English Classes — Score Management</h2>
-    <div class="grid3">
-        <div>
-            <label>Select Class</label>
-            <select id="en-classSelect" onchange="enLoadStudents()">
-                <option value="">-- Choose a Class --</option>
-                <option>Fount1 Morning</option><option>Fount1 Evening</option>
-                <option>Fount2 Morning</option><option>Fount2 Afternoon</option>
-                <option>Nursery Morning</option><option>Nursery Afternoon</option>
-                <option>Level1 Morning</option><option>Level1 Afternoon</option>
-                <option>Level 2</option>
-            </select>
-        </div>
-        <div><label>Month</label><input type="text" id="en-monthInput" value="January"></div>
-        <div><label>Academic Year</label><input type="text" id="en-yearInput" value="2025-2026"></div>
+  <h2 style="font-family:'Playfair Display',serif;">English Classes — Score Management</h2>
+  <div class="mode-bar">
+    <span style="font-size:9pt;color:#64748b;">Mode:</span>
+    <button class="mode-btn active" onclick="setEnMode('month',this)">📅 Monthly</button>
+    <button class="mode-btn" onclick="setEnMode('sem',this)">📊 Semester</button>
+  </div>
+  <div class="grid3">
+    <div><label>Select Class</label>
+      <select id="en-classSelect" onchange="enOnClassChange()">
+        <option value="">-- Choose a Class --</option>
+        <option>Fount1 Morning</option><option>Fount1 Evening</option>
+        <option>Fount2 Morning</option><option>Fount2 Afternoon</option>
+        <option>Nursery Morning</option><option>Nursery Afternoon</option>
+        <option>Level1 Morning</option><option>Level1 Afternoon</option>
+        <option>Level 2</option>
+      </select>
     </div>
-    <div class="tbl-wrap">
-    <table class="score-tbl" border="1" cellspacing="0">
-        <thead>
-            <tr>
-                <th style="min-width:38px;">ID</th>
-                <th style="min-width:140px;">Student Name</th>
-                <th style="min-width:38px;">Sex</th>
-                <th style="min-width:52px; font-size:7pt;">Mix-Skill</th>
-                <th style="min-width:48px; font-size:7pt;">Homework</th>
-                <th style="min-width:48px; font-size:7pt;">Quiz</th>
-                <th style="min-width:50px; font-size:7pt;">Assignment</th>
-                <th style="min-width:50px; font-size:7pt;">Speaking</th>
-                <th style="min-width:50px; font-size:7pt;">Listening</th>
-                <th style="min-width:50px; font-size:7pt;">Arts</th>
-                <th style="min-width:50px; font-size:7pt;">Chinese</th>
-                <th style="min-width:50px; font-size:7pt;">Life-Skills</th>
-                <th style="min-width:50px; font-size:7pt;">Attendance</th>
-                <th style="min-width:145px;">Photo</th>
-            </tr>
-        </thead>
-        <tbody id="en-inputBody"></tbody>
-    </table>
-    </div>
-    <div style="text-align:center; margin-top:20px;">
-        <button class="btn btn-navy" onclick="enGenerate('REPORT')">📋 Generate Rankings Report</button>
-        <button class="btn btn-red" onclick="enGenerate('HONOR')">🏆 Generate Honor Board</button>
-    </div>
+    <div><label id="en-period-label">Month</label><input type="text" id="en-monthInput" value="January"></div>
+    <div><label>Academic Year</label><input type="text" id="en-yearInput" value="2025-2026"></div>
+  </div>
+
+  <!-- EN MONTHLY TABLE -->
+  <div class="tbl-wrap" id="en-wrap-month">
+  <table class="score-tbl">
+    <thead>
+      <tr>
+        <th style="min-width:36px;">ID</th>
+        <th style="min-width:140px;">Student Name</th>
+        <th style="min-width:34px;">Sex</th>
+        <th style="min-width:46px;font-size:7pt;">Mix-Skill</th>
+        <th style="min-width:42px;font-size:7pt;">Homework</th>
+        <th style="min-width:42px;font-size:7pt;">Quiz</th>
+        <th style="min-width:44px;font-size:7pt;">Assignment</th>
+        <th style="min-width:44px;font-size:7pt;">Speaking</th>
+        <th style="min-width:44px;font-size:7pt;">Listening</th>
+        <th style="min-width:44px;font-size:7pt;">Arts</th>
+        <th style="min-width:44px;font-size:7pt;">Chinese</th>
+        <th style="min-width:44px;font-size:7pt;">Life-Skills</th>
+        <th style="min-width:44px;font-size:7pt;">Attendance</th>
+        <th style="min-width:130px;">Photo</th>
+      </tr>
+    </thead>
+    <tbody id="en-monthBody"></tbody>
+  </table>
+  </div>
+
+  <!-- EN SEMESTER TABLE -->
+  <div class="tbl-wrap" id="en-wrap-sem" style="display:none;">
+  <table class="score-tbl">
+    <thead>
+      <tr>
+        <th class="h-sem1" style="min-width:36px;">ID</th>
+        <th class="h-sem1" style="min-width:140px;">Student Name</th>
+        <th class="h-sem1" style="min-width:34px;">Sex</th>
+        <th class="h-sem1" style="min-width:62px;">Score Month 1</th>
+        <th class="h-sem2" style="min-width:62px;">Score Month 2</th>
+        <th class="h-dark" style="min-width:62px;">Score Month 3</th>
+        <th class="h-dark" style="min-width:130px;">Photo</th>
+      </tr>
+    </thead>
+    <tbody id="en-semBody"></tbody>
+  </table>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;" id="en-action-btns">
+    <button class="btn btn-navy" onclick="enGenerate('REPORT')">📋 Generate Rankings Report</button>
+    <button class="btn btn-red" onclick="enGenerate('HONOR')">🏆 Generate Honor Board</button>
+  </div>
 </div>
 <div id="en-pdf-content" class="pdf-wrap"></div>
-<div style="text-align:center;"><button id="en-downloadBtn" class="btn btn-green" onclick="enDownloadPDF()">📥 Download PDF</button></div>
+<div style="text-align:center;">
+  <button id="en-downloadBtn" class="btn btn-green" onclick="enDownloadPDF()">📥 Download PDF</button>
+</div>
 </div>
 </div>
 
 <script>
-function switchTab(id, el) {
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById('tab-'+id).classList.add('active');
-    el.classList.add('active');
+// ===== Grade helpers =====
+function khGrade(avg){
+  if(avg>=9.5)return{text:'ល្អណាស់',color:'#7c3aed'};
+  if(avg>=8)  return{text:'ល្អ',color:'#15803d'};
+  if(avg>=6.5)return{text:'ល្អបង្គួរ',color:'#2563eb'};
+  if(avg>=5)  return{text:'មធ្យម',color:'#d97706'};
+  return           {text:'ខ្សោយ',color:'#be123c'};
+}
+function enGrade(avg){
+  if(avg>=9.5)return{text:'A+ — Outstanding',color:'#7c3aed'};
+  if(avg>=8)  return{text:'A — Excellent',color:'#15803d'};
+  if(avg>=6.5)return{text:'B — Good',color:'#2563eb'};
+  if(avg>=5)  return{text:'C — Average',color:'#d97706'};
+  return           {text:'F — Fail',color:'#be123c'};
+}
+// ===== calcAvg =====
+function calcAvg(row){
+  const inputs=row.querySelectorAll('.sc');
+  const values=Array.from(inputs).filter(x=>x.value.trim()!=='').map(x=>parseFloat(x.value)).filter(v=>!isNaN(v));
+  if(!values.length)return{total:0,avg:0};
+  const total=values.reduce((a,b)=>a+b,0);
+  return{total,avg:total/values.length};
 }
 
-// ===== Average: divide only by subjects with entered scores =====
-function calcAvg(row) {
-    const inputs = row.querySelectorAll('.sc');
-    const values = Array.from(inputs)
-        .filter(x => x.value.trim() !== '')
-        .map(x => parseFloat(x.value))
-        .filter(v => !isNaN(v));
-    if (values.length === 0) return { total: 0, avg: 0 };
-    const total = values.reduce((a, b) => a + b, 0);
-    return { total, avg: total / values.length };
+// ===== localStorage =====
+function lsKey(tab,mode,cls){return 'mikids_'+tab+'_'+mode+'_'+cls;}
+function saveData(tab,mode,cls){
+  const rowSel = tab==='kh'
+    ? (mode==='month'?'.kh-row':'.kh-sem-row')
+    : (mode==='month'?'.en-row':'.en-sem-row');
+  const rows=document.querySelectorAll(rowSel);
+  const data=[];
+  rows.forEach(r=>{
+    const scores=Array.from(r.querySelectorAll('.sc')).map(x=>x.value);
+    const name=r.querySelector('.in-name')?r.querySelector('.in-name').value:'';
+    data.push({scores,name});
+  });
+  const mKey=tab==='kh'?'kh-monthInput':'en-monthInput';
+  const yKey=tab==='kh'?'kh-yearInput':'en-yearInput';
+  const meta={month:document.getElementById(mKey)?document.getElementById(mKey).value:'',year:document.getElementById(yKey)?document.getElementById(yKey).value:''};
+  try{localStorage.setItem(lsKey(tab,mode,cls),JSON.stringify({data,meta}));}catch(e){}
+}
+function loadData(tab,mode,cls){
+  let saved;
+  try{saved=JSON.parse(localStorage.getItem(lsKey(tab,mode,cls)));}catch(e){}
+  if(!saved)return;
+  if(saved.meta){
+    const mKey=tab==='kh'?'kh-monthInput':'en-monthInput';
+    const yKey=tab==='kh'?'kh-yearInput':'en-yearInput';
+    if(saved.meta.month)document.getElementById(mKey).value=saved.meta.month;
+    if(saved.meta.year)document.getElementById(yKey).value=saved.meta.year;
+  }
+  const rowSel = tab==='kh'
+    ? (mode==='month'?'.kh-row':'.kh-sem-row')
+    : (mode==='month'?'.en-row':'.en-sem-row');
+  const rows=document.querySelectorAll(rowSel);
+  rows.forEach((r,i)=>{
+    if(!saved.data[i])return;
+    const {scores,name}=saved.data[i];
+    Array.from(r.querySelectorAll('.sc')).forEach((inp,j)=>{if(scores[j]!==undefined)inp.value=scores[j];});
+    const nameEl=r.querySelector('.in-name');
+    if(nameEl&&name)nameEl.value=name;
+  });
+}
+function attachAutoSave(tab,mode,cls){
+  const rowSel = tab==='kh'
+    ? (mode==='month'?'.kh-row':'.kh-sem-row')
+    : (mode==='month'?'.en-row':'.en-sem-row');
+  document.querySelectorAll(rowSel).forEach(r=>{
+    r.querySelectorAll('.sc,.in-name').forEach(inp=>{
+      inp.addEventListener('input',()=>saveData(tab,mode,cls));
+    });
+  });
+  const mKey=tab==='kh'?'kh-monthInput':'en-monthInput';
+  const yKey=tab==='kh'?'kh-yearInput':'en-yearInput';
+  const mel=document.getElementById(mKey);const yel=document.getElementById(yKey);
+  if(mel)mel.addEventListener('input',()=>saveData(tab,mode,cls));
+  if(yel)yel.addEventListener('input',()=>saveData(tab,mode,cls));
+}
+function clearAllData(){
+  if(!confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យទាំងអស់មែនទេ?'))return;
+  Object.keys(localStorage).filter(k=>k.startsWith('mikids_')).forEach(k=>localStorage.removeItem(k));
+  alert('បានលុបទិន្នន័យទាំងអស់រួចហើយ!');
+  location.reload();
 }
 
-// ===== KH Grade: <5=ខ្សោយ, <6.5=មធ្យម, <8=ល្អបង្គួរ, <9.5=ល្អ, >=9.5=ល្អណាស់ =====
-function khGrade(avg) {
-    if (avg >= 9.5) return { text: 'ល្អណាស់',    color: '#7c3aed' };
-    if (avg >= 8)   return { text: 'ល្អ',         color: '#15803d' };
-    if (avg >= 6.5) return { text: 'ល្អបង្គួរ',  color: '#2563eb' };
-    if (avg >= 5)   return { text: 'មធ្យម',       color: '#d97706' };
-    return               { text: 'ខ្សោយ',       color: '#be123c' };
-}
-
-// ===== EN Grade: <5=Fail, <6.5=Average, <8=Good, <9.5=Excellent, >=9.5=Outstanding =====
-function enGrade(avg) {
-    if (avg >= 9.5) return { text: 'A+ — Outstanding', color: '#7c3aed' };
-    if (avg >= 8)   return { text: 'A — Excellent',    color: '#15803d' };
-    if (avg >= 6.5) return { text: 'B — Good',         color: '#2563eb' };
-    if (avg >= 5)   return { text: 'C — Average',      color: '#d97706' };
-    return               { text: 'F — Fail',           color: '#be123c' };
-}
-
-function buildHonorCard(student, rank, isKh, defaultImg) {
-    const khRanks = ['','១','២','៣','៤','៥'];
-    const badgeClass = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'plain';
-    const rankLabel = isKh ? khRanks[rank] : String(rank);
-    const moulfont = isKh ? `style="font-family:'Moul',serif;"` : '';
-    const imgSrc = student?.img || defaultImg;
-    const scoreTag = !isKh ? `<div class="score-tag">Avg: ${student?.avg.toFixed(2)||'0.00'}</div>` : '';
-    const C='white', S='20px', T='4px';
-    const corners = `<div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;">
-        <div style="position:absolute;top:0;left:0;width:${S};height:${S};border-top:${T} solid ${C};border-left:${T} solid ${C};"></div>
-        <div style="position:absolute;top:0;right:0;width:${S};height:${S};border-top:${T} solid ${C};border-right:${T} solid ${C};"></div>
-        <div style="position:absolute;bottom:0;left:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-left:${T} solid ${C};"></div>
-        <div style="position:absolute;bottom:0;right:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-right:${T} solid ${C};"></div>
-    </div>`;
-    return `<div class="student-card">
-        <div class="rank-badge ${badgeClass}" ${moulfont}>${rankLabel}</div>
-        <div style="position:relative;display:inline-block;width:46mm;height:38mm;">
-            <div class="photo-box"><img src="${imgSrc}"></div>${corners}
-        </div>
-        <span class="name-tag">${student?.name||''}</span>${scoreTag}
-    </div>`;
-}
-
-// ===== KHMER DB =====
+// ===== Student DBs =====
 const khStudentDB = {
-    'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)': [
-        {id:'64',name:'ឃុន ទេពង្ស',sex:'M'},{id:'121',name:'នឿន វឌ្ឍនា',sex:'M'},
-        {id:'128',name:'ពិសិទ្អ ច័ន្ទវឌ្ឃ',sex:'M'},{id:'141',name:'ហេង សាជីង',sex:'F'},
-        {id:'132',name:'សុ បញ្ញា មុនិរាជ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
-        {id:'173',name:'សាន្ត លីប៉េង',sex:'M'},{id:'163',name:'អេង លីឆេង',sex:'M'},
-        {id:'179',name:'ចន្ថា វឌ្ឍនា',sex:'M'},{id:'162',name:'យ៉ាន់ សុខឡេង',sex:'M'}
-    ],
-    'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(រសៀល)': [
-        {id:'139',name:'ហ៊ឺម ម៉ីអ៊ិ',sex:'M'},{id:'146',name:'លន វេស្សភូ',sex:'M'},
-        {id:'102',name:'សំណាង វីរៈបុត្រ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
-        {id:'87',name:'អ៊ុំ រតនាសិទ្ធីការ',sex:'F'},{id:'113',name:'ស៊ីម សិទ្ធីការ',sex:'F'},
-        {id:'164',name:'អ៊ូសុវណ្ណ វេហា៍',sex:'M'},{id:'177',name:'តាំង ហ៊ួយលីន',sex:'F'},
-        {id:'165',name:'លឹម លីម៉េងគ័ង្គ',sex:'M'}
-    ],
-    'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(ព្រឹក)': [
-        {id:'29',name:'ខាន់ មុនីវល្លភា',sex:'F'},{id:'101',name:'ឈុំ វីរ់សិទ្ធ',sex:'M'},
-        {id:'65',name:'និត សុធារ៉ា',sex:'M'},{id:'78',name:'នី លីជីង',sex:'F'},
-        {id:'117',name:'ហ៊ុន រាណ្ណជេណស្ដា',sex:'M'},{id:'47',name:'បុណ្ណជេ ជេននី',sex:'F'},
-        {id:'14',name:'ឃុន ទេពី',sex:'F'},{id:'62',name:'រិទ្ធី ពិស្សុតសុក្រឹត',sex:'M'},
-        {id:'49',name:'ងិន ទៀនវិន',sex:'M'},{id:'107',name:'សុភក្រ័ វរៈសិទ្ធ',sex:'M'},
-        {id:'170',name:'អុលវឿន ដាវីន',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
-        {id:'1',name:'ប៊ុនរីន ខេមរា',sex:'M'}
-    ],
-    'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(រសៀល)': [
-        {id:'54',name:'យន់ លីហេង',sex:'M'},{id:'75',name:'វិន បញ្ញាវ័ន្ត',sex:'M'},
-        {id:'90',name:'សូ រស្មីពនិតា',sex:'F'},{id:'50',name:'សូយ រក្សា',sex:'M'},
-        {id:'72',name:'អ៊ូ សុខអាមី',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
-        {id:'176',name:'ប៉ឹម ម៉ីជូ',sex:'F'},{id:'85',name:'សេរី ចន្ទវឌ្ឍនា',sex:'M'},
-        {id:'161',name:'លីម ហ៊ីប៉',sex:'M'},{id:'55',name:'អ៊ា ជីងហ័រ',sex:'F'},
-        {id:'79',name:'មិត្ត ម៉េងហេង',sex:'M'},{id:'74',name:'ចាន់នី​ ស៊ូសាន់ណា',sex:'F'}
-    ],
-    'ថ្នាក់ទី១(ព្រឹក)': [
-        {id:'75',name:'ឆន វិរៈសិទ្ធ',sex:'M'},{id:'47',name:'ជាឡិច កូលីន',sex:'M'},
-        {id:'92',name:'សុបញ្ញា សោម៉ា',sex:'F'},{id:'83',name:'ភឺន ថិរាយុ',sex:'M'},
-        {id:'69',name:'លី ឆាយឈ័ន',sex:'M'},{id:'77',name:'វុឌ្ឍី ដាវីកា',sex:'F'},
-        {id:'93',name:'អ៊ឹម រោចនា',sex:'F'},{id:'72',name:'វង្ស ដារ៉ាវីន',sex:'M'},
-        {id:'95',name:'ចាវ វិនហាវ',sex:'M'},{id:'80',name:'ងួន បញ្ញាពុទ្ធិស័ក្តិ',sex:'M'}
-    ],
-    'ថ្នាក់ទី១(រសៀល)': [
-        {id:'88',name:'ចំរើន ចន្ទឧត្តម',sex:'M'},{id:'91',name:'ប៊ូ សាធុការ',sex:'F'},
-        {id:'82',name:'សេន យ៉ាស្មីនណា',sex:'F'},{id:'85',name:'ដន សុភ័ណ្ឌម៉ូនីកា',sex:'F'},
-        {id:'78',name:'ស៊្រាង សៀវហ្វុង',sex:'F'},{id:'73',name:'ហេង ម៉ីអ៊ិ',sex:'F'},
-        {id:'74',name:'អឿន ពៅវល័ក្ខ',sex:'F'},{id:'70',name:'រ័ត្ន រ៉ាថេប',sex:'M'}
-    ],
-    'ថ្នាក់ទី២(ព្រឹក)': [
-        {id:'21',name:'ចន្ថា លីតា',sex:'F'},{id:'20',name:'ពៅ សុខចិន',sex:'M'},
-        {id:'17',name:'ណារ៉ា ហេងលី',sex:'M'},{id:'23',name:'សុខ សម្បត្តិ',sex:'M'},
-        {id:'22',name:'សុខ ដាលីស',sex:'F'},{id:'29',name:'ស្រស់ រីហ្សា',sex:'F'},
-        {id:'41',name:'ប៉ុន រីយ៉ា',sex:'F'}
-    ],
-    'ថ្នាក់ទី២(រសៀល)': [
-        {id:'59',name:'អុង បញ្ញារ័ត្ន',sex:'M'},{id:'31',name:'មិត្ត ម៉េងហួរ',sex:'M'},
-        {id:'14',name:'យស់ នរិន្ទ',sex:'M'},{id:'33',name:'វង់ ពុទ្ធិតា',sex:'F'},
-        {id:'62',name:'សូយ បញ្ញា',sex:'M'},{id:'40',name:'សេង សាណា',sex:'F'},
-        {id:'39',name:'ចន្ទ សុផាយ៉ាមេឃ',sex:'M'},{id:'30',name:'ស៊នវីរៈ បញ្ញាទេពី',sex:'F'},
-        {id:'27',name:'ប៊ូ តាម៉ា',sex:'M'},{id:'65',name:'កែវ មុន្នីឧត្តម',sex:'M'},
-        {id:'56',name:'វន្តវិន ថាណា',sex:'F'},{id:'36',name:'ហាន ស៊ីវហ័រ',sex:'F'}
-    ],
-    'ថ្នាក់ទី៣(រសៀល)': [
-        {id:'9',name:'កែវ វីនសុឧត្តតារា',sex:'F'},{id:'28',name:'ឈុនតា រតនៈខុនដូ',sex:'F'},
-        {id:'10',name:'យ៉ា ពេជ្រម៉ូនីកា',sex:'F'},{id:'15',name:'លីម ពុទ្ធិរាជ',sex:'M'},
-        {id:'3',name:'ឡ ស៊ីវហ៊ួយ',sex:'F'},{id:'2',name:'ឡាយ មុនិចិន្ដា',sex:'F'},
-        {id:'24',name:'អោក និសិ្សត',sex:'M'},{id:'44',name:'ចំរើន ម៉ានីតា',sex:'F'}
-    ],
-    'ថ្នាក់ទី៤ ៥': [
-        {id:'1',name:'ឡាយ ភារ៉ាដាវីឌ',sex:'M'},{id:'42',name:'វង្ស មុនីកញ្ចនា',sex:'F'},
-        {id:'43',name:'ពៅ សុនីតា',sex:'F'},{id:'4',name:'ឡ សុវណ្ណហាន់ណា',sex:'F'}
-    ],
-    'មត្ដេយ្យកម្រិតទាប(ព្រឹក)': [
-        {id:'147',name:'សុភក្រ វីរបុត្រ',sex:'M'},{id:'166',name:'លីណា រ័ត្នហុងស័ក្កិអធិភូ',sex:'M'},
-        {id:'160',name:'ថូ សិទ្ធីយូណា',sex:'F'},{id:'175',name:'សុគន្ធ បញ្ញាស័ក',sex:'M'},
-        {id:'000',name:'សុីម សរឧត្តម',sex:'M'},{id:'000',name:'និត សុធារាជ',sex:'M'},
-        {id:'000',name:'វ៉េត នីរីតា',sex:'F'}
-    ],
-    'មត្ដេយ្យកម្រិតទាប(រសៀល)': [
-        {id:'175',name:'ហេង ជ័រមុីង',sex:'F'},{id:'000',name:'សាយ សុខហេង',sex:'M'},
-        {id:'181',name:'ឈន ចេស្ដា',sex:'M'},{id:'000',name:'លាង លក្សុិកញ្ចនា',sex:'M'},
-        {id:'177',name:'វាសនា ពេជ្រសុម៉ាលី',sex:'F'}
-    ]
+  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(ព្រឹក)':[
+    {id:'64',name:'ឃុន ទេពង្ស',sex:'M'},{id:'121',name:'នឿន វឌ្ឍនា',sex:'M'},
+    {id:'128',name:'ពិសិទ្អ ច័ន្ទវឌ្ឃ',sex:'M'},{id:'141',name:'ហេង សាជីង',sex:'F'},
+    {id:'132',name:'សុ បញ្ញា មុនិរាជ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
+    {id:'173',name:'សាន្ត លីប៉េង',sex:'M'},{id:'163',name:'អេង លីឆេង',sex:'M'},
+    {id:'179',name:'ចន្ថា វឌ្ឍនា',sex:'M'},{id:'162',name:'យ៉ាន់ សុខឡេង',sex:'M'}
+  ],
+  'ថ្នាក់មត្តេយ្យកម្រិតមធ្យម(រសៀល)':[
+    {id:'139',name:'ហ៊ឺម ម៉ីអ៊ិ',sex:'M'},{id:'146',name:'លន វេស្សភូ',sex:'M'},
+    {id:'102',name:'សំណាង វីរៈបុត្រ',sex:'M'},{id:'67',name:'ឈឿន ប៊ុនធឿនពុទ្ធិ',sex:'M'},
+    {id:'87',name:'អ៊ុំ រតនាសិទ្ធីការ',sex:'F'},{id:'113',name:'ស៊ីម សិទ្ធីការ',sex:'F'},
+    {id:'164',name:'អ៊ូសុវណ្ណ វេហា',sex:'M'},{id:'177',name:'តាំង ហ៊ួយលីន',sex:'F'},
+    {id:'165',name:'លឹម លីម៉េងគ័ង្គ',sex:'M'}
+  ],
+  'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(ព្រឹក)':[
+    {id:'29',name:'ខាន់ មុនីវល្លភា',sex:'F'},{id:'101',name:'ឈុំ វីរ់សិទ្ធ',sex:'M'},
+    {id:'65',name:'និត សុធារ៉ា',sex:'M'},{id:'78',name:'នី លីជីង',sex:'F'},
+    {id:'117',name:'ហ៊ុន រាណ្ណជេណស្ដា',sex:'M'},{id:'47',name:'បុណ្ណជេ ជេននី',sex:'F'},
+    {id:'14',name:'ឃុន ទេពី',sex:'F'},{id:'62',name:'រិទ្ធី ពិស្សុតសុក្រឹត',sex:'M'},
+    {id:'49',name:'ងិន ទៀនវិន',sex:'M'},{id:'107',name:'សុភក្រ័ វរៈសិទ្ធ',sex:'M'},
+    {id:'170',name:'អុលវឿន ដាវីន',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
+    {id:'1',name:'ប៊ុនរីន ខេមរា',sex:'M'}
+  ],
+  'ថ្នាក់មត្តេយ្យកម្រិតខ្ពស់(រសៀល)':[
+    {id:'54',name:'យន់ លីហេង',sex:'M'},{id:'75',name:'វិន បញ្ញាវ័ន្ត',sex:'M'},
+    {id:'90',name:'សូ រស្មីពនិតា',sex:'F'},{id:'50',name:'សូយ រក្សា',sex:'M'},
+    {id:'72',name:'អ៊ូ សុខអាមី',sex:'F'},{id:'137',name:'សឿន ចាន់សុមេធា',sex:'F'},
+    {id:'176',name:'ប៉ឹម ម៉ីជូ',sex:'F'},{id:'85',name:'សេរី ចន្ទវឌ្ឍនា',sex:'M'},
+    {id:'161',name:'លីម ហ៊ីប៉',sex:'M'},{id:'55',name:'អ៊ា ជីងហ័រ',sex:'F'},
+    {id:'79',name:'មិត្ត ម៉េងហេង',sex:'M'},{id:'74',name:'ចាន់នី ស៊ូសាន់ណា',sex:'F'}
+  ],
+  'ថ្នាក់ទី១(ព្រឹក)':[
+    {id:'75',name:'ឆន វិរៈសិទ្ធ',sex:'M'},{id:'47',name:'ជាឡិច កូលីន',sex:'M'},
+    {id:'92',name:'សុបញ្ញា សោម៉ា',sex:'F'},{id:'83',name:'ភឺន ថិរាយុ',sex:'M'},
+    {id:'69',name:'លី ឆាយឈ័ន',sex:'M'},{id:'77',name:'វុឌ្ឍី ដាវីកា',sex:'F'},
+    {id:'93',name:'អ៊ឹម រោចនា',sex:'F'},{id:'72',name:'វង្ស ដារ៉ាវីន',sex:'M'},
+    {id:'95',name:'ចាវ វិនហាវ',sex:'M'},{id:'80',name:'ងួន បញ្ញាពុទ្ធិស័ក្តិ',sex:'M'}
+  ],
+  'ថ្នាក់ទី១(រសៀល)':[
+    {id:'88',name:'ចំរើន ចន្ទឧត្តម',sex:'M'},{id:'91',name:'ប៊ូ សាធុការ',sex:'F'},
+    {id:'82',name:'សេន យ៉ាស្មីនណា',sex:'F'},{id:'85',name:'ដន សុភ័ណ្ឌម៉ូនីកា',sex:'F'},
+    {id:'78',name:'ស៊្រាង សៀវហ្វុង',sex:'F'},{id:'73',name:'ហេង ម៉ីអ៊ិ',sex:'F'},
+    {id:'74',name:'អឿន ពៅវល័ក្ខ',sex:'F'},{id:'70',name:'រ័ត្ន រ៉ាថេប',sex:'M'}
+  ],
+  'ថ្នាក់ទី២(ព្រឹក)':[
+    {id:'21',name:'ចន្ថា លីតា',sex:'F'},{id:'20',name:'ពៅ សុខចិន',sex:'M'},
+    {id:'17',name:'ណារ៉ា ហេងលី',sex:'M'},{id:'23',name:'សុខ សម្បត្តិ',sex:'M'},
+    {id:'22',name:'សុខ ដាលីស',sex:'F'},{id:'29',name:'ស្រស់ រីហ្សា',sex:'F'},
+    {id:'41',name:'ប៉ុន រីយ៉ា',sex:'F'}
+  ],
+  'ថ្នាក់ទី២(រសៀល)':[
+    {id:'59',name:'អុង បញ្ញារ័ត្ន',sex:'M'},{id:'31',name:'មិត្ត ម៉េងហួរ',sex:'M'},
+    {id:'14',name:'យស់ នរិន្ទ',sex:'M'},{id:'33',name:'វង់ ពុទ្ធិតា',sex:'F'},
+    {id:'62',name:'សូយ បញ្ញា',sex:'M'},{id:'40',name:'សេង សាណា',sex:'F'},
+    {id:'39',name:'ចន្ទ សុផាយ៉ាមេឃ',sex:'M'},{id:'30',name:'ស៊នវីរៈ បញ្ញាទេពី',sex:'F'},
+    {id:'27',name:'ប៊ូ តាម៉ា',sex:'M'},{id:'65',name:'កែវ មុន្នីឧត្តម',sex:'M'},
+    {id:'56',name:'វន្តវិន ថាណា',sex:'F'},{id:'36',name:'ហាន ស៊ីវហ័រ',sex:'F'}
+  ],
+  'ថ្នាក់ទី៣(រសៀល)':[
+    {id:'9',name:'កែវ វីនសុឧត្តតារា',sex:'F'},{id:'28',name:'ឈុនតា រតនៈខុនដូ',sex:'F'},
+    {id:'10',name:'យ៉ា ពេជ្រម៉ូនីកា',sex:'F'},{id:'15',name:'លីម ពុទ្ធិរាជ',sex:'M'},
+    {id:'3',name:'ឡ ស៊ីវហ៊ួយ',sex:'F'},{id:'2',name:'ឡាយ មុនិចិន្ដា',sex:'F'},
+    {id:'24',name:'អោក និសិ្សត',sex:'M'},{id:'44',name:'ចំរើន ម៉ានីតា',sex:'F'}
+  ],
+  'ថ្នាក់ទី៤ ៥':[
+    {id:'1',name:'ឡាយ ភារ៉ាដាវីឌ',sex:'M'},{id:'42',name:'វង្ស មុនីកញ្ចនា',sex:'F'},
+    {id:'43',name:'ពៅ សុនីតា',sex:'F'},{id:'4',name:'ឡ សុវណ្ណហាន់ណា',sex:'F'}
+  ],
+  'មត្ដេយ្យកម្រិតទាប(ព្រឹក)':[
+    {id:'147',name:'សុភក្រ វីរបុត្រ',sex:'M'},{id:'166',name:'លីណា រ័ត្នហុងស័ក្កិ',sex:'M'},
+    {id:'160',name:'ថូ សិទ្ធីយូណា',sex:'F'},{id:'175',name:'សុគន្ធ បញ្ញាស័ក',sex:'M'},
+    {id:'000',name:'សុីម សរឧត្តម',sex:'M'},{id:'000',name:'និត សុធារាជ',sex:'M'},
+    {id:'000',name:'វ៉េត នីរីតា',sex:'F'}
+  ],
+  'មត្ដេយ្យកម្រិតទាប(រសៀល)':[
+    {id:'175',name:'ហេង ជ័រមុីង',sex:'F'},{id:'000',name:'សាយ សុខហេង',sex:'M'},
+    {id:'181',name:'ឈន ចេស្ដា',sex:'M'},{id:'000',name:'លាង លក្សុិកញ្ចនា',sex:'M'},
+    {id:'177',name:'វាសនា ពេជ្រសុម៉ាលី',sex:'F'}
+  ]
 };
 
-const khSel = document.getElementById('kh-classSelect');
-khSel.add(new Option('-- ជ្រើសរើសថ្នាក់ --', ''));
-Object.keys(khStudentDB).forEach(c => khSel.add(new Option(c, c)));
+const enStudentDB = {
+  'Fount1 Morning':[
+    {id:'82',name:'Chhang Singreay',sex:'F'},{id:'149',name:'Thi Sovann Sithika',sex:'F'},
+    {id:'143',name:'Phan Sokheng',sex:'M'},{id:'133',name:'Soth Linprossith',sex:'M'},
+    {id:'134',name:'Eab Liying',sex:'F'},{id:'88',name:'Sim Sithika',sex:'F'},
+    {id:'134',name:'Serey Chanvatthana',sex:'M'},{id:'88',name:'Hy Meeying',sex:'F'},
+    {id:'134',name:'Channy Sisanna',sex:'F'},{id:'88',name:'Chanmroeun Chanoudom',sex:'M'},
+    {id:'127',name:'Ham Chanboryreak',sex:'M'},{id:'182',name:'Tang Huylin',sex:'F'}
+  ],
+  'Fount1 Evening':[
+    {id:'116',name:'In Tiengvitu',sex:'M'},{id:'58',name:'Bunroeun Khemara',sex:'M'},
+    {id:'116',name:'Chhorn Mengsin',sex:'M'},{id:'58',name:'Ngoun Kimhab',sex:'M'},
+    {id:'145',name:'Chhay Pinging',sex:'F'},{id:'125',name:'Panha Petra',sex:'F'},
+    {id:'90',name:'Chomreun Ruonrithirach',sex:'M'},{id:'116',name:'Run Raksmey',sex:'M'},
+    {id:'90',name:'Huy Vannrothsetha',sex:'M'},{id:'116',name:'Nit Sotheara',sex:'M'},
+    {id:'159',name:'Thon Sigech',sex:'F'}
+  ],
+  'Fount2 Morning':[
+    {id:'86',name:'Theng Mengly',sex:'M'},{id:'00',name:'Sreang Sievfong',sex:'F'},
+    {id:'00',name:'Heng Meyich',sex:'F'},{id:'00',name:'Eurn Povoleak',sex:'F'},
+    {id:'00',name:'Han Sivhor',sex:'F'},{id:'00',name:'Roth Sovannchanthnaka',sex:'M'},
+    {id:'00',name:'Chomreun Manita',sex:'F'},{id:'70',name:'Roth Ratheb',sex:'M'},
+    {id:'00',name:'Chomreun Chanoudom',sex:'F'}
+  ],
+  'Fount2 Afternoon':[
+    {id:'68',name:'Song Rithysak',sex:'M'},{id:'00',name:'Pov Sokchen',sex:'M'},
+    {id:'66',name:'Bunleng Aidek',sex:'M'},{id:'67',name:'Pheak Speeddy',sex:'M'},
+    {id:'00',name:'Em Raechna',sex:'F'},{id:'00',name:'Ngoun Panhaputhysak',sex:'M'},
+    {id:'00',name:'Chen Kolin',sex:'M'},{id:'00',name:'Nara Hengly',sex:'M'},
+    {id:'00',name:'Chan Vireasith',sex:'M'},{id:'00',name:'Sok Sambath',sex:'M'},
+    {id:'00',name:'Sok Dalls',sex:'F'},{id:'00',name:'Ly Chaychon',sex:'M'}
+  ],
+  'Nursery Morning':[
+    {id:'148',name:'Beres Maikeus',sex:'M'},{id:'144',name:'Heng Santipheap',sex:'M'},
+    {id:'157',name:'Doung Sometha',sex:'M'},{id:'183',name:'Thong Fongmeng',sex:'M'},
+    {id:'158',name:'Punlok Viraksith',sex:'M'},{id:'172',name:'Reathana Sievle',sex:'F'},
+    {id:'180',name:'Rat Pichmorakot',sex:'F'},{id:'178',name:'Livthy Jutima',sex:'F'},
+    {id:'184',name:'Ho Liping',sex:'M'},{id:'174',name:'Vichika Munnitepey',sex:'F'},
+    {id:'185',name:'Yem Putthivong',sex:'M'},{id:'171',name:'Song Siriboth',sex:'M'}
+  ],
+  'Nursery Afternoon':[
+    {id:'148',name:'Beres Maikeus',sex:'M'},{id:'147',name:'Sopheak Virakboth',sex:'M'},
+    {id:'150',name:'Vet Nirita',sex:'F'},{id:'166',name:'Piseth Chanvatthana',sex:'M'},
+    {id:'166',name:'Lina Hongsakiathiphu',sex:'M'}
+  ],
+  'Level1 Morning':[
+    {id:'00',name:'Pov Sunita',sex:'F'},{id:'00',name:'Kaev Vinsouottara',sex:'F'},
+    {id:'00',name:'Chhuonta Rataknakhondou',sex:'F'},{id:'64',name:'Leang Voatchhanathnu',sex:'M'},
+    {id:'00',name:'Ya Pichmonika',sex:'F'},{id:'00',name:'Lim Puthireach',sex:'M'},
+    {id:'00',name:'Lor Sivhuoy',sex:'F'},{id:'00',name:'Lay Monichenda',sex:'F'},
+    {id:'00',name:'Ork Niset',sex:'M'},{id:'00',name:'Chan Sophayameakh',sex:'M'},
+    {id:'00',name:'Sonvirak Panhatepey',sex:'F'}
+  ],
+  'Level1 Afternoon':[
+    {id:'00',name:'Aok Outtom',sex:'M'},{id:'00',name:'Nara Henglay',sex:'M'},
+    {id:'62',name:'Chhuk Chenlong',sex:'M'}
+  ],
+  'Level 2':[
+    {id:'48',name:'Sopheak Titthdana',sex:'F'},{id:'63',name:'Neourn Vathanac',sex:'M'},
+    {id:'49',name:'Sopheak Rattank',sex:'M'},{id:'61',name:'Phal Sovann',sex:'M'},
+    {id:'53',name:'Hong Sothinal',sex:'M'},{id:'55',name:'Theng Julinh',sex:'F'},
+    {id:'1',name:'Lay Phearadavid',sex:'M'},{id:'4',name:'La Sovannhannah',sex:'F'}
+  ]
+};
 
-function khLoadStudents() {
-    const tbody = document.getElementById('kh-inputBody');
-    tbody.innerHTML = '';
-    const students = khStudentDB[khSel.value] || [];
-    students.forEach((s, i) => {
-        tbody.innerHTML += `
-        <tr class="kh-row" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
-            <td><b>${s.id}</b></td>
-            <td><input type="text" value="${s.name}" class="in-name" style="width:128px;border:none;font-family:'Battambang',sans-serif;"></td>
-            <td>${s.sex}</td>
-            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc km" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc math" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc sci" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc art" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc aksor" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc val" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td><input type="number" class="sc chinese" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>
-            <td style="text-align:center;">
-                <input type="file" accept="image/*" onchange="previewImg(event,'kh-img${i}')" style="width:130px;display:block;margin:0 auto;">
-                <input type="hidden" id="kh-img${i}">
-            </td>
-        </tr>`;
+let khMode='month', enMode='month';
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+function setKhMode(mode,btn){
+  khMode=mode;
+  document.querySelectorAll('#tab-kh .mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('kh-wrap-month').style.display=mode==='month'?'':'none';
+  document.getElementById('kh-wrap-sem').style.display=mode==='sem'?'':'none';
+  document.getElementById('kh-period-label').textContent=mode==='sem'?'ឆមាស':'ប្រចាំខែ';
+  khOnClassChange();
+}
+function setEnMode(mode,btn){
+  enMode=mode;
+  document.querySelectorAll('#tab-en .mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('en-wrap-month').style.display=mode==='month'?'':'none';
+  document.getElementById('en-wrap-sem').style.display=mode==='sem'?'':'none';
+  document.getElementById('en-period-label').textContent=mode==='sem'?'Semester':'Month';
+  enOnClassChange();
+}
+
+// ===== KH class select =====
+const khSel=document.getElementById('kh-classSelect');
+khSel.add(new Option('-- ជ្រើសរើសថ្នាក់ --',''));
+Object.keys(khStudentDB).forEach(c=>khSel.add(new Option(c,c)));
+function khOnClassChange(){
+  if(khMode==='month')khLoadMonthly();
+  else khLoadSemester();
+}
+
+function khLoadMonthly(){
+  const tbody=document.getElementById('kh-monthBody');
+  tbody.innerHTML='';
+  const sc=cls=>`<td><input type="number" class="sc ${cls}" min="0" max="10" step="0.01" placeholder="-" style="width:40px"></td>`;
+  (khStudentDB[khSel.value]||[]).forEach((s,i)=>{
+    tbody.innerHTML+=`<tr class="kh-row" data-id="${s.id}" data-sex="${s.sex}">
+      <td><b>${s.id}</b></td>
+      <td><input type="text" value="${s.name}" class="in-name" style="width:126px;border:none;font-family:'Battambang',sans-serif;font-size:8.5pt;"></td>
+      <td>${s.sex}</td>
+      ${sc('km')+sc('km')+sc('km')+sc('km')+sc('math')+sc('sci')+sc('soc')+sc('soc')+sc('soc')+sc('soc')+sc('phy')+sc('phy')+sc('comp')+sc('ak')+sc('val')+sc('cn')}
+      <td><input type="number" class="sc kh-hw-score" min="0" max="10" step="0.01" placeholder="-" style="width:40px;border:1.5px solid #a78bfa;border-radius:4px;text-align:center;font-size:8pt;background:#faf5ff;"></td>
+      <td style="text-align:center;">
+        <input type="file" accept="image/*" onchange="previewImg(event,'kh-img${i}')" style="width:120px;display:block;margin:0 auto;">
+        <input type="hidden" id="kh-img${i}">
+      </td>
+    </tr>`;
+  });
+  loadData('kh','month',khSel.value);
+  attachAutoSave('kh','month',khSel.value);
+}
+
+function khLoadSemester(){
+  const tbody=document.getElementById('kh-semBody');
+  tbody.innerHTML='';
+  const sc=cls=>`<td><input type="number" class="sc ${cls}" min="0" max="10" step="0.01" placeholder="-" style="width:38px"></td>`;
+  (khStudentDB[khSel.value]||[]).forEach((s,i)=>{
+    tbody.innerHTML+=`<tr class="kh-sem-row" data-id="${s.id}" data-sex="${s.sex}">
+      <td><b>${s.id}</b></td>
+      <td><input type="text" value="${s.name}" class="in-name" style="width:126px;border:none;font-family:'Battambang',sans-serif;font-size:8.5pt;"></td>
+      <td>${s.sex}</td>
+      ${sc('kh-ex').repeat(15)}${sc('kh-mn').repeat(7)}
+      <td><input type="number" class="sc kh-hw-score" min="0" max="10" step="0.01" placeholder="-" style="width:40px;border:1.5px solid #a78bfa;border-radius:4px;text-align:center;font-size:8pt;background:#faf5ff;"></td>
+      <td style="text-align:center;">
+        <input type="file" accept="image/*" onchange="previewImg(event,'kh-sem-img${i}')" style="width:120px;display:block;margin:0 auto;">
+        <input type="hidden" id="kh-sem-img${i}">
+      </td>
+    </tr>`;
+  });
+  loadData('kh','sem',khSel.value);
+  attachAutoSave('kh','sem',khSel.value);
+}
+
+function previewImg(e,id){
+  const r=new FileReader();
+  r.onload=f=>{const el=document.getElementById(id);if(el)el.value=f.target.result;};
+  r.readAsDataURL(e.target.files[0]);
+}
+
+// ===== EN class select =====
+const enSel=document.getElementById('en-classSelect');
+function enOnClassChange(){
+  if(enMode==='month')enLoadMonthly();
+  else enLoadSemester();
+}
+
+function enLoadMonthly(){
+  const tbody=document.getElementById('en-monthBody');
+  tbody.innerHTML='';
+  const sc=`<td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:42px"></td>`;
+  (enStudentDB[enSel.value]||[]).forEach((s,i)=>{
+    tbody.innerHTML+=`<tr class="en-row" data-id="${s.id}" data-sex="${s.sex}">
+      <td><b>${s.id}</b></td>
+      <td><input class="in-name" type="text" value="${s.name}" style="width:138px;border:none;font-family:'DM Sans',sans-serif;font-size:9pt;"></td>
+      <td>${s.sex==='M'?'M':'F'}</td>
+      ${sc.repeat(10)}
+      <td style="text-align:center;">
+        <input type="file" accept="image/*" onchange="previewImg(event,'en-img${i}')" style="width:120px;display:block;margin:0 auto;">
+        <input type="hidden" id="en-img${i}">
+      </td>
+    </tr>`;
+  });
+  loadData('en','month',enSel.value);
+  attachAutoSave('en','month',enSel.value);
+}
+
+function enLoadSemester(){
+  const tbody=document.getElementById('en-semBody');
+  tbody.innerHTML='';
+  (enStudentDB[enSel.value]||[]).forEach((s,i)=>{
+    tbody.innerHTML+=`<tr class="en-sem-row" data-id="${s.id}" data-sex="${s.sex}">
+      <td><b>${s.id}</b></td>
+      <td><input class="in-name" type="text" value="${s.name}" style="width:138px;border:none;font-family:'DM Sans',sans-serif;font-size:9pt;"></td>
+      <td>${s.sex==='M'?'M':'F'}</td>
+      <td><input type="number" class="sc en-s1" min="0" max="10" step="0.01" placeholder="-" style="width:54px"></td>
+      <td><input type="number" class="sc en-s2" min="0" max="10" step="0.01" placeholder="-" style="width:54px"></td>
+      <td><input type="number" class="sc en-s3" min="0" max="10" step="0.01" placeholder="-" style="width:54px"></td>
+      <td style="text-align:center;">
+        <input type="file" accept="image/*" onchange="previewImg(event,'en-sem-img${i}')" style="width:120px;display:block;margin:0 auto;">
+        <input type="hidden" id="en-sem-img${i}">
+      </td>
+    </tr>`;
+  });
+  loadData('en','sem',enSel.value);
+  attachAutoSave('en','sem',enSel.value);
+}
+
+function previewImg(e,id){
+  const r=new FileReader();
+  r.onload=f=>{const el=document.getElementById(id);if(el)el.value=f.target.result;};
+  r.readAsDataURL(e.target.files[0]);
+}
+
+function getKhmerDate(date){
+  const d=new Date(date),year=d.getFullYear(),month=d.getMonth()+1,day=d.getDate();
+  const khDays=['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
+  const toKh=n=>String(n).split('').map(c=>'០១២៣៤៥៦៧៨៩'[+c]).join('');
+  const a=Math.floor((14-month)/12),y=year+4800-a,m=month+12*a-3;
+  const JDN=day+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+  const REF=2451550,SYN=29.53059;
+  const lunarAge=((JDN-REF)%SYN+SYN)%SYN;
+  const ldr=Math.floor(lunarAge)+1;
+  let paksha,ld;
+  if(ldr<=15){paksha='កើត';ld=ldr;}else{paksha='រោច';ld=ldr-15;}
+  const months=['មិគសិរ','បុស្ស','មាឃ','ផល្គុន','ចេត្រ','វិសាខ','ជេស្ឋ','អាសាឍ','ស្រាពណ៍','ភទ្របទ','អស្សុជ','កត្តិក'];
+  const tl=Math.floor((JDN-REF)/SYN);
+  const khM=months[((tl+4)%12+12)%12];
+  const animals=['ជូត','ឆ្លូវ','ខាល','ថោះ','រោង','ម្សាញ់','មមី','មមែ','វក','រកា','ជ','កុរ'];
+  const sasors=['កុរ​ស័ក','ឯក​ស័ក','ទោ​ស័ក','ត្រី​ស័ក','ចត្វា​ស័ក','បញ្ចស័ក','ច​ស័ក','សប្ត​ស័ក','អដ្ឋ​ស័ក','នព្វ​ស័ក'];
+  const effYear=month<4?year-1:year;
+  const animal=animals[((effYear-1900)%12+12)%12];
+  const sasor=sasors[(year+1)%10];
+  return `ថ្ងៃ${khDays[d.getDay()]} ${toKh(ld)}${paksha} ខែ${khM} ឆ្នាំ${animal} ${sasor} ព.ស${toKh(year+543)}`;
+}
+
+
+// ════════════ EXISTING GENERATORS (unchanged) ════════════
+function buildHonorCard(s,rank,isKh,defImg){
+  const khR=['','១','២','៣','៤','៥'];
+  const bc=rank===1?'gold':rank===2?'silver':rank===3?'bronze':'plain';
+  const rl=isKh?khR[rank]:String(rank);
+  const mf=isKh?`style="font-family:'Moul',serif;"`:'';
+  const imgSrc=s?.img||defImg;
+  const C='white',S='20px',T='4px';
+  const corners=`<div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;">
+    <div style="position:absolute;top:0;left:0;width:${S};height:${S};border-top:${T} solid ${C};border-left:${T} solid ${C};"></div>
+    <div style="position:absolute;top:0;right:0;width:${S};height:${S};border-top:${T} solid ${C};border-right:${T} solid ${C};"></div>
+    <div style="position:absolute;bottom:0;left:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-left:${T} solid ${C};"></div>
+    <div style="position:absolute;bottom:0;right:0;width:${S};height:${S};border-bottom:${T} solid ${C};border-right:${T} solid ${C};"></div>
+  </div>`;
+  const scoreTag=!isKh?`<div style="font-size:7.5pt;color:#64748b;margin-top:2px;">Avg: ${s?.avg?.toFixed(2)||'0.00'}</div>`:'';
+  return `<div style="width:46mm;text-align:center;">
+    <div class="rank-badge ${bc}" ${mf}>${rl}</div>
+    <div style="position:relative;display:inline-block;width:46mm;height:38mm;">
+      <div class="photo-box"><img src="${imgSrc}"></div>${corners}
+    </div>
+    <span class="name-tag">${s?.name||''}</span>${scoreTag}
+  </div>`;
+}
+
+function buildFooter(todayKh,today,dirLabel,teachLabel,isMoul){
+  const ff=isMoul?`font-family:'Moul',serif;`:`font-family:'Playfair Display',serif;`;
+  return `<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;padding:0 8px;font-size:9.5pt;">
+    <div style="text-align:center;">${dirLabel}<br><strong style="${ff}font-size:10pt;">នាយកសាលា</strong></div>
+    <div style="text-align:center;">${todayKh}<br><span style="font-size:9pt;">${today}</span><br><strong style="${ff}font-size:10pt;">${teachLabel}</strong></div>
+  </div>`;
+}
+
+const khLegend=`<p style="margin-top:6px;font-size:8pt;color:#475569;">
+  &#9632; <span style="color:#7c3aed;">ល្អណាស់: ≥ ៩,៥</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#15803d;">ល្អ: ៨–៩,៤</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#2563eb;">ល្អបង្គួរ: ៦,៥–៧,៩</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#d97706;">មធ្យម: ៥–៦,៤</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">ខ្សោយ: &lt; ៥</span>
+</p>`;
+
+const enLegend=`<p style="margin-top:6px;font-size:8pt;color:#475569;">
+  &#9632; <span style="color:#7c3aed;">Outstanding (A+): ≥ 9.5</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#15803d;">Excellent (A): 8–9.4</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#2563eb;">Good (B): 6.5–7.9</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#d97706;">Average (C): 5–6.4</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">Fail (F): &lt; 5</span>
+</p>`;
+
+function khGenerate(type){
+  if(!khSel.value)return alert('សូមជ្រើសរើសថ្នាក់!');
+  const month=document.getElementById('kh-monthInput').value;
+  const year=document.getElementById('kh-yearInput').value;
+  const now=new Date();
+  const todayKh=getKhmerDate(now);
+  const today=`ភ្នំពេញ, ថ្ងៃទី ${now.getDate()} ខែ ${month} ឆ្នាំ ${now.getFullYear()}`;
+  const defImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
+  let students=[];
+  if(khMode==='sem'){
+    document.querySelectorAll('.kh-sem-row').forEach((r,i)=>{
+      const exV=Array.from(r.querySelectorAll('.kh-ex')).filter(x=>x.value.trim()!=='').map(x=>parseFloat(x.value)).filter(v=>!isNaN(v));
+      const mnV=Array.from(r.querySelectorAll('.kh-mn')).filter(x=>x.value.trim()!=='').map(x=>parseFloat(x.value)).filter(v=>!isNaN(v));
+      const exA=exV.length?exV.reduce((a,b)=>a+b,0)/exV.length:0;
+      const mnA=mnV.length?mnV.reduce((a,b)=>a+b,0)/mnV.length:0;
+      const n=(exV.length>0?1:0)+(mnV.length>0?1:0);
+      const avg=n?(exA+mnA)/n:0;
+      const total=exV.reduce((a,b)=>a+b,0)+mnV.reduce((a,b)=>a+b,0);
+      const hwEl=r.querySelector('.kh-hw-score');
+      const hw=hwEl&&hwEl.value.trim()!==''?parseFloat(hwEl.value):null;
+      students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',isFemale:r.dataset.sex==='F',avg,total,hw,img:document.getElementById('kh-sem-img'+i)?.value||''});
     });
-}
-
-function previewImg(e, id) {
-    const r = new FileReader();
-    r.onload = f => document.getElementById(id).value = f.target.result;
-    r.readAsDataURL(e.target.files[0]);
-}
-
-function getKhmerDate(date) {
-    const d=new Date(date);
-    const year=d.getFullYear(),month=d.getMonth()+1,day=d.getDate();
-    const khDays=['អាទិត្យ','ចន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'];
-    const toKh=n=>String(n).split('').map(c=>'០១២៣៤៥៦៧៨៩'[+c]).join('');
-    const a=Math.floor((14-month)/12),y=year+4800-a,m=month+12*a-3;
-    const JDN=day+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
-    const REF=2451550,SYN=29.53059;
-    const lunarAge=((JDN-REF)%SYN+SYN)%SYN;
-    const lunarDayRaw=Math.floor(lunarAge)+1;
-    let paksha,lunarDay;
-    if(lunarDayRaw<=15){paksha='កើត';lunarDay=lunarDayRaw;}else{paksha='រោច';lunarDay=lunarDayRaw-15;}
-    const months=['មិគសិរ','បុស្ស','មាឃ','ផល្គុន','ចេត្រ','វិសាខ','ជេស្ឋ','អាសាឍ','ស្រាពណ៍','ភទ្របទ','អស្សុជ','កត្តិក'];
-    const tl=Math.floor((JDN-REF)/SYN);
-    const khMonth=months[((tl+4)%12+12)%12];
-    const animals=['ជូត','ឆ្លូវ','ខាល','ថោះ','រោង','ម្សាញ់','មមី','មមែ','វក','រកា','ជ','កុរ'];
-    const sasors=['កុរ​ស័ក','ឯក​ស័ក','ទោ​ស័ក','ត្រី​ស័ក','ចត្វា​ស័ក','បញ្ចស័ក','ច​ស័ក','សប្ត​ស័ក','អដ្ឋ​ស័ក','នព្វ​ស័ក'];
-    const effYear=month<4?year-1:year;
-    const animal=animals[((effYear-1900)%12+12)%12];
-    const sasor=sasors[(year+1)%10];
-    const BE=year+543;
-    return `ថ្ងៃ${khDays[d.getDay()]} ${toKh(lunarDay)}${paksha} ខែ${khMonth} ឆ្នាំ${animal} ${sasor} ព.ស${toKh(BE)}`;
-}
-
-function khGenerate(type) {
-    if(!khSel.value) return alert('សូមជ្រើសរើសថ្នាក់!');
-    const month=document.getElementById('kh-monthInput').value;
-    const year=document.getElementById('kh-yearInput').value;
-    const now=new Date();
-    const todayKh=getKhmerDate(now);
-    const today=`ភ្នំពេញ, ថ្ងៃទី ${now.getDate()} ខែ ${month} ឆ្នាំ ${now.getFullYear()}`;
-    let students=[];
+  } else {
     document.querySelectorAll('.kh-row').forEach((r,i)=>{
-        const {total,avg} = calcAvg(r);
-        students.push({
-            id:r.dataset.id,
-            name:r.querySelector('.in-name').value,
-            sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',
-            isFemale:r.dataset.sex==='F',
-            total, avg,
-            img:document.getElementById('kh-img'+i).value
-        });
+      const {total,avg}=calcAvg(r);
+      const hwEl=r.querySelector('.kh-hw-score');
+      const hw=hwEl&&hwEl.value.trim()!==''?parseFloat(hwEl.value):null;
+      students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'ប្រុស':'ស្រី',isFemale:r.dataset.sex==='F',avg,total,hw,img:document.getElementById('kh-img'+i)?.value||''});
     });
-    students.sort((a,b)=>b.avg-a.avg);
-    const totalS=students.length, femaleS=students.filter(s=>s.isFemale).length;
-    // Pass = avg >= 5
-    const passed=students.filter(s=>s.avg>=5);
-    const passCount=passed.length, passFemale=passed.filter(s=>s.isFemale).length;
-    const failCount=totalS-passCount, failFemale=femaleS-passFemale;
-    const defaultImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
-
-    let html=`<div class="page-frame"><div class="frame-border">
-    <div class="doc-header">
-        <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
-        <div class="hd-nation-kh">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br><span style="font-family:serif;font-weight:normal;">✵✵✵</span></div>
+  }
+  students.sort((a,b)=>b.avg-a.avg);
+  const totalS=students.length,femaleS=students.filter(s=>s.isFemale).length;
+  const passed=students.filter(s=>s.avg>=5);
+  const passCount=passed.length,passFemale=passed.filter(s=>s.isFemale).length;
+  const failCount=totalS-passCount,failFemale=femaleS-passFemale;
+  const pLabel=khMode==='sem'?`ឆមាស ${month}`:`ខែ${month}`;
+  let html=`<div class="page-frame">
+  <div class="doc-header">
+    <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
+    <div class="hd-nation-kh">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br><span style="font-family:serif;font-weight:normal;">✵✵✵</span></div>
+  </div>`;
+  if(type==='REPORT'){
+    html+=`<div style="text-align:center;margin:4px 0 8px;">
+      <h1 style="font-family:'Moul',serif;font-size:16pt;">ចំណាត់ថ្នាក់${khMode==='sem'?'ប្រចាំឆមាស':'ប្រចាំខែ'}</h1>
+      <p style="font-family:'Moul',serif;font-size:11pt;font-weight:bold;">ថ្នាក់៖ ${khSel.value} | ${pLabel} | ឆ្នាំ${year}</p>
+    </div>
+    <table class="rpt-tbl">
+      <thead><tr><th>ល.រ</th><th>អត្ត​លេខ</th><th>គោត្តនាម-នាម</th><th>ភេទ</th><th>ពិន្ទុសរុប</th><th>មធ្យមភាគ</th><th>ចំណាត់ថ្នាក់</th><th>និទ្ទេស</th></tr></thead>
+      <tbody>${students.map((s,i)=>{const g=khGrade(s.avg);return`<tr><td>${i+1}</td><td>${s.id}</td><td class="name-col">${s.name}</td><td>${s.sex}</td><td><b>${s.total.toFixed(2)}</b></td><td><b>${s.avg.toFixed(2)}</b></td><td><b>${i+1}</b></td><td style="color:${g.color};font-weight:700;">${g.text}</td></tr>`;}).join('')}</tbody>
+    </table>
+    <div class="stats">
+      <p>បញ្ជីបញ្ចប់ ${totalS} នាក់ ក្នុងនោះស្រី ${femaleS} នាក់</p>
+      <p>ជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${totalS?((passCount/totalS)*100).toFixed(2):0}%</p>
+      <p>ធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${totalS?((failCount/totalS)*100).toFixed(2):0}%</p>
+      ${khLegend}
     </div>`;
+  } else {
+    const top5=students.slice(0,5);
+    html+=`<div style="text-align:center;">
+      <h1 style="font-family:'Moul',serif;color:#be123c;font-size:36pt;margin:0;">តារាងកិត្តិយស</h1>
+      <div style="width:180px;height:2px;background:#f59e0b;margin:3px auto;"></div>
+      <p style="font-family:'Moul',serif;font-size:12pt;font-weight:bold;margin-top:4px;">ថ្នាក់៖ ${khSel.value}</p>
+      <p style="font-family:'Moul',serif;font-size:11pt;">${pLabel} ឆ្នាំ ${year}</p>
+    </div>
+    <div class="honor-grid">
+      <div class="honor-row">${buildHonorCard(top5[0],1,true,defImg)}</div>
+      ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,true,defImg)}${buildHonorCard(top5[2],3,true,defImg)}</div>`:''}
+      ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,true,defImg)}${buildHonorCard(top5[4],5,true,defImg)}</div>`:''}
+    </div>`;
+  }
+  html+=buildFooter(todayKh,today,'បានឃើញ និងឯកភាព','គ្រូប្រចាំថ្នាក់',true)+'</div>';
+  const c=document.getElementById('kh-pdf-content');
+  c.innerHTML=html;c.style.display='block';
+  document.getElementById('kh-downloadBtn').style.display='block';
+  c.scrollIntoView({behavior:'smooth'});
+}
 
-    if(type==='REPORT'){
-        html+=`<div style="text-align:center;margin:4px 0 8px;">
-            <h1 style="font-family:'Moul',serif;font-size:16pt;color:black;">ចំណាត់ថ្នាក់ប្រចាំខែ</h1>
-            <p style="font-family:'Moul',serif;font-size:11pt;font-weight:bold;">ថ្នាក់៖ ${khSel.value} | ខែ${month} | ឆ្នាំ${year}</p>
-        </div>
-        <table class="rpt-tbl">
-            <thead>
-                <tr>
-                    <th>ល.រ</th>
-                    <th>អត្ត​លេខ</th>
-                    <th>គោត្តនាម-នាម</th>
-                    <th>ភេទ</th>
-                    <th>ពិន្ទុសរុប</th>
-                    <th>មធ្យមភាគ</th>
-                    <th>ចំណាត់ថ្នាក់</th>
-                    <th>និទ្ទេស</th>
-                </tr>
-            </thead>
-            <tbody>${students.map((s,i)=>{
-                const g = khGrade(s.avg);
-                return `<tr>
-                    <td>${i+1}</td>
-                    <td>${s.id}</td>
-                    <td class="name-col">${s.name}</td>
-                    <td>${s.sex}</td>
-                    <td><b>${s.total.toFixed(2)}</b></td>
-                    <td><b>${s.avg.toFixed(2)}</b></td>
-                    <td><b>${i+1}</b></td>
-                    <td style="color:${g.color};font-weight:700;">${g.text}</td>
-                </tr>`;
-            }).join('')}</tbody>
-        </table>
-        <div class="stats">
-            <p>បញ្ជីបញ្ចប់ត្រឹមលេខ ${totalS} (${totalS} នាក់) ក្នុងនោះស្រី ${femaleS} នាក់</p>
-            <p>សិស្សជាប់ ${passCount} នាក់ ក្នុងនោះស្រី ${passFemale} នាក់ ស្មើ ${totalS>0?((passCount/totalS)*100).toFixed(2):0}%</p>
-            <p>សិស្សធ្លាក់ ${failCount} នាក់ ក្នុងនោះស្រី ${failFemale} នាក់ ស្មើ ${totalS>0?((failCount/totalS)*100).toFixed(2):0}%</p>
-            <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
-                &#9632; ល្អណាស់: ≥ ៩,៥ &nbsp;|&nbsp; &#9632; ល្អ: ៨–៩,៤ &nbsp;|&nbsp; &#9632; ល្អបង្គួរ: ៦,៥–៧,៩ &nbsp;|&nbsp; &#9632; មធ្យម: ៥–៦,៤ &nbsp;|&nbsp; &#9632; ខ្សោយ: &lt; ៥
-            </p>
-        </div>`;
-    } else {
-        const top5=students.slice(0,5);
-        html+=`<div style="text-align:center;margin-top:0mm;">
-            <h1 style="font-family:'Moul',serif;color:#be123c;font-size:36pt;margin:0;">តារាងកិត្តិយស</h1>
-            <div style="width:180px;height:2px;background:#f59e0b;margin:3px auto;"></div>
-            <p style="font-family:'Moul',serif;font-size:12pt;font-weight:bold;margin-top:4px;">ថ្នាក់៖ ${khSel.value}</p>
-            <p style="font-family:'Moul',serif;font-size:11pt;">ប្រចាំខែ ${month} ឆ្នាំ ${year}</p>
-        </div>
-        <div class="honor-grid">
-            <div class="honor-row">${buildHonorCard(top5[0],1,true,defaultImg)}</div>
-            ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,true,defaultImg)}${buildHonorCard(top5[2],3,true,defaultImg)}</div>`:''}
-            ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,true,defaultImg)}${buildHonorCard(top5[4],5,true,defaultImg)}</div>`:''}
-        </div>`;
-    }
-
-    html+=`<div class="doc-footer">
-        <div class="sig-block">បានឃើញ និងឯកភាព<strong>នាយកសាលា</strong></div>
-        <div class="sig-block" style="text-align:right;">${todayKh}<br><span style="display:block;text-align:center;">${today}</span><strong style="text-align:center;">គ្រូប្រចាំថ្នាក់</strong></div>
-    </div></div></div>`;
-
-    const c=document.getElementById('kh-pdf-content');
-    c.innerHTML=html; c.style.display='block';
-    document.getElementById('kh-downloadBtn').style.display='block';
-    c.scrollIntoView({behavior:'smooth'});
+function enGenerate(type){
+  if(!enSel.value)return alert('Please select a class first!');
+  const month=document.getElementById('en-monthInput').value;
+  const year=document.getElementById('en-yearInput').value;
+  const now=new Date();
+  const todayEn=`Phnom Penh, ${now.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'})}`;
+  const todayKh=getKhmerDate(now);
+  const defImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
+  let students=[];
+  if(enMode==='sem'){
+    document.querySelectorAll('.en-sem-row').forEach((r,i)=>{
+      const {total,avg}=calcAvg(r);
+      students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'Male':'Female',isFemale:r.dataset.sex==='F',avg,total,img:document.getElementById('en-sem-img'+i)?.value||''});
+    });
+  } else {
+    document.querySelectorAll('.en-row').forEach((r,i)=>{
+      const {total,avg}=calcAvg(r);
+      students.push({id:r.dataset.id,name:r.querySelector('.in-name').value,sex:r.dataset.sex==='M'?'Male':'Female',isFemale:r.dataset.sex==='F',avg,total,img:document.getElementById('en-img'+i)?.value||''});
+    });
+  }
+  students.sort((a,b)=>b.avg-a.avg);
+  const totalS=students.length,femaleS=students.filter(s=>s.isFemale).length;
+  const passed=students.filter(s=>s.avg>=5);
+  const passCount=passed.length,passFemale=passed.filter(s=>s.isFemale).length;
+  const failCount=totalS-passCount,failFemale=femaleS-passFemale;
+  const pLabel=enMode==='sem'?`Semester ${month}`:`Month: ${month}`;
+  let html=`<div class="page-frame">
+  <div class="doc-header">
+    <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
+    <div class="hd-nation-en">Kingdom of Cambodia<br>Nation · Religion · King<br>✵ ✵ ✵</div>
+  </div>`;
+  if(type==='REPORT'){
+    html+=`<div style="text-align:center;margin:4px 0 8px;">
+      <h1 style="font-family:'Playfair Display',serif;font-size:17pt;font-weight:700;">${enMode==='sem'?'Semester Academic Rankings':'Monthly Academic Rankings'}</h1>
+      <p style="font-size:10.5pt;font-weight:600;margin-top:3px;">Class: ${enSel.value} | ${pLabel} | Year: ${year}</p>
+    </div>
+    <table class="rpt-tbl">
+      <thead><tr><th>#</th><th>ID</th><th>Full Name</th><th>Gender</th><th>Total</th><th>Average</th><th>Rank</th><th>Grade</th></tr></thead>
+      <tbody>${students.map((s,i)=>{const g=enGrade(s.avg);return`<tr><td>${i+1}</td><td>${s.id}</td><td class="name-col">${s.name}</td><td>${s.sex}</td><td><b>${s.total.toFixed(2)}</b></td><td><b>${s.avg.toFixed(2)}</b></td><td><b>${i+1}</b></td><td style="color:${g.color};font-weight:700;">${g.text}</td></tr>`;}).join('')}</tbody>
+    </table>
+    <div class="stats">
+      <p>Total: <b>${totalS}</b> (Female: <b>${femaleS}</b>)</p>
+      <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${totalS?((passCount/totalS)*100).toFixed(1):0}%</p>
+      <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${totalS?((failCount/totalS)*100).toFixed(1):0}%</p>
+      ${enLegend}
+    </div>`;
+  } else {
+    const top5=students.slice(0,5);
+    html+=`<div style="text-align:center;">
+      <h1 style="font-family:'Playfair Display',serif;font-size:28pt;color:#be123c;">Honor Board</h1>
+      <div style="width:140px;height:2px;background:#f59e0b;margin:3px auto;"></div>
+      <p style="font-weight:700;font-size:12pt;margin-top:4px;">Class: ${enSel.value}</p>
+      <p style="font-size:11pt;">${pLabel} | Year: ${year}</p>
+    </div>
+    <div class="honor-grid">
+      <div class="honor-row">${buildHonorCard(top5[0],1,false,defImg)}</div>
+      ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,false,defImg)}${buildHonorCard(top5[2],3,false,defImg)}</div>`:''}
+      ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,false,defImg)}${buildHonorCard(top5[4],5,false,defImg)}</div>`:''}
+    </div>`;
+  }
+  html+=buildFooter(todayKh,todayEn,'Approved by','Class Teacher',false)+'</div>';
+  const c=document.getElementById('en-pdf-content');
+  c.innerHTML=html;c.style.display='block';
+  document.getElementById('en-downloadBtn').style.display='block';
+  c.scrollIntoView({behavior:'smooth'});
 }
 
 function khDownloadPDF(){downloadPDF('kh-pdf-content','kh-downloadBtn',khSel.value,document.getElementById('kh-monthInput').value);}
-
-// ===== ENGLISH DB =====
-const enStudentDB = {
-    'Fount1 Morning': [
-        {id:'82',name:'Chhang Singreay',sex:'F'},{id:'149',name:'Thi Sovann Sithika',sex:'F'},
-        {id:'143',name:'Phan Sokheng',sex:'M'},{id:'133',name:'Soth Linprossith',sex:'M'},
-        {id:'134',name:'Eab Liying',sex:'F'},{id:'88',name:'Sim Sithika',sex:'F'},
-        {id:'134',name:'Serey Chanvatthana',sex:'M'},{id:'88',name:'Hy Meeying',sex:'F'},
-        {id:'134',name:'Channy Sisanna',sex:'F'},{id:'88',name:'Chanmroeun Chanoudom',sex:'M'},
-        {id:'127',name:'Ham Chanboryreak',sex:'M'},{id:'182',name:'Tang Huylin',sex:'F'}
-    ],
-    'Fount1 Evening': [
-        {id:'116',name:'In Tiengvitu',sex:'M'},{id:'58',name:'Bunroeun Khemara',sex:'M'},
-        {id:'116',name:'Chhorn Mengsin',sex:'M'},{id:'58',name:'Ngoun Kimhab',sex:'M'},
-        {id:'145',name:'Chhay Pinging',sex:'F'},{id:'125',name:'Panha Petra',sex:'F'},
-        {id:'90',name:'Chomreun Ruonrithirach',sex:'M'},{id:'116',name:'Run Raksmey',sex:'M'},
-        {id:'90',name:'Huy Vannrothsetha',sex:'M'},{id:'116',name:'Nit Sotheara',sex:'M'},
-        {id:'159',name:'Thon Sigech',sex:'F'}
-    ],
-    'Fount2 Morning': [
-        {id:'86',name:'Theng Mengly',sex:'M'},{id:'00',name:'Sreang Sievfong',sex:'F'},
-        {id:'00',name:'Heng Meyich',sex:'F'},{id:'00',name:'Eurn Povoleak',sex:'F'},
-        {id:'00',name:'Han Sivhor',sex:'F'},{id:'00',name:'Roth Sovannchanthnaka',sex:'M'},
-        {id:'00',name:'Chomreun Manita',sex:'F'},{id:'70',name:'Roth Ratheb',sex:'M'},
-        {id:'00',name:'Chomreun Chanoudom',sex:'F'}
-    ],
-    'Fount2 Afternoon': [
-        {id:'68',name:'Song Rithysak',sex:'M'},{id:'00',name:'Pov Sokchen',sex:'M'},
-        {id:'66',name:'Bunleng Aidek',sex:'M'},{id:'67',name:'Pheak Speeddy',sex:'M'},
-        {id:'00',name:'Em Raechna',sex:'F'},{id:'00',name:'Ngoun Panhaputhysak',sex:'M'},
-        {id:'00',name:'Chen Kolin',sex:'M'},{id:'00',name:'Nara Hengly',sex:'M'},
-        {id:'00',name:'Chan Vireasith',sex:'M'},{id:'00',name:'Sok Sambath',sex:'M'},
-        {id:'00',name:'Sok Dalls',sex:'F'},{id:'00',name:'Ly Chaychon',sex:'M'}
-    ],
-    'Nursery Morning': [
-        {id:'148',name:'Beres Maikeus',sex:'M'},{id:'144',name:'Heng Santipheap',sex:'M'},
-        {id:'157',name:'Doung Sometha',sex:'M'},{id:'183',name:'Thong Fongmeng',sex:'M'},
-        {id:'158',name:'Punlok Viraksith',sex:'M'},{id:'172',name:'Reathana Sievle',sex:'F'},
-        {id:'180',name:'Rat Pichmorakot',sex:'F'},{id:'178',name:'Livthy Jutima',sex:'F'},
-        {id:'184',name:'Ho Liping',sex:'M'},{id:'174',name:'Vichika Munnitepey',sex:'F'},
-        {id:'185',name:'Yem Putthivong',sex:'M'},{id:'171',name:'Song Siriboth',sex:'M'}
-    ],
-    'Nursery Afternoon': [
-        {id:'148',name:'Beres Maikeus',sex:'M'},{id:'147',name:'Sopheak Virakboth',sex:'M'},
-        {id:'150',name:'Vet Nirita',sex:'F'},{id:'166',name:'Piseth Chanvatthana',sex:'M'},
-        {id:'166',name:'Lina Hongsakiathiphu',sex:'M'}
-    ],
-    'Level1 Morning': [
-        {id:'00',name:'Pov Sunita',sex:'F'},{id:'00',name:'Kaev Vinsouottara',sex:'F'},
-        {id:'00',name:'Chhuonta Rataknakhondou',sex:'F'},{id:'64',name:'Leang Voatchhanathnu',sex:'M'},
-        {id:'00',name:'Ya Pichmonika',sex:'F'},{id:'00',name:'Lim Puthireach',sex:'M'},
-        {id:'00',name:'Lor Sivhuoy',sex:'F'},{id:'00',name:'Lay Monichenda',sex:'F'},
-        {id:'00',name:'Ork Niset',sex:'M'},{id:'00',name:'Chan Sophayameakh',sex:'M'},
-        {id:'00',name:'Sonvirak Panhatepey',sex:'F'}
-    ],
-    'Level1 Afternoon': [
-        {id:'00',name:'Aok Outtom',sex:'M'},{id:'00',name:'Nara Henglay',sex:'M'},
-        {id:'62',name:'Chhuk Chenlong',sex:'M'}
-    ],
-    'Level 2': [
-        {id:'48',name:'Sopheak Titthdana',sex:'F'},{id:'63',name:'Neourn Vathanac',sex:'M'},
-        {id:'49',name:'Sopheak Rattank',sex:'M'},{id:'61',name:'Phal Sovann',sex:'M'},
-        {id:'53',name:'Hong Sothinal',sex:'M'},{id:'55',name:'Theng Julinh',sex:'F'},
-        {id:'1',name:'Lay Phearadavid',sex:'M'},{id:'4',name:'La Sovannhannah',sex:'F'}
-    ]
-};
-
-const enSel = document.getElementById('en-classSelect');
-
-function enLoadStudents() {
-    const tbody = document.getElementById('en-inputBody');
-    tbody.innerHTML = '';
-    const students = enStudentDB[enSel.value] || [];
-    students.forEach((s, i) => {
-        tbody.innerHTML += `
-        <tr class="en-row" data-id="${s.id}" data-name="${s.name}" data-sex="${s.sex}">
-            <td><b>${s.id}</b></td>
-            <td><input class="in-name" type="text" value="${s.name}" style="width:138px;border:none;font-family:'DM Sans',sans-serif;"></td>
-            <td>${s.sex==='M'?'Male':'Female'}</td>
-            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc en" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc math" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc sci" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc soc" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc art" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc phy" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc comp" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td><input type="number" class="sc life" min="0" max="10" step="0.01" placeholder="-" style="width:44px"></td>
-            <td>
-                <input type="file" accept="image/*" onchange="previewImg(event,'en-img${i}')" style="width:135px;display:block;margin:0 auto;">
-                <input type="hidden" id="en-img${i}">
-            </td>
-        </tr>`;
-    });
-}
-
-function enGenerate(type) {
-    if(!enSel.value) return alert('Please select a class first!');
-    const month=document.getElementById('en-monthInput').value;
-    const year=document.getElementById('en-yearInput').value;
-    const now=new Date();
-    const todayEn=`Phnom Penh, ${now.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'})}`;
-    const todayKh=getKhmerDate(now);
-    let students=[];
-    document.querySelectorAll('.en-row').forEach((r,i)=>{
-        const {total,avg} = calcAvg(r);
-        students.push({
-            id:r.dataset.id,
-            name:r.querySelector('.in-name').value,
-            sex:r.dataset.sex==='M'?'Male':'Female',
-            isFemale:r.dataset.sex==='F',
-            total, avg,
-            img:document.getElementById('en-img'+i).value
-        });
-    });
-    students.sort((a,b)=>b.avg-a.avg);
-    const totalS=students.length, femaleS=students.filter(s=>s.isFemale).length;
-    const passed=students.filter(s=>s.avg>=5);
-    const passCount=passed.length, passFemale=passed.filter(s=>s.isFemale).length;
-    const failCount=totalS-passCount, failFemale=femaleS-passFemale;
-    const defaultImg='https://i.ibb.co/20Z4h6Z8/Untitled-design-6.png';
-
-    let html=`<div class="page-frame"><div class="frame-border">
-    <div class="doc-header">
-        <div class="hd-logo"><img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png"></div>
-        <div class="hd-nation-en">Kingdom of Cambodia<br>Nation · Religion · King<br>✵ ✵ ✵</div>
-    </div>`;
-
-    if(type==='REPORT'){
-        html+=`<div style="text-align:center;margin:4px 0 8px;">
-            <h1 style="font-family:'Playfair Display',serif;font-size:17pt;font-weight:700;">Monthly Academic Rankings</h1>
-            <p style="font-size:10.5pt;font-weight:600;margin-top:3px;">Class: ${enSel.value} &nbsp;|&nbsp; Month: ${month} &nbsp;|&nbsp; Academic Year: ${year}</p>
-        </div>
-        <table class="rpt-tbl">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Student ID</th>
-                    <th>Full Name</th>
-                    <th>Gender</th>
-                    <th>Total</th>
-                    <th>Average</th>
-                    <th>Rank</th>
-                    <th>Grade</th>
-                </tr>
-            </thead>
-            <tbody>${students.map((s,i)=>{
-                const g=enGrade(s.avg);
-                return `<tr>
-                    <td>${i+1}</td>
-                    <td>${s.id}</td>
-                    <td class="name-col">${s.name}</td>
-                    <td>${s.sex}</td>
-                    <td><b>${s.total.toFixed(2)}</b></td>
-                    <td><b>${s.avg.toFixed(2)}</b></td>
-                    <td><b>${i+1}</b></td>
-                    <td style="color:${g.color};font-weight:700;">${g.text}</td>
-                </tr>`;
-            }).join('')}</tbody>
-        </table>
-        <div class="stats" style="font-size:9pt;line-height:2;margin-top:14px;">
-            <p>Total students: <b>${totalS}</b> (Female: <b>${femaleS}</b>)</p>
-            <p>Passed: <b>${passCount}</b> (Female: <b>${passFemale}</b>) — ${totalS>0?((passCount/totalS)*100).toFixed(1):0}%</p>
-            <p>Failed: <b>${failCount}</b> (Female: <b>${failFemale}</b>) — ${totalS>0?((failCount/totalS)*100).toFixed(1):0}%</p>
-            <p style="margin-top:6px;font-size:8.5pt;color:#475569;">
-                &#9632; Outstanding (A+): ≥ 9.5 &nbsp;|&nbsp; &#9632; Excellent (A): 8–9.4 &nbsp;|&nbsp; &#9632; Good (B): 6.5–7.9 &nbsp;|&nbsp; &#9632; Average (C): 5–6.4 &nbsp;|&nbsp; &#9632; Fail (F): &lt; 5
-            </p>
-        </div>`;
-    } else {
-        const top5=students.slice(0,5);
-        html+=`<div style="text-align:center;margin-top:0mm;">
-            <h1 style="font-family:'Playfair Display',serif;font-size:28pt;color:#be123c;">Honor Board</h1>
-            <div style="width:140px;height:2px;background:#f59e0b;margin:3px auto;"></div>
-            <p style="font-weight:700;font-size:12pt;margin-top:4px;">Class: ${enSel.value}</p>
-            <p style="font-size:11pt;">Month: ${month} &nbsp;|&nbsp; Academic Year: ${year}</p>
-        </div>
-        <div class="honor-grid">
-            <div class="honor-row">${buildHonorCard(top5[0],1,false,defaultImg)}</div>
-            ${top5.length>=3?`<div class="honor-row">${buildHonorCard(top5[1],2,false,defaultImg)}${buildHonorCard(top5[2],3,false,defaultImg)}</div>`:''}
-            ${top5.length>=5?`<div class="honor-row">${buildHonorCard(top5[3],4,false,defaultImg)}${buildHonorCard(top5[4],5,false,defaultImg)}</div>`:''}
-        </div>`;
-    }
-
-    html+=`<div class="doc-footer">
-        <div class="sig-block">Approved by<strong>School Director</strong></div>
-        <div class="sig-block" style="text-align:right;">${todayKh}<br><span style="display:block;text-align:center;">${todayEn}</span><strong style="display:block;text-align:center;">Class Teacher</strong></div>
-    </div></div></div>`;
-
-    const c=document.getElementById('en-pdf-content');
-    c.innerHTML=html; c.style.display='block';
-    document.getElementById('en-downloadBtn').style.display='block';
-    c.scrollIntoView({behavior:'smooth'});
-}
-
 function enDownloadPDF(){downloadPDF('en-pdf-content','en-downloadBtn',enSel.value,document.getElementById('en-monthInput').value);}
 
-function downloadPDF(contentId, btnId, className, month) {
-    const el=document.getElementById(contentId);
-    if(!el||!el.innerHTML.trim()){alert('Please generate a report first!');return;}
-    const btn=document.getElementById(btnId);
-    const orig=btn.innerHTML;
-    btn.innerHTML='⏳ Generating PDF...'; btn.disabled=true;
-    const W=794;
-    el.style.width=W+'px';
-    setTimeout(()=>{
-        html2canvas(el,{scale:3,useCORS:true,allowTaint:true,backgroundColor:'#ffffff',logging:false,width:W,windowWidth:W})
-        .then(canvas=>{
-            el.style.width='';
-            const {jsPDF}=window.jspdf;
-            const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
-            const A4W=210,A4H=297;
-            const mmPerPx=A4W/canvas.width;
-            const imgHmm=canvas.height*mmPerPx;
-            const imgData=canvas.toDataURL('image/jpeg',0.95);
-            if(imgHmm<=A4H){
-                pdf.addImage(imgData,'JPEG',0,0,A4W,imgHmm);
-            } else {
-                let yOff=0;
-                while(yOff<imgHmm){
-                    if(yOff>0)pdf.addPage();
-                    const srcY=yOff/mmPerPx;
-                    const sliceH=Math.min(A4H/mmPerPx,canvas.height-srcY);
-                    const sc=document.createElement('canvas');
-                    sc.width=canvas.width; sc.height=sliceH;
-                    sc.getContext('2d').drawImage(canvas,0,srcY,canvas.width,sliceH,0,0,canvas.width,sliceH);
-                    pdf.addImage(sc.toDataURL('image/jpeg',0.95),'JPEG',0,0,A4W,sliceH*mmPerPx);
-                    yOff+=A4H;
-                }
-            }
-            pdf.save(`MiKids_${(className||'class').replace(/\s+/g,'_')}_${month}_${Date.now()}.pdf`);
-            btn.innerHTML=orig; btn.disabled=false;
-            alert('✅ PDF downloaded successfully!');
-        }).catch(err=>{
-            el.style.width=''; btn.innerHTML=orig; btn.disabled=false;
-            alert('Error: '+err.message);
-        });
-    },800);
+function downloadPDF(contentId,btnId,className,month){
+  const el=document.getElementById(contentId);
+  if(!el||!el.innerHTML.trim()){alert('Please generate a report first!');return;}
+  const btn=document.getElementById(btnId);
+  const orig=btn.innerHTML;
+  btn.innerHTML='⏳ Generating...';btn.disabled=true;
+  const W=794;
+  el.style.width=W+'px';
+  setTimeout(()=>{
+    html2canvas(el,{scale:3,useCORS:true,allowTaint:true,backgroundColor:'#ffffff',logging:false,width:W,windowWidth:W})
+    .then(canvas=>{
+      el.style.width='';
+      const{jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4',compress:true});
+      const A4W=210,A4H=297,mpp=A4W/canvas.width,imgH=canvas.height*mpp;
+      const imgData=canvas.toDataURL('image/jpeg',.95);
+      if(imgH<=A4H){
+        pdf.addImage(imgData,'JPEG',0,0,A4W,imgH);
+      }else{
+        let yOff=0;
+        while(yOff<imgH){
+          if(yOff>0)pdf.addPage();
+          const srcY=yOff/mpp,sliceH=Math.min(A4H/mpp,canvas.height-srcY);
+          const sc=document.createElement('canvas');
+          sc.width=canvas.width;sc.height=sliceH;
+          sc.getContext('2d').drawImage(canvas,0,srcY,canvas.width,sliceH,0,0,canvas.width,sliceH);
+          pdf.addImage(sc.toDataURL('image/jpeg',.95),'JPEG',0,0,A4W,sliceH*mpp);
+          yOff+=A4H;
+        }
+      }
+      pdf.save(`MyKids_${(className||'class').replace(/\s+/g,'_')}_${month}_${Date.now()}.pdf`);
+      btn.innerHTML=orig;btn.disabled=false;
+    }).catch(err=>{el.style.width='';btn.innerHTML=orig;btn.disabled=false;alert('Error: '+err.message);});
+  },800);
 }
 </script>
 </body>
