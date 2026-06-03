@@ -229,6 +229,7 @@ table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
   <div style="text-align:center;margin-top:20px;">
     <button class="btn btn-navy btn-moul" onclick="khGenerate('REPORT')">📋 បង្កើតតារាងចំណាត់ថ្នាក់</button>
     <button class="btn btn-red btn-moul" onclick="khGenerate('HONOR')">🏆 បង្កើតតារាងកិត្តិយស</button>
+    <button class="btn" style="background:#0369a1;color:white;font-family:'Moul',serif;" onclick="downloadScoreTable('kh')">📊 ទាញយកតារាងពិន្ទុ PDF</button>
     <button class="btn" style="background:#64748b;color:white;" onclick="clearAllData()">🗑️ លុបទិន្នន័យទាំងអស់</button>
   </div>
 </div>
@@ -326,6 +327,7 @@ table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
   <div style="text-align:center;margin-top:20px;">
     <button class="btn btn-navy" onclick="enGenerate('REPORT')">📋 Generate Rankings Report</button>
     <button class="btn btn-red" onclick="enGenerate('HONOR')">🏆 Generate Honor Board</button>
+    <button class="btn" style="background:#0369a1;color:white;" onclick="downloadScoreTable('en')">📊 Download Score Table PDF</button>
   </div>
 </div>
 
@@ -345,17 +347,17 @@ table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
 // GRADE HELPERS
 // ════════════════════════════════════════════
 function khGrade(avg){
-  if(avg>=9.5)return{text:'ល្អណាស់',color:'#7c3aed'};
-  if(avg>=8)  return{text:'ល្អ',color:'#15803d'};
-  if(avg>=6.5)return{text:'ល្អបង្គួរ',color:'#2563eb'};
-  if(avg>=5)  return{text:'មធ្យម',color:'#d97706'};
+  if(avg>=9.5)return{text:'ល្អណាស់',color:'#be123c'};
+  if(avg>=8)  return{text:'ល្អ',color:'#be123c'};
+  if(avg>=6.5)return{text:'ល្អបង្គួរ',color:'#be123c'};
+  if(avg>=5)  return{text:'មធ្យម',color:'#be123c'};
   return           {text:'ខ្សោយ',color:'#be123c'};
 }
 function enGrade(avg){
-  if(avg>=9.5)return{text:'A+ — Outstanding',color:'#7c3aed'};
-  if(avg>=8)  return{text:'A — Excellent',color:'#15803d'};
-  if(avg>=6.5)return{text:'B — Good',color:'#2563eb'};
-  if(avg>=5)  return{text:'C — Average',color:'#d97706'};
+  if(avg>=9.5)return{text:'A+ — Outstanding',color:'#be123c'};
+  if(avg>=8)  return{text:'A — Excellent',color:'#be123c'};
+  if(avg>=6.5)return{text:'B — Good',color:'#be123c'};
+  if(avg>=5)  return{text:'C — Average',color:'#be123c'};
   return           {text:'F — Fail',color:'#be123c'};
 }
 
@@ -930,17 +932,17 @@ function buildFooter(todayKh,today,dirLabel,teachLabel,isMoul){
 }
 
 const khLegend=`<p style="margin-top:8px;font-size:8pt;color:#475569;">
-  &#9632; <span style="color:#7c3aed;">ល្អណាស់: ≥ ៩.៥</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#15803d;">ល្អ: ៨–៩.៤</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#2563eb;">ល្អបង្គួរ: ៦.៥–៧.៩</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#d97706;">មធ្យម: ៥–៦.៤</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">ល្អណាស់: ≥ ៩.៥</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">ល្អ: ៨–៩.៤</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">ល្អបង្គួរ: ៦.៥–៧.៩</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">មធ្យម: ៥–៦.៤</span> &nbsp;|&nbsp;
   &#9632; <span style="color:#be123c;">ខ្សោយ: &lt; ៥</span>
 </p>`;
 const enLegend=`<p style="margin-top:8px;font-size:8pt;color:#475569;">
-  &#9632; <span style="color:#7c3aed;">Outstanding (A+): ≥ 9.5</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#15803d;">Excellent (A): 8–9.4</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#2563eb;">Good (B): 6.5–7.9</span> &nbsp;|&nbsp;
-  &#9632; <span style="color:#d97706;">Average (C): 5–6.4</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">Outstanding (A+): ≥ 9.5</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">Excellent (A): 8–9.4</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">Good (B): 6.5–7.9</span> &nbsp;|&nbsp;
+  &#9632; <span style="color:#be123c;">Average (C): 5–6.4</span> &nbsp;|&nbsp;
   &#9632; <span style="color:#be123c;">Fail (F): &lt; 5</span>
 </p>`;
 
@@ -1144,6 +1146,150 @@ function khDownloadPDF(){
 }
 function enDownloadPDF(){
   downloadPDF('en-pdf-content','en-downloadBtn',enSel.value,document.getElementById('en-monthInput').value);
+}
+
+// ════════════════════════════════════════════
+// DOWNLOAD SCORE TABLE AS PDF
+// Captures the full score input table (with all columns) and saves as PDF
+// ════════════════════════════════════════════
+function downloadScoreTable(tab){
+  const isKh = tab==='kh';
+  const className = isKh ? khSel.value : enSel.value;
+  if(!className) return alert(isKh ? 'សូមជ្រើសរើសថ្នាក់!' : 'Please select a class first!');
+
+  const month = document.getElementById(isKh?'kh-monthInput':'en-monthInput').value;
+  const year  = document.getElementById(isKh?'kh-yearInput' :'en-yearInput').value;
+  const now   = new Date();
+  const todayKh = getKhmerDate(now);
+  const todayLabel = isKh
+    ? `ភ្នំពេញ, ថ្ងៃទី ${now.getDate()} ខែ ${month} ឆ្នាំ ${now.getFullYear()}`
+    : `Phnom Penh, ${now.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'})}`;
+
+  // Determine which table wrap is currently visible
+  const mode = isKh ? khMode : enMode;
+  const wrapId = isKh
+    ? (mode==='month'?'kh-wrap-month':'kh-wrap-sem')
+    : (mode==='month'?'en-wrap-month':'en-wrap-sem');
+
+  const tableEl = document.getElementById(wrapId);
+  if(!tableEl) return;
+
+  // Build a temp container styled for PDF
+  const container = document.createElement('div');
+  container.style.cssText = 'background:white;padding:14px 10px;font-family:Battambang,DM Sans,sans-serif;width:1200px;';
+
+  // Header
+  const periodLabel = isKh
+    ? (mode==='sem' ? `ឆមាស ${month}` : `ខែ${month}`)
+    : (mode==='sem' ? `Semester ${month}` : `Month: ${month}`);
+  const title = isKh
+    ? `<div style="text-align:center;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" style="width:120px;">
+          <div style="text-align:center;font-family:Moul,serif;font-size:12pt;line-height:1.7;">
+            ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ<br><span style="font-size:9pt;">✵✵✵</span>
+          </div>
+        </div>
+        <h2 style="font-family:Moul,serif;font-size:15pt;color:#1e3a8a;margin:4px 0;">តារាងពិន្ទុ${mode==='sem'?'ប្រចាំឆមាស':'ប្រចាំខែ'}</h2>
+        <p style="font-family:Moul,serif;font-size:10pt;font-weight:bold;">ថ្នាក់៖ ${className} &nbsp;|&nbsp; ${periodLabel} &nbsp;|&nbsp; ឆ្នាំ${year}</p>
+      </div>`
+    : `<div style="text-align:center;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <img src="https://i.ibb.co/RTWkghgd/Logo-Mikid-removebg-preview.png" style="width:120px;">
+          <div style="text-align:center;font-family:'Playfair Display',serif;font-size:12pt;line-height:1.7;font-weight:700;">
+            Kingdom of Cambodia<br>Nation · Religion · King<br><span style="font-size:9pt;">✵ ✵ ✵</span>
+          </div>
+        </div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:15pt;color:#1e3a8a;margin:4px 0;">Score Table — ${mode==='sem'?'Semester':'Monthly'}</h2>
+        <p style="font-size:10pt;font-weight:600;">Class: ${className} &nbsp;|&nbsp; ${periodLabel} &nbsp;|&nbsp; Year: ${year}</p>
+      </div>`;
+
+  // Clone the table (without file inputs / hidden photo columns)
+  const tblClone = tableEl.querySelector('table').cloneNode(true);
+  // Remove last column (photo column) from header and every row
+  tblClone.querySelectorAll('tr').forEach(tr=>{
+    const cells = tr.querySelectorAll('th,td');
+    // remove last cell (photo)
+    if(cells.length>0) cells[cells.length-1].remove();
+  });
+  // Replace input elements with their current values
+  tblClone.querySelectorAll('input[type=number],input[type=text]').forEach(inp=>{
+    const span = document.createElement('span');
+    span.textContent = inp.value || '';
+    span.style.cssText = 'font-size:8pt;display:block;text-align:center;';
+    inp.replaceWith(span);
+  });
+  // Style the cloned table for print
+  tblClone.style.cssText = 'width:100%;border-collapse:collapse;font-size:7.5pt;margin-top:8px;';
+  tblClone.querySelectorAll('th').forEach(th=>{
+    th.style.padding='5px 3px';
+    th.style.fontSize='7pt';
+    th.style.border='1px solid #334155';
+  });
+  tblClone.querySelectorAll('td').forEach(td=>{
+    td.style.padding='4px 3px';
+    td.style.border='1px solid #cbd5e1';
+    td.style.textAlign='center';
+  });
+
+  // Footer
+  const footer = `<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;padding:0 8px;font-size:9.5pt;">
+    <div style="text-align:center;">${isKh?'បានឃើញ និងឯកភាព':'Approved by'}<br>
+      <strong style="font-family:${isKh?'Moul,serif':'Playfair Display,serif'};font-size:10pt;">នាយកសាលា</strong>
+    </div>
+    <div style="text-align:center;">${todayKh}<br>
+      <span style="font-size:9pt;">${todayLabel}</span><br>
+      <strong style="font-family:${isKh?'Moul,serif':'Playfair Display,serif'};font-size:10pt;">${isKh?'គ្រូប្រចាំថ្នាក់':'Class Teacher'}</strong>
+    </div>
+  </div>`;
+
+  container.innerHTML = title;
+  container.appendChild(tblClone);
+  container.insertAdjacentHTML('beforeend', footer);
+
+  document.body.appendChild(container);
+
+  const btnLabel = isKh ? '📊 ទាញយកតារាងពិន្ទុ PDF' : '📊 Download Score Table PDF';
+  // Find and disable the button
+  const allBtns = document.querySelectorAll('button');
+  let scoreBtn = null;
+  allBtns.forEach(b=>{ if(b.textContent.includes('ទាញយកតារាងពិន្ទុ')||b.textContent.includes('Download Score Table')) scoreBtn=b; });
+  if(scoreBtn){scoreBtn.innerHTML='⏳ Generating...';scoreBtn.disabled=true;}
+
+  setTimeout(()=>{
+    html2canvas(container,{
+      scale:2.5,useCORS:true,allowTaint:true,
+      backgroundColor:'#ffffff',logging:false,
+      width:1200,windowWidth:1200
+    }).then(canvas=>{
+      document.body.removeChild(container);
+      const{jsPDF}=window.jspdf;
+      // Use landscape for wide score tables
+      const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
+      const PW=297,PH=210,mpp=PW/canvas.width,imgH=canvas.height*mpp;
+      const imgData=canvas.toDataURL('image/jpeg',.95);
+      if(imgH<=PH){
+        pdf.addImage(imgData,'JPEG',0,0,PW,imgH);
+      } else {
+        let yOff=0;
+        while(yOff<imgH){
+          if(yOff>0)pdf.addPage();
+          const srcY=yOff/mpp,sliceH=Math.min(PH/mpp,canvas.height-srcY);
+          const sc=document.createElement('canvas');
+          sc.width=canvas.width;sc.height=sliceH;
+          sc.getContext('2d').drawImage(canvas,0,srcY,canvas.width,sliceH,0,0,canvas.width,sliceH);
+          pdf.addImage(sc.toDataURL('image/jpeg',.95),'JPEG',0,0,PW,sliceH*mpp);
+          yOff+=PH;
+        }
+      }
+      pdf.save(`MiKids_ScoreTable_${className.replace(/\s+/g,'_')}_${month}_${Date.now()}.pdf`);
+      if(scoreBtn){scoreBtn.innerHTML=btnLabel;scoreBtn.disabled=false;}
+    }).catch(err=>{
+      document.body.removeChild(container);
+      if(scoreBtn){scoreBtn.innerHTML=btnLabel;scoreBtn.disabled=false;}
+      alert('Error: '+err.message);
+    });
+  },600);
 }
 
 function downloadPDF(contentId,btnId,className,month){
