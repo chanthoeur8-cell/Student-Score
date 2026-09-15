@@ -219,16 +219,18 @@ table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
         <th rowspan="2" style="min-width:120px;">រូបថត</th>
       </tr>
       <tr>
-        <th style="font-size:6pt;min-width:38px;">ស្ដាប់-និយាយ</th>
-        <th style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
         <th style="font-size:6pt;min-width:38px;">អំណាន</th>
+        <th style="font-size:6pt;min-width:38px;">ស្ដាប់-និយាយ</th>
         <th style="font-size:6pt;min-width:38px;">តែង​សេចក្ដី</th>
+        <th style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
+        <th style="font-size:6pt;min-width:38px;">អក្សរផ្ចង់</th>
+        <th style="font-size:6pt;min-width:38px;">គណិតវិទ្យា</th>
         <th style="font-size:6pt;min-width:38px;">ប្រវត្តិវិទ្យា</th>
         <th style="font-size:6pt;min-width:38px;">ភូមិវិទ្យា</th>
         <th style="font-size:6pt;min-width:38px;">សីលធម៍ពលរដ្ឋ</th>
-        <th style="font-size:6pt;min-width:38px;">គេហ-សិល្បៈ</th>
         <th style="font-size:6pt;min-width:38px;">អប់រំកាយ</th>
-        <th style="font-size:6pt;min-width:38px;">សុខ​ភាព</th>
+        <th style="font-size:6pt;min-width:38px;">គេហ-សិល្បៈ</th>
+        <th style="font-size:6pt;min-width:38px;">កិច្ចការផ្ទះ</th>
       </tr>
     </thead>
     <tbody id="kh-monthBody"></tbody>
@@ -253,17 +255,18 @@ table.score-tbl{min-width:100%;border-collapse:collapse;font-size:8pt;}
       <tr>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">អំណាន</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">ស្ដាប់-និយាយ</th>
-        <th class="h-sem1" style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">តែងសេចក្ដី</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">សរសេរតាមអាន</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">អក្សរផ្ចង់</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">គណិតវិទ្យា</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">វិទ្យាសាស្ត្រ</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">ប្រវត្តិវិទ្យា</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">ភូមិវិទ្យា</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">សីលធម៍-ពលរដ្ឋ</th>
-        <th class="h-sem1" style="font-size:6pt;min-width:38px;">គេហ-សិល្បៈ</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">អប់រំកាយ-សុខភាព</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">គេហ-សិល្បៈ</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">បំណិនជីវិត</th>
+        <th class="h-sem1" style="font-size:6pt;min-width:38px;">កិច្ចការផ្ទះ</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">ភាសា​ចិន</th>
         <th class="h-sem1" style="font-size:6pt;min-width:38px;">កុំព្យូទ័រ</th>
       </tr>
@@ -1788,20 +1791,16 @@ const khStudentDB={
     {id:'165',name:'លឹម លីម៉េងគ័ង្គ',sex:'M'}, {id:'165',name:'សូ រស្មីពនិតា',sex:'F'}
   ],
   'ថ្នាក់ទី១(ព្រឹក)':[
-    {id:'29',name:'ខាន់ មុនីវល្លភា',sex:'F'},{id:'101',name:'ឈុំ វីរ់សិទ្ធ',sex:'M'},
-    {id:'65',name:'និត សុធារ៉ា',sex:'M'},{id:'62',name:'រិទ្ធី ពិស្សុតសុក្រឹត',sex:'M'},
-    {id:'117',name:'ហ៊ុន រាណ្ណជេណស្ដា',sex:'M'},{id:'47',name:'បុណ្ណជេ ជេននី',sex:'F'},
-    {id:'49',name:'ងិន ទៀនវិន',sex:'M'},{id:'107',name:'សុភក្រ័ វរៈសិទ្ធ',sex:'M'},
-    {id:'170',name:'អុលវឿន ដាវីន',sex:'F'},{id:'1',name:'ប៊ុនរីន ខេមរា',sex:'M'},
-    {id:'69',name:'ជាឡិច កូលីន',sex:'M'}
+    {id:'49',name:'ងិន ទៀនវិន',sex:'M'},{id:'69',name:'ជាឡិច កូលីន',sex:'M'},{id:'101',name:'ឈុំ វីរ់សិទ្ធ',sex:'M'},
+    {id:'65',name:'និត សុធារ៉ា',sex:'M'},{id:'1',name:'ប៊ុនរីន ខេមរា',sex:'M'},{id:'62',name:'រិទ្ធី ពិស្សុតសុក្រឹត',sex:'M'},
+    {id:'107',name:'សុភក្រ័ វរៈសិទ្ធ',sex:'M'},{id:'170',name:'ហង់ កែវវិសុទ្ធ',sex:'M'}, {id:'117',name:'ហ៊ុន រាណ្ណជេណស្ដា',sex:'M'}
   ],
   'ថ្នាក់ទី១(រសៀល)':[
-     {id:'54',name:'យន់ លីហេង',sex:'M'},{id:'75',name:'វិន បញ្ញាវ័ន្ត',sex:'M'},
-    {id:'90',name:'សូ រស្មីពនិតា',sex:'F'},{id:'50',name:'សូយ រក្សា',sex:'M'},
-    {id:'72',name:'អ៊ូ សុខអាមី',sex:'F'},
-    {id:'176',name:'ប៉ឹម ម៉ីជូ',sex:'F'},{id:'85',name:'សេរី ចន្ទវឌ្ឍនា',sex:'M'},
-    {id:'161',name:'លីម ហ៊ីប៉',sex:'M'},{id:'55',name:'អ៊ា ជីងហ័រ',sex:'F'},
-    {id:'79',name:'មិត្ត ម៉េងហេង',sex:'M'},{id:'74',name:'ចាន់នី ស៊ូសាន់ណា',sex:'F'}
+    {id:'74',name:'ចាន់នី ស៊ូសាន់ណា',sex:'F'},{id:'176',name:'ប៉ឹម ម៉ីជូ',sex:'F'},
+    {id:'54',name:'យន់ លីហេង',sex:'M'},{id:'161',name:'លីម ហ៊ីប៉',sex:'M'},
+    {id:'75',name:'វិន បញ្ញាវ័ន្ត',sex:'M'},{id:'90',name:'សូ រស្មីពនិតា',sex:'F'},
+    {id:'50',name:'សូយ រក្សា',sex:'M'},{id:'85',name:'សេរី ចន្ទវឌ្ឍនា',sex:'M'},
+    {id:'161',name:'ហេង វិវឌ្ឍនៈ',sex:'M'},{id:'55',name:'អ៊ា ជីងហ័រ',sex:'F'}
     ],
   'ថ្នាក់ទី២(ព្រឹក)':[
     {id:'80',name:'ងួន បញ្ញាពុទ្ធិស័ក្តិ',sex:'M'}, {id:'95',name:'ចាវ វិនហាវ',sex:'M'},
